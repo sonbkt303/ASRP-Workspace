@@ -1,14 +1,10 @@
-## Khái niệm cốt lõi
+# HTTP
 
-## Checklist “làm được gì” (security controls)
+## Mục tiêu
 
-## Ví dụ threat / scenario
+- Ghi chú các khái niệm/nhóm rủi ro chính cho HTTP.
 
-## Ứng dụng thực tế
+## Thực hành
 
-## Issue gặp phải trong thực tế
-
-## Bài tập nhỏ
-
-## Cross-module links
-
+- (TODO) Thêm ví dụ cấu hình/diagram minh họa.
+- (TODO) Thêm checklist kiểm tra bảo mật.

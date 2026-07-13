@@ -1,8 +1,8 @@
-# HTTPS
+# TCP
 
 ## Mục tiêu
 
-- Ghi chú các khái niệm/nhóm rủi ro chính cho HTTPS.
+- Ghi chú các khái niệm/nhóm rủi ro chính cho TCP.
 
 ## Thực hành
 

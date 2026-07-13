@@ -1,8 +1,8 @@
-# HTTPS
+# Reverse Proxy
 
 ## Mục tiêu
 
-- Ghi chú các khái niệm/nhóm rủi ro chính cho HTTPS.
+- Ghi chú các khái niệm/nhóm rủi ro chính cho Reverse Proxy.
 
 ## Thực hành
 

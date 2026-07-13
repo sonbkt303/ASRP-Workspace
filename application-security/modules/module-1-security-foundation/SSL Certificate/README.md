@@ -1,8 +1,8 @@
-# HTTPS
+# SSL Certificate
 
 ## Mục tiêu
 
-- Ghi chú các khái niệm/nhóm rủi ro chính cho HTTPS.
+- Ghi chú các khái niệm/nhóm rủi ro chính cho SSL Certificate.
 
 ## Thực hành
 
