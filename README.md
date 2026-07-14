@@ -102,5 +102,6 @@ security-playground/
 
 ## Start here
 1. Read `[docs/roadmap/Application-Security-Overview.md](docs/roadmap/Application-Security-Overview.md)`.
-2. Pick a topic in `knowledge/` (example: `knowledge/networking/TCP.md`).
-3. Follow the lifecycle headings inside each topic.
+2. Read the topic template: `[docs/KB_TOPIC_TEMPLATE.md](docs/KB_TOPIC_TEMPLATE.md)`.
+3. Pick a topic in `knowledge/` (example: `knowledge/networking/TCP.md`).
+4. Follow the lifecycle headings inside each topic.
