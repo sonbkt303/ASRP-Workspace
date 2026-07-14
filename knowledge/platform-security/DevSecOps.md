@@ -20,7 +20,7 @@ Security gates: build/deploy/runtime; shift-left + shift-right; evidence-based p
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-8-security-review](../../knowledge/L0-foundations/Security-Review.md) (chuyển findings thành CI/CD gates)
+- Tới: [module-8-security-review](../../knowledge/foundations/Security-Review.md) (chuyển findings thành CI/CD gates)
 
 # Chapter 9 — DevSecOps
 
