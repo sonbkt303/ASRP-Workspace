@@ -2,6 +2,10 @@
 
 Template gốc để mọi bài trong `knowledge/` có cấu trúc nhất quán. Domain có thể mở rộng thêm section riêng nhưng **không bỏ** các mục cốt lõi.
 
+## Filename Convention
+- Tên file trong `knowledge/` nên dùng `kebab-case / lowercase` (ví dụ: `dns-records.md`).
+- Các chữ viết tắt trong nội dung có thể giữ dạng đúng chuẩn (HTTP/TLS/DNS/JWT...), nhưng file name vẫn theo `lowercase/kebab-case`.
+
 ## Frontmatter (bắt buộc)
 ```yaml
 ---

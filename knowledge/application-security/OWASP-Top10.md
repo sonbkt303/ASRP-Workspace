@@ -21,7 +21,7 @@ Injection: query/command concatenation trong endpoint tạo data leak nếu khô
 Chọn 3 hạng mục OWASP rủi ro cao và viết 1 trang “controls + verify evidence” (theo template evidence).
 
 ## Cross-module links
-- Tới: [module-4-secure-coding](../../knowledge/secure-engineering/Secure-Coding.md) (turn OWASP into secure code)
+- Tới: [module-4-secure-coding](../../knowledge/secure-engineering/secure-coding.md) (turn OWASP into secure code)
 - Tới: [module-8-security-review](../../knowledge/foundations/Security-Review.md) (review findings)
 
 

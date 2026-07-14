@@ -98,3 +98,7 @@ If you're unsure where a topic belongs,
 DO NOT duplicate it.
 Refine the taxonomy first.
 
+## Filename Convention (bắt buộc)
+- Tên file nên dùng `kebab-case / lowercase` (ví dụ: `http-header.md`, `tls-session.md`).
+- Nếu topic có viết tắt/thuật ngữ chuẩn (HTTP/TLS/DNS/JWT...), thì có thể viết hoa trong nội dung (body), nhưng **file name** vẫn giữ lowercase/kebab-case.
+

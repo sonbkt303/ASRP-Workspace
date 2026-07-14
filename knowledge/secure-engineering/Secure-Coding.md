@@ -20,7 +20,7 @@ Input validation, output encoding theo ngữ cảnh, chống injection bằng sa
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-5-api-security](../../knowledge/application-security/API-Security.md) (secure patterns cho API)
+- Tới: [module-5-api-security](../../knowledge/application-security/api-security.md) (secure patterns cho API)
 
 
 ## Build

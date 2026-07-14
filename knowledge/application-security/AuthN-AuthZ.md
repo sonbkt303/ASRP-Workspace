@@ -21,9 +21,9 @@ IDOR: endpoint `GET /api/orders/{id}` trả về dữ liệu của user khác n�
 Viết “Access control test matrix” cho 1 use case: tạo/mở/sửa/xóa một tài nguyên theo 3 role và 3 kiểu ownership.
 
 ## Cross-module links
-- Tới: [module-3-owasp-top10](../../knowledge/application-security/OWASP-Top10.md) (Broken Access Control)
-- Tới: [module-4-secure-coding](../../knowledge/secure-engineering/Secure-Coding.md) (write auth-safe code)
-- Tới: [module-5-api-security](../../knowledge/application-security/API-Security.md) (object-level API auth)
+- Tới: [module-3-owasp-top10](../../knowledge/application-security/owasp-top10.md) (Broken Access Control)
+- Tới: [module-4-secure-coding](../../knowledge/secure-engineering/secure-coding.md) (write auth-safe code)
+- Tới: [module-5-api-security](../../knowledge/application-security/api-security.md) (object-level API auth)
 
 
 ## Build
