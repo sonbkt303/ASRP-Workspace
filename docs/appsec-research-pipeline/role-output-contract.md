@@ -23,16 +23,22 @@ Mỗi “role” tạo output theo đúng vai trò để Technical Writer (Mr W)
   - Concrete mitigations mapped to the mechanism described in `#4`
   - Verification/observability signals mapped into `#9`
   - Actionable best practices in `#10`
+- Constraints:
+  - `#9` verification signals are **required** when `defensive_scope` is non-empty (at least 2 concrete signals)
+  - Do not reduce `#9` to a placeholder when defensive content is in scope
 
 ### Mr H (Adversarial Security Engineer) - Attack-oriented failure modes
 - Provide:
   - Common vulnerabilities/mistakes for `#8`
   - Failure modes that defensive controls must address
+- Constraints:
+  - Defensive framing only — **no exploit walkthroughs or weaponization**
 
 ### Mr R (Devil's Advocate) - Assumptions & edge cases
 - Provide:
   - Assumptions that could be wrong
   - Edge cases and “where defenses fail” bổ sung cho `#7/#8`
+- Label outputs with `Assumption:` or `Edge case:` in `#7`/`#8`
 
 ### Mr Q (Knowledge Librarian) - Evidence pack
 - Provide:
@@ -50,4 +56,6 @@ Mỗi “role” tạo output theo đúng vai trò để Technical Writer (Mr W)
       `#9 Debugging & Observability` → `#10 Best Practices` →
       `#11 Related Topics` → `#12 References`
   - Ensure theory-first 70/30 balance in narrative.
+  - Merge, dedupe, and resolve conflicts between roles before final output.
 
+**Reconciliation rule (Mr W)**: Every item in `#10` must address at least one item in `#8` or an edge case from Mr R; otherwise downgrade to `needs evidence` or remove.

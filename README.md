@@ -50,8 +50,7 @@ security-playground/
 │   ├── ai-security/
 │   ├── research/
 │   ├── glossary/
-│   ├── TAXONOMY.md
-│   └── README.md
+│   └── README.md                 # Domain index & taxonomy
 │
 ├── labs/                          # Hands-on Labs
 │   ├── networking/
@@ -107,25 +106,33 @@ security-playground/
 4. Follow the lifecycle headings inside each topic.
 
 ## AppSec Research (Knowledge Base writer pipeline)
-Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRFi defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
+Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRF defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
 `appsec-research-orchestrator` (Professor P).
 
+Pipeline reference: [`docs/appsec-research-pipeline/README.md`](docs/appsec-research-pipeline/README.md). Domain taxonomy: [`knowledge/README.md`](knowledge/README.md).
+
 ### Mẫu prompt chuẩn (dùng lại)
-Copy/paste đoạn sau và thay `<topic>`:
+Copy/paste đoạn sau và thay các placeholder:
 
 ```text
 Research Topic: <topic>.
-Theory-first (70/30), but defensive must include hardening + monitoring + verification.
-If too broad, split into subtopics (atomic documents).
-Prefer RFC/standards + OWASP references.
-Output: Knowledge Base topic(s) according to kb-write-topic template (#1..#12).
+Category: <category>. Difficulty: <level>. Tags: <tags>.
+Theory-first (70/30), but defensive must include hardening + monitoring + verification (proof signals in #9).
+If too broad, split into subtopics (atomic documents) and confirm split plan first.
+Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
+Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
+Check knowledge/ for duplicates before writing.
+Output: KB topic(s) per kb-write-topic template (#1–#12). Output mode: propose file path.
 ```
 
 ### Ví dụ nhanh
 ```text
 Research Topic: HTTP caching for auth content.
-Theory-first (70/30), but defensive must include hardening + monitoring + verification.
-If too broad, split into subtopics (atomic documents).
-Prefer RFC/standards + OWASP references.
-Output: Knowledge Base topic(s) according to kb-write-topic template (#1..#12).
+Category: web. Difficulty: intermediate. Tags: http, caching, auth.
+Theory-first (70/30), but defensive must include hardening + monitoring + verification (proof signals in #9).
+If too broad, split into subtopics (atomic documents) and confirm split plan first.
+Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
+Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
+Check knowledge/ for duplicates before writing.
+Output: KB topic(s) per kb-write-topic template (#1–#12). Output mode: propose file path.
 ```
