@@ -105,3 +105,27 @@ security-playground/
 2. Read the topic template: `[docs/knowledge-base-topic-template.md](docs/knowledge-base-topic-template.md)`.
 3. Pick a topic in `knowledge/` (example: `knowledge/networking/tcp.md`).
 4. Follow the lifecycle headings inside each topic.
+
+## AppSec Research (Knowledge Base writer pipeline)
+Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRFi defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
+`appsec-research-orchestrator` (Professor P).
+
+### Mẫu prompt chuẩn (dùng lại)
+Copy/paste đoạn sau và thay `<topic>`:
+
+```text
+Research Topic: <topic>.
+Theory-first (70/30), but defensive must include hardening + monitoring + verification.
+If too broad, split into subtopics (atomic documents).
+Prefer RFC/standards + OWASP references.
+Output: Knowledge Base topic(s) according to kb-write-topic template (#1..#12).
+```
+
+### Ví dụ nhanh
+```text
+Research Topic: HTTP caching for auth content.
+Theory-first (70/30), but defensive must include hardening + monitoring + verification.
+If too broad, split into subtopics (atomic documents).
+Prefer RFC/standards + OWASP references.
+Output: Knowledge Base topic(s) according to kb-write-topic template (#1..#12).
+```
