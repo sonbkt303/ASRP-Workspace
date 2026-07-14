@@ -29,6 +29,20 @@ Template: [`docs/knowledge-base-topic-template.md`](../docs/knowledge-base-topic
 - Sub-domain có thể dùng slash: `networking/http`, `foundations/cryptography`.
 - Không chắc → đọc README trong domain (ví dụ [`foundations/README.md`](foundations/README.md)) hoặc hỏi user.
 
+### Category decision tree (path resolution)
+
+| Topic type | `category` | `proposed_path` folder |
+|------------|------------|------------------------|
+| HTTP, caching, headers, CDN, web platform | `web` | `knowledge/web/` |
+| TCP, UDP, DNS, TLS transport | `networking` | `knowledge/networking/` |
+| HTTP as transport layer only (not app semantics) | `networking/http` | `knowledge/networking/` |
+| AuthN/AuthZ, API security, OWASP | `application-security` | `knowledge/application-security/` |
+| DevSecOps, infra hardening | `platform-security` | `knowledge/platform-security/` |
+| Secure coding, SDLC | `secure-engineering` | `knowledge/secure-engineering/` |
+
+**Rule**: `category` có thể có slash; **folder** luôn là segment đầu tiên trước `/`.
+Ví dụ: `category: networking/http` → file tại `knowledge/networking/http-overview.md`.
+
 ## Domain boundaries
 
 Một số giới hạn phạm vi (tránh nhảy domain quá sớm) — chi tiết trong [`foundations/README.md`](foundations/README.md):

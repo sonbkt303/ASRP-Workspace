@@ -122,7 +122,7 @@ If too broad, split into subtopics (atomic documents) and confirm split plan fir
 Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
 Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
 Check knowledge/ for duplicates before writing.
-Output: KB topic(s) per kb-write-topic template (#1–#12). Output mode: propose file path.
+Output: SecurityResearchJob YAML first, then role stubs, then KB topic(s) (#1–#12). Output mode: propose file path.
 ```
 
 ### Ví dụ nhanh
@@ -134,5 +134,5 @@ If too broad, split into subtopics (atomic documents) and confirm split plan fir
 Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
 Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
 Check knowledge/ for duplicates before writing.
-Output: KB topic(s) per kb-write-topic template (#1–#12). Output mode: propose file path.
+Output: SecurityResearchJob YAML first, then role stubs, then KB topic(s) (#1–#12). Output mode: propose file path.
 ```

@@ -56,6 +56,10 @@ Mỗi “role” tạo output theo đúng vai trò để Technical Writer (Mr W)
       `#9 Debugging & Observability` → `#10 Best Practices` →
       `#11 Related Topics` → `#12 References`
   - Ensure theory-first 70/30 balance in narrative.
-  - Merge, dedupe, and resolve conflicts between roles before final output.
+  - Merge role stubs from `## Role outputs (internal)` into final KB; dedupe and resolve conflicts.
 
 **Reconciliation rule (Mr W)**: Every item in `#10` must address at least one item in `#8` or an edge case from Mr R; otherwise downgrade to `needs evidence` or remove.
+
+## Execution order (normative)
+
+Roles execute **sequentially** Mr A → Mr S → Mr B → Mr H → Mr R → Mr Q → Mr W. Do not batch (e.g. "Mr A + Mr S" in one pass). Record each role under `## Role outputs (internal)` before Mr W merges.
