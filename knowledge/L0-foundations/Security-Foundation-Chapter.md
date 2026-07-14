@@ -12,6 +12,6 @@
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-2-authn-authz](../../knowledge/05-Authentication/AuthN-AuthZ.md) (authN/authZ boundaries)
-- Tới: [module-7-threat-modeling](../../knowledge/18-Architecture/Threat-Modeling.md) (trust boundaries & threat list)
+- Tới: [module-2-authn-authz](../../knowledge/L3-application-security/AuthN-AuthZ.md) (authN/authZ boundaries)
+- Tới: [module-7-threat-modeling](../../knowledge/L0-foundations/Threat-Modeling.md) (trust boundaries & threat list)
 

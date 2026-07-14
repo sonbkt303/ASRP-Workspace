@@ -20,8 +20,8 @@ Scope → assets/data → data flows → trust boundaries → threats → mitiga
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-8-security-review](../../knowledge/18-Architecture/Security-Review.md) (turn threats into review checklist)
-- Tới: [module-9-devsecops](../../knowledge/09-System-Security/DevSecOps.md) (mitigations into CI gates)
+- Tới: [module-8-security-review](../../knowledge/L0-foundations/Security-Review.md) (turn threats into review checklist)
+- Tới: [module-9-devsecops](../../knowledge/L4-platform-security/DevSecOps.md) (mitigations into CI gates)
 
 
 ## Build

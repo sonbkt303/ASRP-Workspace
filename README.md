@@ -5,16 +5,21 @@ Repository notes inspired by a **Knowledge Graph** learning loop:
 `Learn → Build → Break → Fix → Automate → Share`
 
 ## Top-level structure
-- `knowledge/`: topic notes ("Wikipedia") organized by numbered domains.
-- `labs/`: hands-on labs (add later; empty for now).
-- `playground/`: demo projects (add later; empty for now).
-- `tools/`: security tools you create later.
-- `research/`: deeper investigations (Diagram.drawio, PoC, References).
-- `templates/`: reusable templates (threat model, findings, threat lists, etc.).
-- `roadmap/`: learning roadmap overview.
-- `automation/`, `ai/`, `archive/`: future modules.
+- `apps/`: demo applications (web/mobile/desktop/ai).
+- `labs/`: hands-on labs (networking, OS, web, application/platform/cloud/offensive/ai security, reverse engineering).
+- `knowledge/`: Knowledge Base, organized by topic families:
+  - `foundations/`, `networking/`, `web/`
+  - `application-security/`, `platform-security/`, `cloud-security/`
+  - `offensive-security/`, `secure-engineering/`, `ai-security/`
+  - `research/`, `glossary/`
+- `tools/`: security tools.
+- `packages/`: shared libraries.
+- `infrastructure/`: shared infrastructure.
+- `datasets/`: payloads / samples / PCAPs.
+- `automation/`: scripts & automation.
+- `docs/`: repository documentation (roadmap, templates, references, research).
 
 ## Start here
-1. Read `[roadmap/Application-Security-Overview.md](roadmap/Application-Security-Overview.md)`.
-2. Pick a topic in `knowledge/` (example: `knowledge/02-Network/TCP.md`).
+1. Read `[docs/roadmap/Application-Security-Overview.md](docs/roadmap/Application-Security-Overview.md)`.
+2. Pick a topic in `knowledge/` (example: `knowledge/L1-networking/TCP.md`).
 3. Follow the lifecycle headings inside each topic.

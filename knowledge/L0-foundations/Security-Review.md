@@ -20,7 +20,7 @@ Finding quality: evidence, affected scope, severity rationale, remediation và v
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-9-devsecops](../../knowledge/09-System-Security/DevSecOps.md) (biến findings thành CI gates)
+- Tới: [module-9-devsecops](../../knowledge/L4-platform-security/DevSecOps.md) (biến findings thành CI gates)
 
 
 ## Build

@@ -20,7 +20,7 @@ Security misconfiguration, secrets/config hygiene, network boundary khái niệm
 ## Bài tập nhỏ
 
 ## Cross-module links
-- Tới: [module-8-security-review](../../knowledge/18-Architecture/Security-Review.md) (review infra/config)
+- Tới: [module-8-security-review](../../knowledge/L0-foundations/Security-Review.md) (review infra/config)
 
 
 ## Build

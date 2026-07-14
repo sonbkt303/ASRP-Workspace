@@ -22,7 +22,7 @@ Mass assignment: PATCH user có thể set `role` nếu binding/DTO sai.
 Thiết kế “API security checklist” cho 5 endpoint phổ biến + role matrix (để test nhanh).
 
 ## Cross-module links
-- Tới: [module-8-security-review](../../knowledge/18-Architecture/Security-Review.md) (review API findings)
+- Tới: [module-8-security-review](../../knowledge/L0-foundations/Security-Review.md) (review API findings)
 
 
 ## Build
