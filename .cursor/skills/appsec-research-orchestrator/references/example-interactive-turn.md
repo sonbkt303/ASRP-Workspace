@@ -1,6 +1,6 @@
 # Example: Interactive Turn (truncated)
 
-Reference for `execution_mode: interactive`. Full protocol: [`docs/appsec-research-pipeline/interactive-mode.md`](../../../docs/appsec-research-pipeline/interactive-mode.md).
+Reference for `execution_mode: interactive`. Full protocol: [`pipeline/interactive-mode.md`](pipeline/interactive-mode.md).
 
 ## Turn 1 — Job plan + first role
 
@@ -108,4 +108,4 @@ Proceed
 ## Notes
 
 - Stubs not in conversation context are not valid on `Resume interactive` — re-paste job YAML or re-run from missing role.
-- `qa-only` and `single-role` examples are in [`prompt-template.md`](../../../docs/appsec-research-pipeline/prompt-template.md).
+- `qa-only` and `single-role` examples are in [`pipeline/prompt-template.md`](pipeline/prompt-template.md).

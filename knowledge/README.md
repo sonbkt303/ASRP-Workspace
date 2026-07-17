@@ -57,7 +57,7 @@ Một số giới hạn phạm vi (tránh nhảy domain quá sớm) — chi ti�
 
 ## AppSec research pipeline
 
-Khi nghiên cứu topic mới qua orchestrator skill (`appsec-research-orchestrator`, Mr P — Professional):
+Khi nghiên cứu topic mới qua orchestrator skill (`appsec-research-orchestrator`, Mr P — Professional) — runtime SSoT: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md):
 1. Dedup search trong `knowledge/` (bước pre-flight bắt buộc)
 2. Resolve `category` từ bảng domain trên
 3. Output theo template 12 section — xem [`docs/appsec-research-pipeline/README.md`](../docs/appsec-research-pipeline/README.md) và [`role-glossary.md`](../docs/appsec-research-pipeline/role-glossary.md)

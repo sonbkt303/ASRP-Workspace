@@ -109,6 +109,10 @@ security-playground/
 Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRF defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
 `appsec-research-orchestrator` (Mr P — Professional).
 
+**Setup (máy mới / PC khác):** clone [`cursor-agents`](../cursor-agents), chạy `./scripts/setup.sh` (hoặc `.\scripts\setup.ps1`), restart Cursor — skill có sẵn ở mọi project qua `~/.cursor/skills/`. Cập nhật: `cd cursor-agents && git pull`.
+
+Runtime SSoT: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../cursor-agents/skills/appsec-research-orchestrator/SKILL.md). Mirror trong repo: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](.cursor/skills/appsec-research-orchestrator/SKILL.md).
+
 Pipeline reference: [`docs/appsec-research-pipeline/README.md`](docs/appsec-research-pipeline/README.md). Persona glossary: [`docs/appsec-research-pipeline/role-glossary.md`](docs/appsec-research-pipeline/role-glossary.md). Domain taxonomy: [`knowledge/README.md`](knowledge/README.md).
 
 Hướng dẫn sử dụng: [`docs/appsec-research-pipeline/USER-GUIDE.md`](docs/appsec-research-pipeline/USER-GUIDE.md)

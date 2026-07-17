@@ -6,7 +6,7 @@
 
 Khi bạn chat một AppSec topic (ví dụ: `HTTP caching`, `OAuth token validation`, `SSRF defense`), pipeline sẽ điều phối “team security” theo vai trò, và hệ thống hóa thành **Knowledge Base topic(s)** trong `knowledge/`.
 
-**Runtime source of truth**: `cursor-agents/skills/appsec-research-orchestrator/SKILL.md` (repo [`cursor-agents`](../../cursor-agents) — symlink qua `~/.cursor/skills/` sau setup). Bản mirror trong repo này: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](../../.cursor/skills/appsec-research-orchestrator/SKILL.md). Các file trong `docs/appsec-research-pipeline/` là reference thiết kế (đồng bộ từ skill bundle).
+**Runtime source of truth**: [`../../SKILL.md`](../../SKILL.md) (cursor-agents: `skills/appsec-research-orchestrator/SKILL.md`). Các file trong `references/pipeline/` là reference thiết kế.
 
 **Persona names**: [`role-glossary.md`](role-glossary.md)
 
@@ -25,7 +25,7 @@ Khi bạn chat một AppSec topic (ví dụ: `HTTP caching`, `OAuth token valida
 
 ### 0. Pre-flight (batch / interactive)
 
-1. KB dedup search trong `knowledge/` (xem `knowledge/README.md`)
+1. KB dedup search trong `knowledge/` nếu repo đích có thư mục này (xem target repo `knowledge/README.md` hoặc [`../knowledge-taxonomy.md`](../knowledge-taxonomy.md))
 2. Resolve `category` từ domain taxonomy
 3. Emit `SecurityResearchJob` YAML fenced (`## SecurityResearchJob`) theo `job-schema.md`
 4. Confirm split plan nếu `split_confirmation.required` hoặc user yêu cầu single doc
@@ -66,7 +66,7 @@ Split nếu topic chứa nhiều “mechanism axis” khác nhau:
 
 ## One Concept = One Home (cross-link guideline)
 
-Trước khi tạo KB topic mới, kiểm tra `knowledge/` (ví dụ `knowledge/web/HTTP.md`).
+Trước khi tạo KB topic mới, kiểm tra `knowledge/` trong repo đích (ví dụ `knowledge/web/HTTP.md`).
 Nếu overlap đáng kể:
 
 - không viết lại nội dung cốt lõi

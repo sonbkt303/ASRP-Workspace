@@ -85,4 +85,3 @@ Example 1: HTTP caching
 Example 2: HTTP security headers (theory-first)
 - Keep theory-first framing.
 - Make `# 7` and `# 10` strong; keep implementation minimal unless requested.
-

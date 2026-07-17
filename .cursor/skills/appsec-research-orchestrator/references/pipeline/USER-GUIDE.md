@@ -2,8 +2,7 @@
 
 Tài liệu này dành cho **người dùng** muốn nghiên cứu chủ đề Application Security và nhận output dạng **Knowledge Base topic(s)** trong `knowledge/`.
 
-- **Runtime (agent, SSoT)**: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) — edit tại `cursor-agents`, rồi sync mirror về repo này
-- **Mirror local**: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](../../.cursor/skills/appsec-research-orchestrator/SKILL.md)
+- **Runtime (agent)**: [`../../SKILL.md`](../../SKILL.md) (cursor-agents: `skills/appsec-research-orchestrator/SKILL.md`)
 - **Tên persona (SSoT)**: [`role-glossary.md`](role-glossary.md)
 - **Prompt copy-paste (SSoT)**: [`prompt-template.md`](prompt-template.md)
 
@@ -333,7 +332,7 @@ Sau mỗi Checkpoint, reply **một** trong các lệnh sau:
 
 Split confirmation: `Approve split plan: ...` / `Merge to 1 doc: ...` — xem [`interactive-mode.md`](interactive-mode.md).
 
-Ví dụ turn interactive: [`references/example-interactive-turn.md`](../../.cursor/skills/appsec-research-orchestrator/references/example-interactive-turn.md) (hoặc bản đầy đủ trong `cursor-agents/skills/.../references/`).
+Ví dụ turn interactive: [`../example-interactive-turn.md`](../example-interactive-turn.md).
 
 ---
 
@@ -349,6 +348,8 @@ Ví dụ turn interactive: [`references/example-interactive-turn.md`](../../.cur
 
 Path: `knowledge/<folder>/<kebab-case>.md` — folder = segment đầu của `category`.
 
+Category taxonomy: ưu tiên `knowledge/README.md` của repo đích; fallback [`../knowledge-taxonomy.md`](../knowledge-taxonomy.md).
+
 ### Quality gates (tóm tắt)
 
 - **One Concept = One Home** — dedup `knowledge/` trước khi viết; cross-link `#11`, không copy core content.
@@ -363,13 +364,12 @@ Path: `knowledge/<folder>/<kebab-case>.md` — folder = segment đầu của `ca
 
 | Tài liệu | Nội dung |
 |----------|----------|
-| [SKILL.md](../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) | Agent contract (runtime SSoT) |
-| [SKILL.md (mirror)](../../.cursor/skills/appsec-research-orchestrator/SKILL.md) | Bản mirror trong repo này |
+| [SKILL.md](../../SKILL.md) | Agent contract (runtime) |
 | [role-glossary.md](role-glossary.md) | Tên persona (SSoT) |
 | [role-output-contract.md](role-output-contract.md) | Ràng buộc từng Mr |
 | [job-schema.md](job-schema.md) | Schema `SecurityResearchJob` |
 | [interactive-mode.md](interactive-mode.md) | Checkpoint, resume, amend (SSoT) |
 | [prompt-template.md](prompt-template.md) | Prompt copy-paste (SSoT) |
 | [README.md](README.md) | Pipeline overview |
-| [knowledge/README.md](../../knowledge/README.md) | Domain taxonomy, category |
+| [knowledge-taxonomy.md](../knowledge-taxonomy.md) | Domain taxonomy fallback |
 | [knowledge-base-topic-template.md](../knowledge-base-topic-template.md) | Template 12 section |
