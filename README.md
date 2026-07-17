@@ -107,32 +107,12 @@ security-playground/
 
 ## AppSec Research (Knowledge Base writer pipeline)
 Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRF defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
-`appsec-research-orchestrator` (Professor P).
+`appsec-research-orchestrator` (Mr P — Professional).
 
-Pipeline reference: [`docs/appsec-research-pipeline/README.md`](docs/appsec-research-pipeline/README.md). Domain taxonomy: [`knowledge/README.md`](knowledge/README.md).
+Pipeline reference: [`docs/appsec-research-pipeline/README.md`](docs/appsec-research-pipeline/README.md). Persona glossary: [`docs/appsec-research-pipeline/role-glossary.md`](docs/appsec-research-pipeline/role-glossary.md). Domain taxonomy: [`knowledge/README.md`](knowledge/README.md).
+
+Hướng dẫn sử dụng: [`docs/appsec-research-pipeline/USER-GUIDE.md`](docs/appsec-research-pipeline/USER-GUIDE.md)
 
 ### Mẫu prompt chuẩn (dùng lại)
-Copy/paste đoạn sau và thay các placeholder:
 
-```text
-Research Topic: <topic>.
-Category: <category>. Difficulty: <level>. Tags: <tags>.
-Theory-first (70/30), but defensive must include hardening + monitoring + verification (proof signals in #9).
-If too broad, split into subtopics (atomic documents) and confirm split plan first.
-Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
-Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
-Check knowledge/ for duplicates before writing.
-Output: SecurityResearchJob YAML first, then role stubs, then KB topic(s) (#1–#12). Output mode: propose file path.
-```
-
-### Ví dụ nhanh
-```text
-Research Topic: HTTP caching for auth content.
-Category: web. Difficulty: intermediate. Tags: http, caching, auth.
-Theory-first (70/30), but defensive must include hardening + monitoring + verification (proof signals in #9).
-If too broad, split into subtopics (atomic documents) and confirm split plan first.
-Evidence strictness: #12 needs ≥2 RFC/standards (or documented exception) + ≥1 OWASP (or official security guideline).
-Every main claim in #7, #8, #10 must map to evidence inline or in #12 (or label "needs evidence").
-Check knowledge/ for duplicates before writing.
-Output: SecurityResearchJob YAML first, then role stubs, then KB topic(s) (#1–#12). Output mode: propose file path.
-```
+Copy/paste từ [`docs/appsec-research-pipeline/prompt-template.md`](docs/appsec-research-pipeline/prompt-template.md).
