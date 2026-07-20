@@ -1,9 +1,9 @@
 # Hướng dẫn sử dụng: appsec-research-orchestrator
 
-Tài liệu này dành cho **người dùng** muốn nghiên cứu chủ đề Application Security và nhận output dạng **Knowledge Base topic(s)** trong `knowledge/`.
+Tài liệu này dành cho **người dùng** muốn nghiên cứu chủ đề Application Security và nhận output dạng **Knowledge Base topic(s)** trong `Repository Content/knowledge/`.
 
-- **Runtime (agent, SSoT)**: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) — edit tại `cursor-agents`, rồi sync mirror về repo này
-- **Mirror local**: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](../../.cursor/skills/appsec-research-orchestrator/SKILL.md)
+- **Runtime (agent, SSoT)**: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) — edit tại `cursor-agents`, rồi sync mirror về repo này
+- **Mirror local**: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](../../../.cursor/skills/appsec-research-orchestrator/SKILL.md)
 - **Tên persona (SSoT)**: [`role-glossary.md`](role-glossary.md)
 - **Prompt copy-paste (SSoT)**: [`prompt-template.md`](prompt-template.md)
 
@@ -16,7 +16,7 @@ Skill `appsec-research-orchestrator` do **Mr P (Professional)** điều phối. 
 **Khi nào dùng orchestrator:**
 
 - Bạn muốn nghiên cứu topic AppSec (ví dụ: `HTTP caching`, `JWT validation`, `SSRF prevention`) và cần output có cấu trúc, evidence, threat model, failure modes, mitigations.
-- Bạn muốn kiểm tra trùng lặp với `knowledge/` trước khi viết mới (One Concept = One Home).
+- Bạn muốn kiểm tra trùng lặp với `Repository Content/knowledge/` trước khi viết mới (One Concept = One Home).
 
 **Khi nào dùng `kb-write-topic` thay thế:**
 
@@ -58,7 +58,7 @@ Thêm `Execution mode:` nếu không dùng batch (mặc định là `batch`).
 | Last updated | `2026-07-17` |
 | References requirement | `RFC/standards first, then OWASP` |
 
-Nếu pre-flight tìm thấy topic trùng trong `knowledge/`, cung cấp thêm `Related` hoặc để Mr P ghi trong job plan.
+Nếu pre-flight tìm thấy topic trùng trong `Repository Content/knowledge/`, cung cấp thêm `Related` hoặc để Mr P ghi trong job plan.
 
 ---
 
@@ -88,7 +88,7 @@ Single-role: One Mr stub
 
 | Thành viên | Chức năng | Nhiệm vụ chính | KB sections |
 |------------|-----------|----------------|-------------|
-| **Mr P (Professional)** | Điều phối | Pre-flight, dedup `knowledge/`, job plan, phối hợp team | — |
+| **Mr P (Professional)** | Điều phối | Pre-flight, dedup `Repository Content/knowledge/`, job plan, phối hợp team | — |
 | **Mr A (Analyst)** | Phân tích lý thuyết | Cơ chế hoạt động, terminology; không viết controls trong phần theory | `#3`, `#4`, tối thiểu `#1–#2` |
 | **Mr S (Strategist)** | Kiến trúc bảo mật | Threat model, trust boundaries, attack surface, in/out scope | `#7`, `#1` |
 | **Mr H (Hazard)** | Rủi ro / lỗi | Failure modes, common mistakes — **defensive framing**, không exploit walkthrough | `#8` |
@@ -135,13 +135,13 @@ Category: web. Difficulty: intermediate. Tags: http, caching, vary.
 Status: draft. Last updated: 2026-07-17.
 References requirement: RFC/standards first, then OWASP.
 Theory-first (70/30), but defensive must include hardening + monitoring + verification (proof signals in #9).
-Check knowledge/ for duplicates before writing.
+Check `Repository Content/knowledge/` for duplicates before writing.
 Output: SecurityResearchJob YAML first, then role stubs, then KB topic(s) (#1–#12). Output mode: propose file path.
 ```
 
 **Kỳ vọng:** `## SecurityResearchJob` → `## Role outputs (internal)` (tất cả Mr) → `## KB topic(s)` với `**Proposed path**:`.
 
-**Bước tiếp theo:** Review KB, chỉnh tay hoặc `write to knowledge/` nếu muốn ghi file.
+**Bước tiếp theo:** Review KB, chỉnh tay hoặc `write to Repository Content/knowledge/` nếu muốn ghi file.
 
 ---
 
@@ -333,7 +333,7 @@ Sau mỗi Checkpoint, reply **một** trong các lệnh sau:
 
 Split confirmation: `Approve split plan: ...` / `Merge to 1 doc: ...` — xem [`interactive-mode.md`](interactive-mode.md).
 
-Ví dụ turn interactive: [`references/example-interactive-turn.md`](../../.cursor/skills/appsec-research-orchestrator/references/example-interactive-turn.md) (hoặc bản đầy đủ trong `cursor-agents/skills/.../references/`).
+Ví dụ turn interactive: [`references/example-interactive-turn.md`](../../../.cursor/skills/appsec-research-orchestrator/references/example-interactive-turn.md) (hoặc bản đầy đủ trong `cursor-agents/skills/.../references/`).
 
 ---
 
@@ -345,13 +345,13 @@ Ví dụ turn interactive: [`references/example-interactive-turn.md`](../../.cur
 |------|--------------|----------|
 | `propose file path` (mặc định) | Có (`**Proposed path**:`) | Không |
 | `chat-only` | Không | Không |
-| `write to knowledge/` | Có | Có (không overwrite không confirm) |
+| `write to Repository Content/knowledge/` | Có | Có (không overwrite không confirm) |
 
-Path: `knowledge/<folder>/<kebab-case>.md` — folder = segment đầu của `category`.
+Path: `Repository Content/knowledge/<folder>/<kebab-case>.md` — folder = segment đầu của `category`.
 
 ### Quality gates (tóm tắt)
 
-- **One Concept = One Home** — dedup `knowledge/` trước khi viết; cross-link `#11`, không copy core content.
+- **One Concept = One Home** — dedup `Repository Content/knowledge/` trước khi viết; cross-link `#11`, không copy core content.
 - **Evidence strictness** — `#12`: ≥2 RFC/standards + ≥1 OWASP (hoặc exception có ghi chú).
 - **Defensive depth** — khi `defensive_scope` non-empty: `#9` có ≥2 verification signals.
 - **Reconciliation** — mỗi item `#10` map về `#8` hoặc edge case Mr R.
@@ -363,8 +363,8 @@ Path: `knowledge/<folder>/<kebab-case>.md` — folder = segment đầu của `ca
 
 | Tài liệu | Nội dung |
 |----------|----------|
-| [SKILL.md](../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) | Agent contract (runtime SSoT) |
-| [SKILL.md (mirror)](../../.cursor/skills/appsec-research-orchestrator/SKILL.md) | Bản mirror trong repo này |
+| [SKILL.md](../../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md) | Agent contract (runtime SSoT) |
+| [SKILL.md (mirror)](../../../.cursor/skills/appsec-research-orchestrator/SKILL.md) | Bản mirror trong repo này |
 | [role-glossary.md](role-glossary.md) | Tên persona (SSoT) |
 | [role-output-contract.md](role-output-contract.md) | Ràng buộc từng Mr |
 | [job-schema.md](job-schema.md) | Schema `SecurityResearchJob` |

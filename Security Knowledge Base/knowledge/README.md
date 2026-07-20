@@ -1,8 +1,8 @@
 # Knowledge Base
 
-`knowledge/` chứa các bài Knowledge Base theo domain. Mỗi khái niệm chỉ tồn tại một lần (**One Concept = One Home**).
+`Repository Content/knowledge/` chứa các bài Knowledge Base theo domain. Mỗi khái niệm chỉ tồn tại một lần (**One Concept = One Home**).
 
-Trước khi tạo topic mới, search `knowledge/` để tránh trùng lặp. Nếu overlap đáng kể: cross-link ở `#11 Related Topics`, ghi rõ in-scope/out-of-scope, không viết lại nội dung cốt lõi.
+Trước khi tạo topic mới, search `Repository Content/knowledge/` để tránh trùng lặp. Nếu overlap đáng kể: cross-link ở `#11 Related Topics`, ghi rõ in-scope/out-of-scope, không viết lại nội dung cốt lõi.
 
 Template: [`docs/knowledge-base-topic-template.md`](../docs/knowledge-base-topic-template.md)
 
@@ -33,15 +33,15 @@ Template: [`docs/knowledge-base-topic-template.md`](../docs/knowledge-base-topic
 
 | Topic type | `category` | `proposed_path` folder |
 |------------|------------|------------------------|
-| HTTP, caching, headers, CDN, web platform | `web` | `knowledge/web/` |
-| TCP, UDP, DNS, TLS transport | `networking` | `knowledge/networking/` |
-| HTTP as transport layer only (not app semantics) | `networking/http` | `knowledge/networking/` |
-| AuthN/AuthZ, API security, OWASP | `application-security` | `knowledge/application-security/` |
-| DevSecOps, infra hardening | `platform-security` | `knowledge/platform-security/` |
-| Secure coding, SDLC | `secure-engineering` | `knowledge/secure-engineering/` |
+| HTTP, caching, headers, CDN, web platform | `web` | `Repository Content/knowledge/web/` |
+| TCP, UDP, DNS, TLS transport | `networking` | `Repository Content/knowledge/networking/` |
+| HTTP as transport layer only (not app semantics) | `networking/http` | `Repository Content/knowledge/networking/` |
+| AuthN/AuthZ, API security, OWASP | `application-security` | `Repository Content/knowledge/application-security/` |
+| DevSecOps, infra hardening | `platform-security` | `Repository Content/knowledge/platform-security/` |
+| Secure coding, SDLC | `secure-engineering` | `Repository Content/knowledge/secure-engineering/` |
 
 **Rule**: `category` có thể có slash; **folder** luôn là segment đầu tiên trước `/`.
-Ví dụ: `category: networking/http` → file tại `knowledge/networking/http-overview.md`.
+Ví dụ: `category: networking/http` → file tại `Repository Content/knowledge/networking/http-overview.md`.
 
 ## Domain boundaries
 
@@ -57,7 +57,7 @@ Một số giới hạn phạm vi (tránh nhảy domain quá sớm) — chi ti�
 
 ## AppSec research pipeline
 
-Khi nghiên cứu topic mới qua orchestrator skill (`appsec-research-orchestrator`, Mr P — Professional) — runtime SSoT: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md):
-1. Dedup search trong `knowledge/` (bước pre-flight bắt buộc)
+Khi nghiên cứu topic mới qua orchestrator skill (`appsec-research-orchestrator`, Mr P — Professional) — runtime SSoT: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../../../cursor-agents/skills/appsec-research-orchestrator/SKILL.md):
+1. Dedup search trong `Repository Content/knowledge/` (bước pre-flight bắt buộc)
 2. Resolve `category` từ bảng domain trên
 3. Output theo template 12 section — xem [`docs/appsec-research-pipeline/README.md`](../docs/appsec-research-pipeline/README.md) và [`role-glossary.md`](../docs/appsec-research-pipeline/role-glossary.md)

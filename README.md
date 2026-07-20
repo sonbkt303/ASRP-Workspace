@@ -1,122 +1,45 @@
-# Security Playground OS
+# ASRP Workspace
 
-Repository notes inspired by a **Knowledge Graph** learning loop:
+This repository is organized into two root-level work areas:
 
-`Learn → Build → Break → Fix → Automate → Share`
+- `ASRP Workspace/`: the workspace root for the ASRP initiative.
+- `Application Security Review Platform (ASRP)/`: the platform taxonomy and canonical ASRP structure.
+- `Repository Content/`: the current working content moved from the old root folders.
+- `.cursor/`: local Cursor assets and skill mirrors kept at the repository root.
 
-## Top-level structure
-- `apps/`: demo applications (web/mobile/desktop/ai).
-- `labs/`: hands-on labs (networking, OS, web, application/platform/cloud/offensive/ai security, reverse engineering).
-- `knowledge/`: Knowledge Base, organized by topic families:
-  - `foundations/`, `networking/`, `web/`
-  - `application-security/`, `platform-security/`, `cloud-security/`
-  - `offensive-security/`, `secure-engineering/`, `ai-security/`
-  - `research/`, `glossary/`
-- `tools/`: security tools.
-- `packages/`: shared libraries.
-- `infrastructure/`: shared infrastructure.
-- `datasets/`: payloads / samples / PCAPs.
-- `automation/`: scripts & automation.
-- `docs/`: repository documentation (roadmap, templates, references, research).
-
-## Vai trò của từng thư mục
-`security-playground/` là một “học theo vòng lặp” dựa trên concept graph:
-`Learn → Build → Break → Fix → Automate → Share`
-
-Mỗi thư mục có vai trò rõ ràng để đảm bảo: một khái niệm chỉ tồn tại một lần (One Concept = One Home).
-
-- `knowledge/`: Knowledge Base. Một khái niệm chỉ tồn tại một lần (One Concept = One Home).
-- `labs/`: Bài thực hành, PoC, walkthrough, CTF, môi trường kiểm thử.
-- `apps/`: Ứng dụng mẫu để học và kiểm thử bảo mật.
-- `tools/`: Công cụ tự viết (scanner, parser, analyzer...).
-- `packages/`: Thư viện dùng chung giữa `apps/` và `tools/`.
-- `infrastructure/`: Docker, Kubernetes, Terraform, Monitoring và các thành phần hạ tầng dùng chung.
-- `datasets/`: Payloads, PCAP, wordlists, mẫu dữ liệu phục vụ nghiên cứu.
-- `automation/`: Script build, generate docs, validate links, export...
-- `docs/`: Tài liệu về chính repository (architecture, contribution, standards...).
-
-## Cấu trúc tham chiếu
+## Root layout
 ```text
-security-playground/
-├── knowledge/                     # Knowledge Base
-│   ├── foundations/
-│   ├── networking/
-│   ├── web/
-│   ├── application-security/
-│   ├── platform-security/
-│   ├── cloud-security/
-│   ├── offensive-security/
-│   ├── secure-engineering/
-│   ├── ai-security/
-│   ├── research/
-│   ├── glossary/
-│   └── README.md                 # Domain index & taxonomy
+ASRP Workspace/
+├── Application Security Review Platform (ASRP)/
+│   ├── 1. Project Management/
+│   ├── 2. Security Knowledge Base ⭐ (Core Asset)/
+│   ├── 3. Assessment Engine/
+│   ├── 4. Reporting/
+│   ├── 5. Dashboard & Analytics/
+│   └── 6. Integrations/
 │
-├── labs/                          # Hands-on Labs
-│   ├── networking/
-│   ├── web/
-│   ├── application-security/
-│   ├── platform-security/
-│   ├── cloud-security/
-│   ├── offensive-security/
-│   └── ai-security/
+├── Repository Content/
+│   ├── apps/
+│   ├── automation/
+│   ├── datasets/
+│   ├── docs/
+│   ├── infrastructure/
+│   ├── knowledge/
+│   ├── labs/
+│   ├── packages/
+│   ├── scripts/
+│   └── tools/
 │
-├── apps/                          # Demo Applications
-│   ├── web/
-│   ├── mobile/
-│   ├── desktop/
-│   ├── api/
-│   └── ai/
-│
-├── tools/                         # Security Tools
-│
-├── packages/                      # Shared Libraries
-│
-├── infrastructure/                # Shared Infrastructure
-│   ├── docker/
-│   ├── kubernetes/
-│   ├── terraform/
-│   ├── monitoring/
-│   └── local/
-│
-├── datasets/                      # Payloads / PCAP / Wordlists
-│
-├── automation/                    # Scripts & Automation
-│
-├── docs/                          # Repository Documentation
-│
-├── .github/
-├── .vscode/
-│
-├── README.md
-├── ROADMAP.md
-├── CONTRIBUTING.md
-├── LICENSE
-│
-├── package.json
-├── pnpm-workspace.yaml
-├── turbo.json
-└── tsconfig.base.json
+├── .cursor/
+├── .git/
+└── README.md
 ```
 
 ## Start here
-1. Read `[docs/roadmap/Application-Security-Overview.md](docs/roadmap/Application-Security-Overview.md)`.
-2. Read the topic template: `[docs/knowledge-base-topic-template.md](docs/knowledge-base-topic-template.md)`.
-3. Pick a topic in `knowledge/` (example: `knowledge/networking/tcp.md`).
-4. Follow the lifecycle headings inside each topic.
+1. Read [`Repository Content/knowledge/README.md`](Repository%20Content/knowledge/README.md) for the Knowledge Base taxonomy.
+2. Read [`Repository Content/docs/appsec-research-pipeline/README.md`](Repository%20Content/docs/appsec-research-pipeline/README.md) for the research pipeline reference.
+3. Use the ASRP tree as the target architecture when adding new project management, assessment, reporting, analytics, or integration assets.
 
-## AppSec Research (Knowledge Base writer pipeline)
-Khi bạn muốn “nghiên cứu một chủ đề AppSec” (ví dụ: `HTTP caching`, `Vary header`, `SSRF defense`) và muốn output được hệ thống hóa thành **Knowledge Base topic(s)** đúng template, hãy dùng skill:
-`appsec-research-orchestrator` (Mr P — Professional).
-
-**Setup (máy mới / PC khác):** clone [`cursor-agents`](../cursor-agents), chạy `./scripts/setup.sh` (hoặc `.\scripts\setup.ps1`), restart Cursor — skill có sẵn ở mọi project qua `~/.cursor/skills/`. Cập nhật: `cd cursor-agents && git pull`.
-
-Runtime SSoT: [`cursor-agents/skills/appsec-research-orchestrator/SKILL.md`](../cursor-agents/skills/appsec-research-orchestrator/SKILL.md). Mirror trong repo: [`.cursor/skills/appsec-research-orchestrator/SKILL.md`](.cursor/skills/appsec-research-orchestrator/SKILL.md).
-
-Pipeline reference: [`docs/appsec-research-pipeline/README.md`](docs/appsec-research-pipeline/README.md). Persona glossary: [`docs/appsec-research-pipeline/role-glossary.md`](docs/appsec-research-pipeline/role-glossary.md). Domain taxonomy: [`knowledge/README.md`](knowledge/README.md).
-
-Hướng dẫn sử dụng: [`docs/appsec-research-pipeline/USER-GUIDE.md`](docs/appsec-research-pipeline/USER-GUIDE.md)
-
-### Mẫu prompt chuẩn (dùng lại)
-
-Copy/paste từ [`docs/appsec-research-pipeline/prompt-template.md`](docs/appsec-research-pipeline/prompt-template.md).
+## One Concept = One Home
+The Knowledge Base under `Repository Content/knowledge/` is the canonical home for AppSec concepts.
+When adding or moving content, keep a topic in one place and cross-link related material instead of duplicating it.

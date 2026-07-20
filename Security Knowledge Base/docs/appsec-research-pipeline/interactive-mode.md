@@ -114,7 +114,7 @@ Interactive-only persona; **not** in the A→W execution chain. Invoked on deman
 
 - No `SecurityResearchJob` required (optional topic context)
 - Emit `## Mr QA (Query Assistant)` only
-- May search `knowledge/` briefly if relevant
+- May search `Repository Content/knowledge/` briefly if relevant
 - No role stubs, no KB final
 
 ### `single-role`
