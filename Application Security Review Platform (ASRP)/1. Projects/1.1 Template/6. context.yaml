@@ -1,0 +1,20 @@
+# Context template
+business: <business>
+
+security: <security>
+
+deployment: <deployment>
+
+compliance: <compliance>
+
+# Example: 
+# business:
+#   industry: Healthcare
+# security:
+#   internet_facing: true
+#   contains_pii: true
+# deployment:
+#   environment: Kubernetes
+# compliance:
+#   - HIPAA
+#   - GDPR

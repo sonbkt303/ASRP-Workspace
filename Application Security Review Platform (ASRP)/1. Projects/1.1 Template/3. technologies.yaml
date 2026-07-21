@@ -1,0 +1,45 @@
+# Technology stack template
+# Rule Mapping
+components:
+
+  - backend:
+
+    language: <backend_language>
+
+    runtime: <backend_runtime>
+
+    framework: <backend_framework>
+
+    libraries: <backend_libraries>
+
+    database: <backend_database>
+
+  - frontend:
+
+    language: <frontend_language>
+
+    framework: <frontend_framework>
+
+    ui: <frontend_ui>
+
+  - infrastructure:
+
+    platform: <infrastructure_platform>
+
+    container: <infrastructure_container>
+
+    orchestration: <infrastructure_orchestration>     
+
+    iac: <infrastructure_iac>
+
+# Example: 
+# technologies:
+#   - backend:
+#     language: Python
+#     runtime: FastAPI
+#     framework: Django
+#     libraries: Django REST Framework
+#     database: PostgreSQL
+#   - frontend:
+#     language: JavaScript
+#     framework: React

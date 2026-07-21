@@ -1,0 +1,20 @@
+# Assessment template
+standards: <standards>
+security_domains: <security_domains>
+rule_sets: <rule_sets>
+severity: <severity>
+ai: <ai>
+output: <output>
+
+# Example: 
+# assessment:
+#   standards:
+#     - OWASP Top 10
+#     - OWASP ASVS
+#   security_domains:
+#     - Authentication
+#     - Authorization
+#     - Secrets
+#     - Dependency
+#   rule_sets:
+#     - OWASP Top 10
