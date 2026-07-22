@@ -1,0 +1,27 @@
+# Project metadata template
+project:
+  id: ""
+  name: ""
+  description: ""
+  lifecycle_status: draft
+  owner: ""
+  organization: ""
+  version: ""
+  status: active
+  registry_version: "1.0"
+  created_at: ""
+  updated_at: ""
+
+# Example:
+# project:
+#   id: cleverdent
+#   name: CleverDent
+#   description: Dental Management Platform
+#   lifecycle_status: draft
+#   owner: Clever Team
+#   organization: Clever Team
+#   version: "1.0"
+#   status: active
+#   registry_version: "1.0"
+#   created_at: "2026-01-01"
+#   updated_at: "2026-01-01"

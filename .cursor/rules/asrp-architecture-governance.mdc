@@ -1,0 +1,34 @@
+---
+description: ASRP architecture governance — reference blueprints before structural changes
+alwaysApply: true
+---
+
+# ASRP Architecture Governance
+
+Before making any structural change to the Application Security Review Platform (ASRP):
+
+1. **Read the overview:** `Application Security Review Platform (ASRP)/ARCHITECTURE-BLUEPRINT.md`
+2. **Read the layer blueprint** for the layer you are changing (e.g. `PROJECTS-REGISTRY-BLUEPRINT.md` for Layer 1)
+3. **Check handoff:** `Application Security Review Platform (ASRP)/HANDOFF.md` for current next-layer scope
+
+## After implementing a finalized change
+
+1. Update the **layer blueprint** with the new contract/structure
+2. Sync a **summary** to `ARCHITECTURE-BLUEPRINT.md` (paths, status, roadmap)
+3. Update `HANDOFF.md` if next-layer tasks changed
+4. Do **not** duplicate full contracts in the overview — link to layer blueprints instead
+
+## Blueprint hierarchy
+
+- `ARCHITECTURE-BLUEPRINT.md` — canonical overview (6 layers, main flow, data contracts)
+- `PROJECTS-REGISTRY-BLUEPRINT.md` — Layer 1 detail
+- `RULE-LIBRARY-BLUEPRINT.md` — Layer 2 detail (planned)
+- `HANDOFF.md` — next layer deliverables and acceptance criteria
+
+## Layer 1 quick reference
+
+- Folder: `1. Projects Registry/`
+- Template: `1.1 Template/` (8 YAML files)
+- Schemas: `1. Projects Registry/schema/`
+- Example: `cleverdent/` (validated)
+- Engine rule: do not scan when `lifecycle_status != validated`

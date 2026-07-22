@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/registry-manifest.schema.json",
+  "title": "ASRP Registry Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry_manifest"],
+  "properties": {
+    "registry_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "project_id",
+        "registry_version",
+        "lifecycle_status",
+        "validated_at",
+        "validated_by",
+        "profile_files",
+        "profile_hash",
+        "schema_versions"
+      ],
+      "properties": {
+        "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "registry_version": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+        "lifecycle_status": {
+          "type": "string",
+          "const": "validated"
+        },
+        "validated_at": { "$ref": "_definitions.json#/$defs/isoDateTime" },
+        "validated_by": { "type": "string", "minLength": 1 },
+        "profile_files": {
+          "type": "array",
+          "items": { "$ref": "_definitions.json#/$defs/profileFileName" },
+          "minItems": 7,
+          "maxItems": 7,
+          "uniqueItems": true
+        },
+        "profile_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "schema_versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "project",
+            "components",
+            "technologies",
+            "architecture",
+            "scope",
+            "context",
+            "assessment"
+          ],
+          "properties": {
+            "project": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "components": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "technologies": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "architecture": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "scope": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "context": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+            "assessment": { "$ref": "_definitions.json#/$defs/schemaVersion" }
+          }
+        }
+      }
+    }
+  }
+}

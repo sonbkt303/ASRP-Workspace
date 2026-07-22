@@ -1,0 +1,12 @@
+project:
+  id: cleverdent
+  name: CleverDent
+  description: Dental Management Platform
+  lifecycle_status: validated
+  owner: Clever Team
+  organization: Clever Team
+  version: "1.0"
+  status: active
+  registry_version: "1.0"
+  created_at: "2026-01-01"
+  updated_at: "2026-07-22"

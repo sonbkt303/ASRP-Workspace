@@ -1,0 +1,15 @@
+technologies:
+  - component_id: cleverdent-api
+    language: python
+    runtime: "3.11"
+    framework: fastapi
+    package_managers:
+      - pip
+    libraries:
+      - sqlalchemy
+      - pydantic
+      - uvicorn
+    database: postgresql
+    rule_set_ids:
+      - owasp-top10-2021
+      - python-secure-coding

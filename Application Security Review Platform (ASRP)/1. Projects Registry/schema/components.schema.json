@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/components.schema.json",
+  "title": "ASRP Component Inventory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["components"],
+  "properties": {
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "project_id", "name", "type", "repository", "branch", "vcs"],
+        "properties": {
+          "id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+          "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+          "name": { "type": "string", "minLength": 1 },
+          "type": { "$ref": "_definitions.json#/$defs/componentType" },
+          "repository": { "type": "string", "minLength": 1 },
+          "branch": { "type": "string", "minLength": 1, "default": "main" },
+          "path": { "type": "string" },
+          "scan_paths": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "exclude_paths": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "vcs": { "$ref": "_definitions.json#/$defs/vcsType" },
+          "owner": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    }
+  }
+}

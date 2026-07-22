@@ -1,0 +1,31 @@
+# Context template
+context:
+  project_id: ""
+  business:
+    industry: ""
+    description: ""
+  security:
+    internet_facing: false
+    contains_pii: false
+    data_classification: internal
+  deployment:
+    environment: ""
+  compliance: []
+  risk_tier: medium
+
+# Example:
+# context:
+#   project_id: cleverdent
+#   business:
+#     industry: healthcare
+#     description: Dental clinic management system
+#   security:
+#     internet_facing: true
+#     contains_pii: true
+#     data_classification: confidential
+#   deployment:
+#     environment: kubernetes
+#   compliance:
+#     - HIPAA
+#     - GDPR
+#   risk_tier: high

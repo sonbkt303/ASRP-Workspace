@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/technologies.schema.json",
+  "title": "ASRP Technology Stack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["technologies"],
+  "properties": {
+    "technologies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["component_id", "language"],
+        "properties": {
+          "component_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+          "language": { "type": "string", "minLength": 1 },
+          "runtime": { "type": "string" },
+          "framework": { "type": "string" },
+          "package_managers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "libraries": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "database": { "type": "string" },
+          "rule_set_ids": {
+            "type": "array",
+            "items": { "$ref": "_definitions.json#/$defs/kebabCaseId" }
+          }
+        }
+      }
+    }
+  }
+}

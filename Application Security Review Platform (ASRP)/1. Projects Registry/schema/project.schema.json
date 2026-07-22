@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/project.schema.json",
+  "title": "ASRP Project Metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "lifecycle_status", "owner", "organization", "registry_version"],
+      "properties": {
+        "id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "name": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "lifecycle_status": { "$ref": "_definitions.json#/$defs/lifecycleStatus" },
+        "owner": { "type": "string", "minLength": 1 },
+        "organization": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "status": { "type": "string" },
+        "registry_version": { "$ref": "_definitions.json#/$defs/schemaVersion" },
+        "created_at": { "$ref": "_definitions.json#/$defs/isoDate" },
+        "updated_at": { "$ref": "_definitions.json#/$defs/isoDate" }
+      }
+    }
+  }
+}

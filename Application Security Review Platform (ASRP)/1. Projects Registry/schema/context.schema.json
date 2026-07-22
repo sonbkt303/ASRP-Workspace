@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/context.schema.json",
+  "title": "ASRP Business and Security Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["context"],
+  "properties": {
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "security", "risk_tier"],
+      "properties": {
+        "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "business": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "industry": { "type": "string" },
+            "description": { "type": "string" }
+          }
+        },
+        "security": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["internet_facing", "contains_pii", "data_classification"],
+          "properties": {
+            "internet_facing": { "type": "boolean" },
+            "contains_pii": { "type": "boolean" },
+            "data_classification": { "$ref": "_definitions.json#/$defs/dataClassification" }
+          }
+        },
+        "deployment": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "environment": { "type": "string" }
+          }
+        },
+        "compliance": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_tier": { "$ref": "_definitions.json#/$defs/riskTier" }
+      }
+    }
+  }
+}

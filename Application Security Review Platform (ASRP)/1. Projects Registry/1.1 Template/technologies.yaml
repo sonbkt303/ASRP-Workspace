@@ -1,0 +1,27 @@
+# Technology stack template
+# Rule Mapping: rule_set_ids link to Layer 2.3 Rule Library
+technologies:
+  - component_id: ""
+    language: ""
+    runtime: ""
+    framework: ""
+    package_managers: []
+    libraries: []
+    database: ""
+    rule_set_ids: []
+
+# Example:
+# technologies:
+#   - component_id: cleverdent-api
+#     language: python
+#     runtime: "3.11"
+#     framework: fastapi
+#     package_managers:
+#       - pip
+#     libraries:
+#       - sqlalchemy
+#       - pydantic
+#     database: postgresql
+#     rule_set_ids:
+#       - owasp-top10-2021
+#       - python-secure-coding

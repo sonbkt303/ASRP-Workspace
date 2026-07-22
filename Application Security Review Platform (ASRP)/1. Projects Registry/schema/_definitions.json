@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/_definitions.json",
+  "title": "ASRP Projects Registry Shared Definitions",
+  "$defs": {
+    "kebabCaseId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "minLength": 1
+    },
+    "lifecycleStatus": {
+      "type": "string",
+      "enum": ["draft", "profiled", "validated", "scanning", "completed"]
+    },
+    "componentType": {
+      "type": "string",
+      "enum": ["backend", "frontend", "mobile", "iac", "library"]
+    },
+    "vcsType": {
+      "type": "string",
+      "enum": ["git", "svn", "mercurial"]
+    },
+    "reviewLevel": {
+      "type": "string",
+      "enum": ["source_code", "config", "iac", "full"]
+    },
+    "riskTier": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "dataClassification": {
+      "type": "string",
+      "enum": ["public", "internal", "confidential", "restricted"]
+    },
+    "severityThreshold": {
+      "type": "string",
+      "enum": ["info", "low", "medium", "high", "critical"]
+    },
+    "isoDateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "isoDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "profileFileName": {
+      "type": "string",
+      "enum": [
+        "project.yaml",
+        "components.yaml",
+        "technologies.yaml",
+        "architecture.yaml",
+        "scope.yaml",
+        "context.yaml",
+        "assessment.yaml"
+      ]
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    }
+  }
+}

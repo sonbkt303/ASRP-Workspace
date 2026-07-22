@@ -1,0 +1,50 @@
+# Registry manifest template
+# Created after human gate validation. Do not edit template directly.
+registry_manifest:
+  project_id: ""
+  registry_version: "1.0"
+  lifecycle_status: validated
+  validated_at: ""
+  validated_by: ""
+  profile_files:
+    - "project.yaml"
+    - "components.yaml"
+    - "technologies.yaml"
+    - "architecture.yaml"
+    - "scope.yaml"
+    - "context.yaml"
+    - "assessment.yaml"
+  profile_hash: ""
+  schema_versions:
+    project: "1.0"
+    components: "1.0"
+    technologies: "1.0"
+    architecture: "1.0"
+    scope: "1.0"
+    context: "1.0"
+    assessment: "1.0"
+
+# Example:
+# registry_manifest:
+#   project_id: cleverdent
+#   registry_version: "1.0"
+#   lifecycle_status: validated
+#   validated_at: "2026-07-22T10:00:00Z"
+#   validated_by: asrp-team
+#   profile_files:
+#     - "project.yaml"
+#     - "components.yaml"
+#     - "technologies.yaml"
+#     - "architecture.yaml"
+#     - "scope.yaml"
+#     - "context.yaml"
+#     - "assessment.yaml"
+#   profile_hash: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+#   schema_versions:
+#     project: "1.0"
+#     components: "1.0"
+#     technologies: "1.0"
+#     architecture: "1.0"
+#     scope: "1.0"
+#     context: "1.0"
+#     assessment: "1.0"

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/architecture.schema.json",
+  "title": "ASRP Architecture Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["architecture"],
+  "properties": {
+    "architecture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "style": { "type": "string" },
+        "gateway": { "type": "string" },
+        "authentication": { "type": "string" },
+        "authorization": { "type": "string" },
+        "communication": { "type": "string" },
+        "database": { "type": "string" },
+        "cache": { "type": "string" },
+        "queue": { "type": "string" },
+        "storage": { "type": "string" },
+        "external_services": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

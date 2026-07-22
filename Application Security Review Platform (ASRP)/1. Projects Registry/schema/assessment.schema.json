@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/assessment.schema.json",
+  "title": "ASRP Assessment Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assessment"],
+  "properties": {
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "standards", "security_domains", "rule_set_ids", "tools_enabled", "severity_threshold"],
+      "properties": {
+        "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "standards": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "security_domains": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "rule_set_ids": {
+          "type": "array",
+          "items": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+          "minItems": 1
+        },
+        "tools_enabled": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sast", "sca", "secrets", "iac", "dast"],
+          "properties": {
+            "sast": { "type": "boolean" },
+            "sca": { "type": "boolean" },
+            "secrets": { "type": "boolean" },
+            "iac": { "type": "boolean" },
+            "dast": { "type": "boolean" }
+          }
+        },
+        "severity_threshold": { "$ref": "_definitions.json#/$defs/severityThreshold" },
+        "ai": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "focus_domains": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "formats": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["markdown", "html", "json", "pdf"]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

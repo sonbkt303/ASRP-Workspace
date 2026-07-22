@@ -1,0 +1,18 @@
+# Scope template
+scope:
+  project_id: ""
+  component_ids: []
+  include: []
+  exclude: []
+  review_level: source_code
+
+# Example:
+# scope:
+#   project_id: cleverdent
+#   component_ids:
+#     - cleverdent-api
+#   include:
+#     - backend
+#   exclude:
+#     - mobile
+#   review_level: source_code

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://projects-registry/schema/scope.schema.json",
+  "title": "ASRP Assessment Scope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["scope"],
+  "properties": {
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_id", "review_level"],
+      "properties": {
+        "project_id": { "$ref": "_definitions.json#/$defs/kebabCaseId" },
+        "component_ids": {
+          "type": "array",
+          "items": { "$ref": "_definitions.json#/$defs/kebabCaseId" }
+        },
+        "include": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "review_level": { "$ref": "_definitions.json#/$defs/reviewLevel" }
+      }
+    }
+  }
+}

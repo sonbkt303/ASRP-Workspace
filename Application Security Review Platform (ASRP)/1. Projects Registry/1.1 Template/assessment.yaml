@@ -1,0 +1,48 @@
+# Assessment template
+assessment:
+  project_id: ""
+  standards: []
+  security_domains: []
+  rule_set_ids: []
+  tools_enabled:
+    sast: true
+    sca: true
+    secrets: true
+    iac: false
+    dast: false
+  severity_threshold: low
+  ai:
+    enabled: false
+    focus_domains: []
+  output:
+    formats:
+      - markdown
+      - json
+
+# Example:
+# assessment:
+#   project_id: cleverdent
+#   standards:
+#     - OWASP Top 10
+#     - OWASP ASVS L1
+#   security_domains:
+#     - Authentication
+#     - Authorization
+#     - Secrets Management
+#     - Dependency Management
+#   rule_set_ids:
+#     - owasp-top10-2021
+#   tools_enabled:
+#     sast: true
+#     sca: true
+#     secrets: true
+#     iac: false
+#     dast: false
+#   severity_threshold: low
+#   ai:
+#     enabled: false
+#     focus_domains: []
+#   output:
+#     formats:
+#       - markdown
+#       - json

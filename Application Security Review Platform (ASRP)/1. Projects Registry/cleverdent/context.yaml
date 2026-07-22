@@ -1,0 +1,15 @@
+context:
+  project_id: cleverdent
+  business:
+    industry: healthcare
+    description: Dental clinic management system handling patient records and appointments
+  security:
+    internet_facing: true
+    contains_pii: true
+    data_classification: confidential
+  deployment:
+    environment: kubernetes
+  compliance:
+    - HIPAA
+    - GDPR
+  risk_tier: high
