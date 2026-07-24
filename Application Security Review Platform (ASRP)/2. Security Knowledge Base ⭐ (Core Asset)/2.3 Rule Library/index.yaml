@@ -1,0 +1,160 @@
+rule_library:
+  version: "1.0"
+  updated_at: "2026-07-24T00:00:00Z"
+  total_rules: 19
+  engines_supported: ["semgrep", "gitleaks", "trivy", "checkov", "cicd", "custom_ai"]
+  design_pattern: "Multi-Language Rule Design (1 Rule ID = 1 Security Concept across Python, JS/TS, Go, Java)"
+  
+  rules:
+    # Gitleaks Secret Scanner Rules (All Languages)
+    - id: "ASRP-SEC-001"
+      path: "by-engine/gitleaks/gitleaks-generic-api-key.yaml"
+      enabled: true
+      engine: "gitleaks"
+      severity: "high"
+      rule_set_ids: ["secrets-basic", "owasp-top10-2021"]
+
+    - id: "ASRP-SEC-002"
+      path: "by-engine/gitleaks/gitleaks-aws-access-key.yaml"
+      enabled: true
+      engine: "gitleaks"
+      severity: "critical"
+      rule_set_ids: ["secrets-basic", "owasp-top10-2021"]
+
+    - id: "ASRP-SEC-003"
+      path: "by-engine/gitleaks/gitleaks-private-rsa-key.yaml"
+      enabled: true
+      engine: "gitleaks"
+      severity: "critical"
+      rule_set_ids: ["secrets-basic", "owasp-top10-2021"]
+
+    - id: "ASRP-SEC-004"
+      path: "by-engine/gitleaks/gitleaks-database-connection-string.yaml"
+      enabled: true
+      engine: "gitleaks"
+      severity: "critical"
+      rule_set_ids: ["secrets-basic", "owasp-top10-2021"]
+
+    # Semgrep SAST Rules (Multi-Language: Python, JS/TS, Go, Java)
+    - id: "ASRP-INJ-001"
+      path: "by-engine/semgrep/sql-injection.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "critical"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-INJ-002"
+      path: "by-engine/semgrep/command-injection.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "critical"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-PATH-001"
+      path: "by-engine/semgrep/path-traversal.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-DESER-001"
+      path: "by-engine/semgrep/insecure-deserialization.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "critical"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-CRYPTO-001"
+      path: "by-engine/semgrep/weak-crypto-hash.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "medium"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-SSRF-001"
+      path: "by-engine/semgrep/ssrf-request.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-XSS-001"
+      path: "by-engine/semgrep/reflected-xss.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-MISCFG-001"
+      path: "by-engine/semgrep/debug-mode-enabled.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-MISCFG-002"
+      path: "by-engine/semgrep/cors-wildcard.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "medium"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    # Trivy Container & SCA Rules
+    - id: "ASRP-TRIVY-001"
+      path: "by-engine/trivy/trivy-docker-user-root.yaml"
+      enabled: true
+      engine: "trivy"
+      severity: "high"
+      rule_set_ids: ["container-security", "owasp-top10-2021"]
+
+    - id: "ASRP-TRIVY-002"
+      path: "by-engine/trivy/trivy-docker-latest-tag.yaml"
+      enabled: true
+      engine: "trivy"
+      severity: "medium"
+      rule_set_ids: ["container-security", "owasp-top10-2021"]
+
+    - id: "ASRP-SCA-001"
+      path: "by-engine/trivy/trivy-sca-vulnerable-dependency.yaml"
+      enabled: true
+      engine: "trivy"
+      severity: "critical"
+      rule_set_ids: ["dependencies", "owasp-top10-2021"]
+
+    # Checkov IaC Infrastructure Rules
+    - id: "ASRP-IAC-001"
+      path: "by-engine/checkov/iac-s3-bucket-public.yaml"
+      enabled: true
+      engine: "checkov"
+      severity: "critical"
+      rule_set_ids: ["iac-security", "owasp-top10-2021"]
+
+    - id: "ASRP-IAC-002"
+      path: "by-engine/checkov/iac-k8s-privileged-container.yaml"
+      enabled: true
+      engine: "checkov"
+      severity: "critical"
+      rule_set_ids: ["iac-security", "owasp-top10-2021"]
+
+    # CI/CD Pipeline Security Rules
+    - id: "ASRP-CICD-001"
+      path: "by-engine/cicd/cicd-unpinned-github-action.yaml"
+      enabled: true
+      engine: "cicd"
+      severity: "medium"
+      rule_set_ids: ["cicd-security", "owasp-top10-2021"]
+
+    - id: "ASRP-CICD-002"
+      path: "by-engine/cicd/cicd-github-token-write-perm.yaml"
+      enabled: true
+      engine: "cicd"
+      severity: "high"
+      rule_set_ids: ["cicd-security", "owasp-top10-2021"]
+
+    # Custom AI Reviewer Rules
+    - id: "ASRP-AI-001"
+      path: "by-engine/custom-ai/ai-bola-idor-check.yaml"
+      enabled: true
+      engine: "custom_ai"
+      severity: "high"
+      rule_set_ids: ["business-logic", "owasp-top10-2021"]

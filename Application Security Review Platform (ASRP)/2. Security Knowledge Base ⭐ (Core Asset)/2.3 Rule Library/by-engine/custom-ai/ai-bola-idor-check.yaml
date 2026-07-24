@@ -1,0 +1,25 @@
+rule:
+  id: "ASRP-AI-001"
+  name: "BOLA/IDOR Access Control Logic Check"
+  description: "AI Reviewer kiểm tra luồng phân quyền API xem endpoint có kiểm tra tính sở hữu của tài nguyên hay không."
+  severity: "high"
+  engine: "custom_ai"
+  category: "business_logic"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A01:2021-Broken Access Control"]
+    cwe: ["CWE-639"]
+    asvs_v4: ["V4.1.1"]
+
+  knowledge_ref: "knowledge/domains/authorization.md"
+  
+  engine_config:
+    ai_prompt_focus: "Phân tích API endpoint nhận ID tài nguyên (ví dụ /orders/{id}). Kiểm tra xem hàm có verify user_id của Token với owner_id trong Database trước khi trả dữ liệu không."
+    
+  remediation:
+    summary: "Thêm điều kiện lọc tài nguyên theo current_user.id trong câu query Database (ví dụ WHERE id = :id AND user_id = :current_user_id)."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"

@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-TRIVY-002"
+  name: "Docker Base Image Tagged as Latest"
+  description: "Phát hiện Dockerfile sử dụng tag :latest thay vì ghim phiên bản cố định, dễ gây lỗi bảo mật khi base image bị cập nhật đột ngột."
+  severity: "medium"
+  engine: "trivy"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["docker"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-1188"]
+    asvs_v4: ["V14.1.1"]
+
+  knowledge_ref: "knowledge/domains/infrastructure-security.md"
+  
+  engine_config:
+    trivy_rule_id: "DS001"
+    check_type: "dockerfile"
+    
+  remediation:
+    summary: "Ghim phiên bản cụ thể của base image (ví dụ: FROM python:3.11-slim-bullseye hoặc digest sha256)."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"

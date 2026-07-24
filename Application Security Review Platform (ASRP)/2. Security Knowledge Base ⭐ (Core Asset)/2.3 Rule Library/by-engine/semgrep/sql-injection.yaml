@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-INJ-001"
+  name: "SQL Injection via String Concatenation/Formatting"
+  description: "Phát hiện câu lệnh SQL được nối chuỗi hoặc format trực tiếp từ biến đầu vào người dùng."
+  severity: "critical"
+  engine: "semgrep"
+  category: "injection"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A03:2021-Injection"]
+    cwe: ["CWE-89"]
+    asvs_v4: ["V5.3.4"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "cursor.execute(f'... {$USER_INPUT} ...')"
+      - language: "javascript"
+        pattern: "db.query('... ' + $USER_INPUT)"
+      - language: "typescript"
+        pattern: "db.query('... ' + $USER_INPUT)"
+      - language: "go"
+        pattern: "db.Query(fmt.Sprintf('...', $USER_INPUT))"
+      - language: "java"
+        pattern: "stmt.executeQuery(\"... \" + $USER_INPUT)"
+    
+  remediation:
+    summary: "Sử dụng Parameterized Queries / Prepared Statements hoặc ORM (SQLAlchemy, TypeORM, GORM, Hibernate) để bind biến an toàn."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"

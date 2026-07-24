@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-CRYPTO-001"
+  name: "Weak Cryptographic Hashing Algorithm (MD5/SHA1)"
+  description: "Phát hiện sử dụng hàm băm MD5 hoặc SHA1 đã bị coi là không an toàn đối với mã hóa bảo mật."
+  severity: "medium"
+  engine: "semgrep"
+  category: "cryptography"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A02:2021-Cryptographic Failures"]
+    cwe: ["CWE-327"]
+    asvs_v4: ["V6.2.1"]
+
+  knowledge_ref: "knowledge/domains/cryptography.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "hashlib.md5(...)"
+      - language: "javascript"
+        pattern: "crypto.createHash('md5')"
+      - language: "typescript"
+        pattern: "crypto.createHash('md5')"
+      - language: "go"
+        pattern: "md5.New()"
+      - language: "java"
+        pattern: "MessageDigest.getInstance(\"MD5\")"
+    
+  remediation:
+    summary: "Nâng cấp lên SHA-256/SHA-512 cho dữ liệu thường, hoặc Argon2id/bcrypt/PBKDF2 cho mật khẩu."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"

@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-SSRF-001"
+  name: "Server-Side Request Forgery (SSRF) via HTTP Client"
+  description: "Phát hiện ứng dụng gửi yêu cầu HTTP ra bên ngoài bằng URL do người dùng cung cấp trực tiếp."
+  severity: "high"
+  engine: "semgrep"
+  category: "ssrf"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A10:2021-Server-Side Request Forgery"]
+    cwe: ["CWE-918"]
+    asvs_v4: ["V5.2.6"]
+
+  knowledge_ref: "knowledge/domains/api-security.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "requests.get($URL)"
+      - language: "javascript"
+        pattern: "axios.get($URL)"
+      - language: "typescript"
+        pattern: "fetch($URL)"
+      - language: "go"
+        pattern: "http.Get($URL)"
+      - language: "java"
+        pattern: "new URL($URL).openConnection()"
+    
+  remediation:
+    summary: "Validate URL domain bằng Whitelist, cấm IP nội bộ (127.0.0.1, 169.254.169.254, 10.0.0.0/8)."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html"

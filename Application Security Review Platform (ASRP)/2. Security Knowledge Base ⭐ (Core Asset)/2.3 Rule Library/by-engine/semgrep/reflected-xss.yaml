@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-XSS-001"
+  name: "Reflected Cross-Site Scripting (XSS)"
+  description: "Phát hiện mã nguồn trả về dữ liệu người dùng nhập trực tiếp ra Response mà không qua HTML Encoding."
+  severity: "high"
+  engine: "semgrep"
+  category: "injection"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A03:2021-Injection"]
+    cwe: ["CWE-79"]
+    asvs_v4: ["V5.3.1"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "render_template_string($USER_INPUT)"
+      - language: "javascript"
+        pattern: "res.send(req.query.$INPUT)"
+      - language: "typescript"
+        pattern: "res.send(req.query.$INPUT)"
+      - language: "go"
+        pattern: "w.Write([]byte(r.FormValue($INPUT)))"
+      - language: "java"
+        pattern: "response.getWriter().write($USER_INPUT)"
+    
+  remediation:
+    summary: "Dùng Template Engine hỗ trợ auto-escaping (Jinja2, EJS, Go html/template) hoặc thư viện sanitize-html."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"

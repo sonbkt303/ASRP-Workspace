@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-CICD-002"
+  name: "Overly Permissive GITHUB_TOKEN Write Permissions"
+  description: "Phát hiện GitHub Actions workflow cấp quyền write thừa thãi cho GITHUB_TOKEN trên toàn bộ job."
+  severity: "high"
+  engine: "cicd"
+  category: "supply_chain"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["github-actions"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A01:2021-Broken Access Control"]
+    cwe: ["CWE-250"]
+    asvs_v4: ["V4.1.1"]
+
+  knowledge_ref: "knowledge/domains/authorization.md"
+  
+  engine_config:
+    tool: "zizmor"
+    rule_id: "overpermissive-token"
+    
+  remediation:
+    summary: "Đặt permissions: read-all ở mức top-level workflow và chỉ cấp quyền write tối thiểu ở mức từng job cụ thể."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html"

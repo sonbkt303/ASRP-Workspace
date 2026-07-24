@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-PATH-001"
+  name: "Path Traversal via Unsafe File Operations"
+  description: "Phát hiện thao tác đọc/ghi file nhận đường dẫn trực tiếp từ client không qua sanitize."
+  severity: "high"
+  engine: "semgrep"
+  category: "access_control"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A01:2021-Broken Access Control"]
+    cwe: ["CWE-22"]
+    asvs_v4: ["V12.3.1"]
+
+  knowledge_ref: "knowledge/domains/file-upload-security.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "open(f'.../{$PATH}...')"
+      - language: "javascript"
+        pattern: "fs.readFile($PATH, ...)"
+      - language: "typescript"
+        pattern: "fs.readFile($PATH, ...)"
+      - language: "go"
+        pattern: "os.Open($PATH)"
+      - language: "java"
+        pattern: "new File($PATH)"
+    
+  remediation:
+    summary: "Validate đường dẫn bằng path.basename(), path.resolve() và kiểm tra xem có nằm ngoài thư mục root cho phép không."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/File_Path_Traversal_Cheat_Sheet.html"

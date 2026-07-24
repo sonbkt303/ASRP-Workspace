@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-MISCFG-002"
+  name: "Permissive CORS Configuration (Wildcard Origin)"
+  description: "Phát hiện middleware CORS cấu hình allow_origins=['*'] kết hợp với cho phép gửi credentials."
+  severity: "medium"
+  engine: "semgrep"
+  category: "misconfiguration"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-942"]
+    asvs_v4: ["V14.4.6"]
+
+  knowledge_ref: "knowledge/domains/configuration-security.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "CORSMiddleware(..., allow_origins=['*'], ...)"
+      - language: "javascript"
+        pattern: "cors({ origin: '*' })"
+      - language: "typescript"
+        pattern: "cors({ origin: '*' })"
+      - language: "go"
+        pattern: "cors.New(cors.Options{ AllowedOrigins: []string{\"*\"} })"
+      - language: "java"
+        pattern: "@CrossOrigin(origins = \"*\")"
+    
+  remediation:
+    summary: "Thay wildcard '*' bằng danh sách các domain tin cậy cụ thể (ví dụ: ['https://app.example.com'])."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/HTML5_Security_Cheat_Sheet.html"

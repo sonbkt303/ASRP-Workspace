@@ -2,7 +2,7 @@
 
 > **Status:** Active  
 > **Last updated:** 2026-07-22  
-> **Previous layer:** [PROJECTS-REGISTRY-BLUEPRINT.md](PROJECTS-REGISTRY-BLUEPRINT.md) (Layer 1 — Done)  
+> **Previous layer:** [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md) (Layer 1 — Done)  
 > **Next layer:** Layer 2 — Rule Library (`2.3`) + Rule Resolver
 
 ---
@@ -14,7 +14,7 @@ Layer 1 (Projects Registry) đã hoàn thiện:
 - 8 YAML profile files + JSON Schemas
 - Lifecycle + human gate (`registry.manifest.yaml`)
 - Example instance: `cleverdent/` (validated)
-- Blueprint: [PROJECTS-REGISTRY-BLUEPRINT.md](PROJECTS-REGISTRY-BLUEPRINT.md)
+- Blueprint: [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md)
 
 Layer 2 là **blocker tiếp theo** trước khi Assessment Engine có thể chạy scan có ý nghĩa.
 
@@ -44,7 +44,7 @@ Layer 2 là **blocker tiếp theo** trước khi Assessment Engine có thể ch�
 | D5 | **`owasp-top10-2021.yaml`** | Mapping rule_id → OWASP Top 10 categories | — |
 | D6 | **Rule Resolver** | `assessment + technologies + scope → resolved-rules.json` | `assessment.yaml`, `technologies.yaml`, `scope.yaml` |
 | D7 | **`resolved-rules.json` schema** | Output contract L1+L2 → L3.4 Rule Evaluation | `cleverdent/runs/{run_id}/` |
-| D8 | **`RULE-LIBRARY-BLUEPRINT.md`** | Layer 2 blueprint (pattern giống Projects Registry) | — |
+| D8 | **`BLUEPRINT.md`** | Layer 2 blueprint (`2.3 Rule Library/BLUEPRINT.md`) | — |
 
 ---
 

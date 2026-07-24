@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-TRIVY-001"
+  name: "Container Running as Root User"
+  description: "Phát hiện Dockerfile không khai báo USER không phải root, làm tăng nguy cơ Container Escape."
+  severity: "high"
+  engine: "trivy"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["docker"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-250"]
+    asvs_v4: ["V14.1.1"]
+
+  knowledge_ref: "knowledge/domains/infrastructure-security.md"
+  
+  engine_config:
+    trivy_rule_id: "DS002"
+    check_type: "dockerfile"
+    
+  remediation:
+    summary: "Thêm lệnh 'USER appuser' trong Dockerfile sau khi tạo user không có đặc quyền root."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"

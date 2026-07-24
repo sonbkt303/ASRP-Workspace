@@ -18,8 +18,8 @@
 ```mermaid
 flowchart TB
     ArchBP[ARCHITECTURE-BLUEPRINT.md]
-    L1BP[PROJECTS-REGISTRY-BLUEPRINT.md]
-    L2BP[RULE-LIBRARY-BLUEPRINT.md planned]
+    L1BP[1. Projects Registry/BLUEPRINT.md]
+    L2BP[2. Security Knowledge Base ⭐/2.3 Rule Library/BLUEPRINT.md]
     Handoff[HANDOFF.md]
     ArchBP --> L1BP
     ArchBP --> L2BP
@@ -31,8 +31,8 @@ flowchart TB
 
 | Layer | Blueprint | Status |
 |-------|-----------|--------|
-| L1 — Projects Registry | [PROJECTS-REGISTRY-BLUEPRINT.md](PROJECTS-REGISTRY-BLUEPRINT.md) | **Done** |
-| L2 — Rule Library | RULE-LIBRARY-BLUEPRINT.md | Planned (see [HANDOFF.md](HANDOFF.md)) |
+| L1 — Projects Registry | [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md) | **Done** |
+| L2 — Rule Library | [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) | **In Progress** |
 | L3 — Assessment Engine | — | Planned |
 | L4 — Integrations | — | Planned |
 | L5 — Reporting | — | Planned |
@@ -141,7 +141,7 @@ flowchart TB
 
 **Vai trò:** Hồ sơ dự án — mọi thông tin engine cần biết trước khi scan.
 
-**Chi tiết:** xem [PROJECTS-REGISTRY-BLUEPRINT.md](PROJECTS-REGISTRY-BLUEPRINT.md)
+**Chi tiết:** xem [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md)
 
 **Tóm tắt:**
 

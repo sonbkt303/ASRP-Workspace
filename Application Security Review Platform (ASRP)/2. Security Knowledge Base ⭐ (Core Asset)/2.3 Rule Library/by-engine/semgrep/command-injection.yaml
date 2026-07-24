@@ -1,0 +1,35 @@
+rule:
+  id: "ASRP-INJ-002"
+  name: "OS Command Injection via System Execution"
+  description: "Phát hiện lệnh hệ điều hành được thực thi trực tiếp với biến đầu vào chưa được sanitize."
+  severity: "critical"
+  engine: "semgrep"
+  category: "injection"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A03:2021-Injection"]
+    cwe: ["CWE-78"]
+    asvs_v4: ["V5.3.8"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "subprocess.Popen(..., shell=True)"
+      - language: "javascript"
+        pattern: "child_process.exec($CMD)"
+      - language: "typescript"
+        pattern: "child_process.exec($CMD)"
+      - language: "go"
+        pattern: "exec.Command(\"sh\", \"-c\", $CMD)"
+      - language: "java"
+        pattern: "Runtime.getRuntime().exec($CMD)"
+    
+  remediation:
+    summary: "Tránh gọi shell trực tiếp. Truyền lệnh dưới dạng mảng tham số (API execFile/exec) thay vì nối chuỗi."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html"

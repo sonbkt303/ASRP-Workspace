@@ -1,0 +1,32 @@
+tech_stack_map:
+  languages:
+    python:
+      default_rule_sets: ["python-secure-coding", "secrets-basic", "owasp-top10-2021"]
+    javascript:
+      default_rule_sets: ["nodejs-secure-coding", "secrets-basic", "owasp-top10-2021"]
+    typescript:
+      default_rule_sets: ["nodejs-secure-coding", "secrets-basic", "owasp-top10-2021"]
+    go:
+      default_rule_sets: ["go-secure-coding", "secrets-basic", "owasp-top10-2021"]
+    java:
+      default_rule_sets: ["java-secure-coding", "secrets-basic", "owasp-top10-2021"]
+  frameworks:
+    fastapi:
+      default_rule_sets: ["python-secure-coding", "fastapi-security"]
+    django:
+      default_rule_sets: ["python-secure-coding", "django-security"]
+    flask:
+      default_rule_sets: ["python-secure-coding"]
+    express:
+      default_rule_sets: ["nodejs-secure-coding"]
+    react:
+      default_rule_sets: ["react-xss-prevention"]
+    springboot:
+      default_rule_sets: ["java-secure-coding"]
+  infrastructure:
+    docker:
+      default_rule_sets: ["container-security"]
+    terraform:
+      default_rule_sets: ["iac-security"]
+    kubernetes:
+      default_rule_sets: ["k8s-security"]

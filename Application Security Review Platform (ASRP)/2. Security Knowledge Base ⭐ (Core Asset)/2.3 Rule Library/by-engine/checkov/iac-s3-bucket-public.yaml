@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-IAC-001"
+  name: "AWS S3 Bucket Public Read/Write Access"
+  description: "Phát hiện cấu hình Terraform S3 Bucket cho phép truy cập công khai (Public Read/Write)."
+  severity: "critical"
+  engine: "checkov"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["terraform", "cloudformation"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-732"]
+    asvs_v4: ["V14.1.2"]
+
+  knowledge_ref: "knowledge/domains/infrastructure-security.md"
+  
+  engine_config:
+    checkov_check_id: "CKV_AWS_20"
+    resource: "aws_s3_bucket"
+    
+  remediation:
+    summary: "Đặt acl = 'private' và bật aws_s3_bucket_public_access_block để chặn toàn bộ public access."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Cloud_Native_Security_Cheat_Sheet.html"

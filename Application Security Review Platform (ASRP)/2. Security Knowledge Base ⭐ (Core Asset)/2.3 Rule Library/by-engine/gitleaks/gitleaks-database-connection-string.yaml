@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-SEC-004"
+  name: "Hardcoded Database Connection String with Credentials"
+  description: "Phát hiện chuỗi URI kết nối Database chứa username và password bị hardcode."
+  severity: "critical"
+  engine: "gitleaks"
+  category: "secrets"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A07:2021-Identification and Authentication Failures"]
+    cwe: ["CWE-798"]
+    asvs_v4: ["V14.2.1"]
+
+  knowledge_ref: "knowledge/domains/secrets-management.md"
+  
+  engine_config:
+    gitleaks_rule_id: "db-connection-string"
+    regex: '(?i)(postgres|postgresql|mysql|mongodb|redis|oracle):\/\/[A-Za-z0-9_]+:[^@\s]+@[A-Za-z0-9_\-\.]+'
+    
+  remediation:
+    summary: "Đưa chuỗi kết nối vào biến môi trường DATABASE_URL hoặc Secret Manager."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"

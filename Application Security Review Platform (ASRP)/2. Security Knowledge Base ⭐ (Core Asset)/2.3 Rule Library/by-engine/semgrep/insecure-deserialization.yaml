@@ -1,0 +1,33 @@
+rule:
+  id: "ASRP-DESER-001"
+  name: "Insecure Deserialization of Untrusted Data"
+  description: "Phát hiện giải mã đối tượng không an toàn từ dữ liệu đầu vào người dùng có thể dẫn tới RCE."
+  severity: "critical"
+  engine: "semgrep"
+  category: "data_integrity"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A08:2021-Software and Data Integrity Failures"]
+    cwe: ["CWE-502"]
+    asvs_v4: ["V5.5.1"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "pickle.loads(...)"
+      - language: "javascript"
+        pattern: "serialize.unserialize(...)"
+      - language: "typescript"
+        pattern: "serialize.unserialize(...)"
+      - language: "java"
+        pattern: "new ObjectInputStream(...).readObject()"
+    
+  remediation:
+    summary: "Dùng JSON/Protocol Buffers/Safe Parser thay cho native serialization. Cấm deserialize binary stream không tin cậy."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Deserialization_Cheat_Sheet.html"

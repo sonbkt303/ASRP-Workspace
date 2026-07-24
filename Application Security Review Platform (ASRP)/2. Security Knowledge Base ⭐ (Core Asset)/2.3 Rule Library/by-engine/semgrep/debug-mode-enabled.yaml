@@ -1,0 +1,33 @@
+rule:
+  id: "ASRP-MISCFG-001"
+  name: "Application Debug Mode Enabled in Production"
+  description: "Phát hiện ứng dụng bật Debug Mode làm lộ Interactive Debugger hoặc Stack Trace nhạy cảm."
+  severity: "high"
+  engine: "semgrep"
+  category: "misconfiguration"
+  
+  applicable_technologies:
+    languages: ["python", "javascript", "typescript", "go", "java"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-215"]
+    asvs_v4: ["V14.3.1"]
+
+  knowledge_ref: "knowledge/domains/configuration-security.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "python"
+        pattern: "DEBUG = True"
+      - language: "javascript"
+        pattern: "app.use(errorhandler())"
+      - language: "typescript"
+        pattern: "app.use(errorhandler())"
+      - language: "java"
+        pattern: "server.error.include-stacktrace=always"
+    
+  remediation:
+    summary: "Đặt DEBUG = False trên production hoặc đọc từ biến môi trường os.getenv('DEBUG')."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html"

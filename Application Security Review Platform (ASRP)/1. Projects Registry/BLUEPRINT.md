@@ -1,8 +1,8 @@
 # Projects Registry Blueprint
 
 > **Status:** Active — Layer 1 canonical reference.  
-> **Last updated:** 2026-07-22  
-> **Parent:** [ARCHITECTURE-BLUEPRINT.md](ARCHITECTURE-BLUEPRINT.md) §Layer 1  
+> **Last updated:** 2026-07-24  
+> **Parent:** [ARCHITECTURE-BLUEPRINT.md](../ARCHITECTURE-BLUEPRINT.md) §Layer 1  
 > **Scope:** Project profile contracts, lifecycle, schemas, and layer I/O for Projects Registry.
 
 ---
@@ -27,6 +27,7 @@
 
 ```
 1. Projects Registry/
+├── BLUEPRINT.md               # Layer 1 canonical blueprint (file này)
 ├── 1.1 Template/              # Starter template — không chỉnh sửa trực tiếp
 │   ├── project.yaml
 │   ├── components.yaml
@@ -178,7 +179,7 @@ stateDiagram-v2
 
 ## 7. JSON Schema
 
-Schemas nằm tại [`schema/`](1.%20Projects%20Registry/schema/).
+Schemas nằm tại [`schema/`](schema/).
 
 | Schema | Validates |
 |--------|-----------|
@@ -191,7 +192,7 @@ Schemas nằm tại [`schema/`](1.%20Projects%20Registry/schema/).
 | `assessment.schema.json` | `assessment.yaml` |
 | `registry-manifest.schema.json` | `registry.manifest.yaml` |
 
-Shared enums và patterns: [`schema/_definitions.json`](1.%20Projects%20Registry/schema/_definitions.json)
+Shared enums và patterns: [`schema/_definitions.json`](schema/_definitions.json)
 
 ### Validation (manual, Sprint 1)
 
@@ -230,7 +231,7 @@ Format: `sha256:{64-char-hex}`
 8. **Create manifest** — generate `registry.manifest.yaml` with `profile_hash`, set `lifecycle_status: validated`
 9. **Ready** — Assessment Engine may start runs under `runs/`
 
-**Reference instance:** [`cleverdent/`](1.%20Projects%20Registry/cleverdent/)
+**Reference instance:** [`cleverdent/`](cleverdent/)
 
 ---
 
@@ -238,10 +239,10 @@ Format: `sha256:{64-char-hex}`
 
 | Document | Path |
 |----------|------|
-| Architecture overview | [ARCHITECTURE-BLUEPRINT.md](ARCHITECTURE-BLUEPRINT.md) |
-| Next layer handoff | [HANDOFF.md](HANDOFF.md) |
-| Layer README | [1. Projects Registry/README.md](1.%20Projects%20Registry/README.md) |
-| Template README | [1.1 Template/README.md](1.%20Projects%20Registry/1.1%20Template/README.md) |
+| Architecture overview | [ARCHITECTURE-BLUEPRINT.md](../ARCHITECTURE-BLUEPRINT.md) |
+| Next layer handoff | [HANDOFF.md](../HANDOFF.md) |
+| Layer README | [README.md](README.md) |
+| Template README | [1.1 Template/README.md](1.1%20Template/README.md) |
 
 ---
 
@@ -249,5 +250,5 @@ Format: `sha256:{64-char-hex}`
 
 | Date | Change |
 |------|--------|
+| 2026-07-24 | Colocated blueprint pattern (moved from root to Layer 1 directory) |
 | 2026-07-22 | Initial Layer 1 blueprint — schemas, lifecycle, I/O matrix, cleverdent instance |
-| 2026-07-22 | Semantic YAML filenames (no numeric prefix); bootstrap order documented in §3.1 |

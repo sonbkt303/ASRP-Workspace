@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-CICD-001"
+  name: "GitHub Action Third-Party Dependency Not Pinned to Full Commit SHA"
+  description: "Phát hiện GitHub Action workflow gọi action bên thứ ba bằng branch/tag thay vì ghim mã Commit SHA cố định."
+  severity: "medium"
+  engine: "cicd"
+  category: "supply_chain"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["github-actions"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A08:2021-Software and Data Integrity Failures"]
+    cwe: ["CWE-829"]
+    asvs_v4: ["V14.2.3"]
+
+  knowledge_ref: "knowledge/domains/dependency-management.md"
+  
+  engine_config:
+    tool: "actionlint"
+    rule_id: "action-unpinned"
+    
+  remediation:
+    summary: "Dùng Git Commit SHA đầy đủ 40 ký tự thay vì tag (ví dụ: uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11)."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html"

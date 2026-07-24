@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-IAC-002"
+  name: "Kubernetes Privileged Container Execution"
+  description: "Phát hiện Kubernetes Pod manifest cấu hình privileged: true cho phép container truy cập trực tiếp Kernel của Host."
+  severity: "critical"
+  engine: "checkov"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["kubernetes", "helm"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-250"]
+    asvs_v4: ["V14.1.1"]
+
+  knowledge_ref: "knowledge/domains/infrastructure-security.md"
+  
+  engine_config:
+    checkov_check_id: "CKV_K8S_16"
+    resource: "Pod"
+    
+  remediation:
+    summary: "Đặt securityContext.privileged: false trong Pod Spec ngoại trừ các DaemonSet hệ thống đặc biệt."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Kubernetes_Security_Cheat_Sheet.html"

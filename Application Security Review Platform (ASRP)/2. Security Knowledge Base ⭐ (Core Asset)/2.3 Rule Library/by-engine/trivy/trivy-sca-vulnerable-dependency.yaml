@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-SCA-001"
+  name: "Vulnerable Dependency Package (CVE Detection)"
+  description: "Phát hiện thư viện phụ thuộc chứa lỗ hổng bảo mật đã công bố công khai (High/Critical CVE)."
+  severity: "critical"
+  engine: "trivy"
+  category: "dependencies"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A06:2021-Vulnerable and Outdated Components"]
+    cwe: ["CWE-1395"]
+    asvs_v4: ["V14.2.3"]
+
+  knowledge_ref: "knowledge/domains/dependency-management.md"
+  
+  engine_config:
+    trivy_check_type: "vulnerability"
+    severity_filter: ["HIGH", "CRITICAL"]
+    
+  remediation:
+    summary: "Cập nhật phiên bản thư viện lên phiên bản an toàn mới nhất được khuyến cáo trong CVE advisory."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Vulnerable_Dependency_Management_Cheat_Sheet.html"

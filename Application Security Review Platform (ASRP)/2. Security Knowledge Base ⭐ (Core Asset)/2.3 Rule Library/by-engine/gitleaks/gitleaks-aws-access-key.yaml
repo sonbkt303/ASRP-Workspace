@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-SEC-002"
+  name: "Hardcoded AWS Access Key / Secret Key"
+  description: "Phát hiện AWS Access Key ID hoặc Secret Access Key bị hardcode trong mã nguồn."
+  severity: "critical"
+  engine: "gitleaks"
+  category: "secrets"
+  
+  applicable_technologies:
+    languages: ["all"]
+    frameworks: ["all"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A07:2021-Identification and Authentication Failures"]
+    cwe: ["CWE-798"]
+    asvs_v4: ["V14.2.1"]
+
+  knowledge_ref: "knowledge/domains/secrets-management.md"
+  
+  engine_config:
+    gitleaks_rule_id: "aws-access-token"
+    regex: '(A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}'
+    
+  remediation:
+    summary: "Thu hồi ngay lập tức AWS Key trên AWS IAM Console và chuyển sang sử dụng IAM Roles/Environment Variables."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html"
