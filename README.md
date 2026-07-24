@@ -12,10 +12,10 @@ Tài liệu kiến trúc chính: [`Application Security Review Platform (ASRP)/A
 ASRP Workspace/
 ├── Application Security Review Platform (ASRP)/
 │   ├── ARCHITECTURE-BLUEPRINT.md          # Canonical overview — 6 layers
-│   ├── HANDOFF.md                         # Next-layer deliverables
-│   ├── PROJECTS-REGISTRY-BLUEPRINT.md     # Layer 1 blueprint (done)
+│   ├── HANDOFF.md                         # Next-layer deliverables (Handoff to Layer 3)
 │   │
 │   ├── 1. Projects Registry/              # Layer 1 — project profiles
+│   │   ├── BLUEPRINT.md                   # Layer 1 blueprint (done)
 │   │   ├── README.md
 │   │   ├── 1.1 Template/                  # Template cho mọi project instance
 │   │   │   ├── README.md
@@ -76,8 +76,16 @@ ASRP Workspace/
 │   │   │   ├── 2.2.11 File Upload Security
 │   │   │   ├── 2.2.12 Business Logic Security
 │   │   │   └── 2.2.13 Infrastructure Security
-│   │   ├── 2.3 Rule Library
-│   │   ├── 2.4 Review Checklists
+│   │   ├── 2.3 Rule Library/              # Layer 2 — Executable Rules & Resolver (done)
+│   │   │   ├── BLUEPRINT.md               # Layer 2 blueprint (done)
+│   │   │   ├── README.md
+│   │   │   ├── index.yaml                 # Master catalog (19 rules)
+│   │   │   ├── by-engine/                 # 6 Scanner Engines (semgrep, gitleaks, trivy, checkov, cicd, custom_ai)
+│   │   │   ├── by-domain/                 # 8 Security Domains
+│   │   │   └── mappings/                  # Tech Stack & OWASP Top 10 A01–A10
+│   │   ├── 2.4 Review Checklists/             # Human Review Checklists
+│   │   │   ├── README.md
+│   │   │   └── architecture-security-checklist.yaml
 │   │   ├── 2.5 Playbooks
 │   │   ├── 2.6 Threat Models
 │   │   ├── 2.7 Secure Coding Guidelines

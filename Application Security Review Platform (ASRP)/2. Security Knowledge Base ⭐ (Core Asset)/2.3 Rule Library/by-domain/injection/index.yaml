@@ -1,0 +1,11 @@
+domain:
+  id: "injection"
+  name: "Injection Security Domain"
+  description: "Các quy tắc phát hiện lỗ hổng chèn dữ liệu độc hại (SQLi, Command Injection, XSS)."
+  rules:
+    - id: "ASRP-INJ-001"
+      path: "../../by-engine/semgrep/sql-injection.yaml"
+    - id: "ASRP-INJ-002"
+      path: "../../by-engine/semgrep/command-injection.yaml"
+    - id: "ASRP-XSS-001"
+      path: "../../by-engine/semgrep/reflected-xss.yaml"

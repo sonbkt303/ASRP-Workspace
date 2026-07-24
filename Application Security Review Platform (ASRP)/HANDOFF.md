@@ -1,153 +1,79 @@
-# ASRP Handoff — Layer 2
+# ASRP Handoff — Layer 3: Assessment Engine & Rule Resolver
 
 > **Status:** Active  
-> **Last updated:** 2026-07-22  
-> **Previous layer:** [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md) (Layer 1 — Done)  
-> **Next layer:** Layer 2 — Rule Library (`2.3`) + Rule Resolver
+> **Last updated:** 2026-07-24  
+> **Previous layer:** [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) (Layer 2 — Done)  
+> **Next layer:** Layer 3 — Assessment Engine (`3. Assessment Engine`) & Rule Resolver Tool
 
 ---
 
 ## 1. Context
 
-Layer 1 (Projects Registry) đã hoàn thiện:
+Layer 1 (Projects Registry) và Layer 2 (Rule Library) đã hoàn thiện 100%:
 
-- 8 YAML profile files + JSON Schemas
-- Lifecycle + human gate (`registry.manifest.yaml`)
-- Example instance: `cleverdent/` (validated)
-- Blueprint: [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md)
+- **Layer 1:** 8 YAML profile files + JSON Schemas + Manifest Gate (`cleverdent/` validated instance).
+- **Layer 2:** [BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md), Master Catalog `index.yaml` (19 Executable Rules), 6 Scanner Engines (`semgrep`, `gitleaks`, `trivy`, `checkov`, `cicd`, `custom_ai`), 8 Security Domains, và đầy đủ mappings OWASP Top 10 A01–A10.
 
-Layer 2 là **blocker tiếp theo** trước khi Assessment Engine có thể chạy scan có ý nghĩa.
+Layer 3 là **Motor thực thi tiếp theo** biến "Profile + Rules" thành "Findings + Evidence".
 
 ---
 
-## 2. Next Layer Scope
+## 2. Next Layer Scope (Layer 3 — Assessment Engine)
 
-**Primary:** `2. Security Knowledge Base ⭐ (Core Asset)/2.3 Rule Library`  
-**Cross-cutting:** Rule Resolver (L1 profile + L2 rules → `resolved-rules.json`)
-
-**Không block pipeline:**
-
-- `2.1 Security Standards` — concept reference (markdown)
-- `2.2 Security Domains` — taxonomy (markdown)
-- KB concept tại `Security Knowledge Base/knowledge/` — đã có, dùng cho AI/RAG reference
+**Primary Modules:**
+- `3.1 Source Acquisition` — Clone repo, checkout commit SHA, lưu acquisition metadata.
+- `3.2 Workspace` — Phân loại source, config, IaC, secrets, dependencies.
+- `3.4 Rule Evaluation / Rule Resolver` — Đọc profile Layer 1 + rules Layer 2 để xuất `resolved-rules.json` và gọi scanners.
+- `3.5 AI Reviewer` — Thực thi các rule `custom_ai` đánh giá BOLA/IDOR và logic nghiệp vụ.
+- `3.6 Findings` — Chuẩn hóa kết quả quét thành danh sách findings có CWE, Severity, Evidence.
 
 ---
 
-## 3. Deliverables
+## 3. Layer 3 Deliverables
 
-| # | Deliverable | Mô tả | Input từ Layer 1 |
-|---|-------------|-------|------------------|
-| D1 | **Rule format YAML** | `rule.id`, `engine`, `applicable_technologies`, `standard_mapping`, `knowledge_ref` | — |
-| D2 | **`2.3 Rule Library/index.yaml`** | Catalog tất cả rules: id, path, enabled, version | — |
-| D3 | **MVP rules (20–50)** | OWASP Top 10 coverage: Semgrep, Gitleaks, Trivy | — |
-| D4 | **`tech-stack-map.yaml`** | Map language/framework → `rule_set_ids` | `technologies.yaml` |
-| D5 | **`owasp-top10-2021.yaml`** | Mapping rule_id → OWASP Top 10 categories | — |
-| D6 | **Rule Resolver** | `assessment + technologies + scope → resolved-rules.json` | `assessment.yaml`, `technologies.yaml`, `scope.yaml` |
-| D7 | **`resolved-rules.json` schema** | Output contract L1+L2 → L3.4 Rule Evaluation | `cleverdent/runs/{run_id}/` |
-| D8 | **`BLUEPRINT.md`** | Layer 2 blueprint (`2.3 Rule Library/BLUEPRINT.md`) | — |
+| # | Deliverable | Mô tả | Input từ Layer 1 & 2 |
+|---|-------------|-------|----------------------|
+| D1 | **Rule Resolver CLI** | Tool tự động đọc profile L1 + rules L2 → sinh `resolved-rules.json` | `assessment.yaml`, `technologies.yaml`, `index.yaml` |
+| D2 | **Source Acquisition Script** | Clone repo và pin SHA vào `runs/{run_id}/acquisition.json` | `components.yaml` |
+| D3 | **Scanner Orchestrator** | Gọi Semgrep/Gitleaks/Trivy/Checkov chạy theo `resolved-rules.json` | `resolved-rules.json` |
+| D4 | **Findings Normalizer** | Chuẩn hóa JSON raw output của scanner về schema ASRP Findings | Raw tool outputs |
+| D5 | **`ASSESSMENT-ENGINE-BLUEPRINT.md`** | Bản thiết kế colocated tại `3. Assessment Engine/BLUEPRINT.md` | ARCHITECTURE-BLUEPRINT.md |
 
 ---
 
-## 4. Rule Resolver — Core Logic
+## 4. Rule Resolver — Core Execution Flow
 
 ```mermaid
 flowchart LR
-    A["assessment.yaml<br/>rule_set_ids, domains"]
-    B["technologies.yaml<br/>language, framework"]
-    C["scope.yaml<br/>component_ids, paths"]
-    D["2.3 Rule Library/index.yaml"]
-    R[Rule Resolver]
-    O["resolved-rules.json"]
+    A["Layer 1 Profile<br/>assessment.yaml, technologies.yaml"]
+    B["Layer 2 Rules<br/>index.yaml, tech-stack-map.yaml"]
+    C["scope.yaml<br/>include/exclude paths"]
+    R[Rule Resolver Engine]
+    O["runs/{run_id}/resolved-rules.json"]
 
     A --> R
     B --> R
     C --> R
-    D --> R
     R --> O
 ```
 
-**Pseudo-logic:**
+---
 
-```
-1. Read assessment.rule_set_ids + security_domains
-2. Read technologies[].language, framework, rule_set_ids per component
-3. Read scope.component_ids, include/exclude paths
-4. Join with 2.3 Rule Library/index.yaml + tech-stack-map.yaml
-5. Filter: enabled rules matching tech + scope + lens
-6. Output resolved-rules.json to {project}/runs/{run_id}/
-```
+## 5. Layer 2 Acceptance Criteria Checklist
 
-**Pre-condition:** `cleverdent/` must have `lifecycle_status: validated` and valid `registry.manifest.yaml`.
+- [x] [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) published.
+- [x] `2.3 Rule Library/index.yaml` catalogs 19 enabled rules across 6 engines.
+- [x] Rules cover full OWASP Top 10 2021 categories A01–A10.
+- [x] `tech-stack-map.yaml` maps Python, JS/TS, Go, Java, Docker, Terraform, K8s.
+- [x] Multi-Language Rule Design Standard persisted in [`.agents/AGENTS.md`](../.agents/AGENTS.md).
+- [x] Directory READMEs created for `2.3 Rule Library/`, `by-engine/`, `by-domain/`, `mappings/`, `2.4 Review Checklists/`.
+- [x] [ARCHITECTURE-BLUEPRINT.md](ARCHITECTURE-BLUEPRINT.md) synced (Layer 2 status → Done).
 
 ---
 
-## 5. Suggested Folder Structure (Layer 2.3)
-
-```
-2. Security Knowledge Base ⭐ (Core Asset)/2.3 Rule Library/
-├── index.yaml
-├── by-domain/
-│   ├── secrets/
-│   ├── injection/
-│   └── dependencies/
-├── by-engine/
-│   ├── semgrep/
-│   ├── gitleaks/
-│   └── trivy/
-└── mappings/
-    ├── owasp-top10-2021.yaml
-    └── tech-stack-map.yaml
-```
-
----
-
-## 6. Layer I/O (L1 → L2 → L3)
-
-| From | To | Artifact |
-|------|----|----------|
-| L1 | Rule Resolver | `technologies.yaml`, `scope.yaml`, `assessment.yaml` |
-| L1 | Rule Resolver (gate) | `registry.manifest.yaml` |
-| L2 | Rule Resolver | `2.3 Rule Library/index.yaml`, rule YAML files |
-| Resolver | L3.4 | `resolved-rules.json` |
-| L2 | L3.6 (findings) | `standard_mapping`, `knowledge_ref` per rule |
-
----
-
-## 7. Acceptance Criteria (Layer 2 Done)
-
-- [ ] `RULE-LIBRARY-BLUEPRINT.md` published
-- [ ] `2.3 Rule Library/index.yaml` catalogs ≥20 enabled rules
-- [ ] Rules cover OWASP Top 10 2021 categories (secrets, injection, XSS, misconfig, etc.)
-- [ ] `tech-stack-map.yaml` maps `python` + `fastapi` → relevant rule sets
-- [ ] Rule Resolver runs against `cleverdent/` validated profile
-- [ ] Output `cleverdent/runs/run-{date}-001/resolved-rules.json` is valid per schema
-- [ ] Each rule has `knowledge_ref` link to concept KB (where applicable)
-- [ ] [HANDOFF.md](HANDOFF.md) updated with Layer 3 tasks
-- [ ] [ARCHITECTURE-BLUEPRINT.md](ARCHITECTURE-BLUEPRINT.md) synced (Layer 2 status → Done)
-
----
-
-## 8. Out of Scope (Layer 2)
-
-- Assessment Engine orchestrator implementation (Layer 3)
-- Actually running Semgrep/Gitleaks/Trivy (Layer 4 Integrations)
-- AI Reviewer rules (Layer 3.5, Sprint 5+)
-- Full OWASP ASVS mapping (incremental after Top 10 MVP)
-
----
-
-## 9. Suggested Sprint Plan
-
-| Sprint | Focus |
-|--------|-------|
-| Sprint 2a | Rule format + index.yaml + folder structure + RULE-LIBRARY-BLUEPRINT.md |
-| Sprint 2b | 20–50 MVP rules (Gitleaks, Semgrep, Trivy) |
-| Sprint 2c | Rule Resolver + resolved-rules.json schema + test with cleverdent |
-
----
-
-## 10. Changelog
+## 6. Changelog
 
 | Date | Change |
 |------|--------|
+| 2026-07-24 | Layer 2 completed (19 Rules, 6 Engines, Multi-Lang Spec). Handoff to Layer 3 Assessment Engine. |
 | 2026-07-22 | Initial handoff from Layer 1 → Layer 2 |

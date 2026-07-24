@@ -32,7 +32,7 @@ flowchart TB
 | Layer | Blueprint | Status |
 |-------|-----------|--------|
 | L1 — Projects Registry | [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md) | **Done** |
-| L2 — Rule Library | [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) | **In Progress** |
+| L2 — Rule Library | [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) | **Done** |
 | L3 — Assessment Engine | — | Planned |
 | L4 — Integrations | — | Planned |
 | L5 — Reporting | — | Planned |

@@ -194,6 +194,7 @@ owasp_top10_2021_mapping:
 | Milestone | Deliverable | Status |
 |-----------|-------------|--------|
 | **M1** | Ban hành `2.3 Rule Library/BLUEPRINT.md` | **Done** |
-| **M2** | Khởi tạo `index.yaml` và các file `mappings/` | **Done** |
-| **M3** | Thêm bộ luật MVP (Semgrep, Gitleaks, Trivy) | **Done** |
-| **M4** | Hiện thực Rule Resolver Engine & xuất `resolved-rules.json` | Next Sprint |
+| **M2** | Khởi tạo `index.yaml` (19 rules) và các file `mappings/` (OWASP Top 10 A01–A10) | **Done** |
+| **M3** | Bộ luật Executable 6 Engines (`semgrep`, `gitleaks`, `trivy`, `checkov`, `cicd`, `custom_ai`) | **Done** |
+| **M4** | Multi-Language Rule Design Standard ([`.agents/AGENTS.md`](../../../.agents/AGENTS.md)) | **Done** |
+| **M5** | Handoff sang Layer 3 — Hiện thực Rule Resolver Engine & Assessment Engine | Next Layer |

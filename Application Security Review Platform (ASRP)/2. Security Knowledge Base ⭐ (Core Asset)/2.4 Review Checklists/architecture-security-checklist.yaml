@@ -1,0 +1,26 @@
+checklist_suite:
+  id: "CHK-SUITE-ARCH-001"
+  name: "Architecture & Authorization Manual Review Checklist"
+  description: "Bộ câu hỏi đánh giá bảo mật kiến trúc phân quyền dành cho Security Auditor."
+  
+  items:
+    - id: "CHK-AUTH-001"
+      title: "Xác thực 2 yếu tố (2FA/OTP) cho giao dịch tài chính/đổi thông tin nhạy cảm"
+      category: "authentication"
+      review_level: "deep"
+      status: "pending" # pending | pass | fail | N/A
+      verification_prompt: "Hệ thống có yêu cầu OTP hoặc Re-authenticate khi đổi Password/Email/Rút tiền không?"
+      
+    - id: "CHK-LOGIC-001"
+      title: "Chống lỗi lặp số thứ tự (IDOR/BOLA) trên tất cả các API Endpoint"
+      category: "authorization"
+      review_level: "standard"
+      status: "pending"
+      verification_prompt: "Đã verify rằng user_id trong JWT Token bắt buộc phải khớp với owner_id của record trong DB chưa?"
+
+    - id: "CHK-SECRET-001"
+      title: "Quản lý Secret Key và Certificate bằng HashiCorp Vault hoặc Cloud KMS"
+      category: "secrets"
+      review_level: "standard"
+      status: "pending"
+      verification_prompt: "Có đảm bảo các Production API Keys không lưu dưới dạng plain text trong tệp cấu hình không?"
