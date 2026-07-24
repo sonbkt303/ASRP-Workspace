@@ -95,7 +95,8 @@ ASRP Workspace/
 │   │   ├── 2.11 Case Studies
 │   │   └── 2.12 Decision Logs
 │   │
-│   ├── 3. Assessment Engine/              # Layer 3 — clone → scan → findings
+│   ├── 3. Assessment Engine/              # Layer 3 — clone → scan → findings (in progress)
+│   │   ├── BLUEPRINT.md                   # Layer 3 blueprint (done)
 │   │   ├── 3.1 Source Acquisition (Clone - Local Workspace)
 │   │   ├── 3.2 Workspace/
 │   │   │   ├── 3.2.1 Source Code
@@ -107,7 +108,8 @@ ASRP Workspace/
 │   │   │   ├── 3.2.7 API Specification
 │   │   │   └── 3.2.8 Documentation
 │   │   ├── 3.3 Evidence Collection
-│   │   ├── 3.4 Rule Evaluation
+│   │   ├── 3.4 Rule Evaluation/
+│   │   │   └── rule_resolver.py           # Core Rule Resolver CLI Tool (done)
 │   │   ├── 3.5 AI Reviewer
 │   │   ├── 3.6 Findings
 │   │   ├── 3.7 Risk Assessment
