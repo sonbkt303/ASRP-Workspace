@@ -48,7 +48,16 @@ class RiskAssessor:
         
         # Paths setup
         self.asrp_dir = os.path.join(self.workspace_root, "Application Security Review Platform (ASRP)")
-        self.project_dir = os.path.join(self.asrp_dir, "1. Projects Registry", self.project_id)
+        registry_dir = os.path.join(self.asrp_dir, "1. Projects Registry")
+        
+        self.project_dir = os.path.join(registry_dir, self.project_id)
+        if os.path.exists(registry_dir):
+            for folder in os.listdir(registry_dir):
+                if folder.lower() == self.project_id.lower():
+                    self.project_dir = os.path.join(registry_dir, folder)
+                    self.project_id = folder
+                    break
+
         self.runs_dir = os.path.join(self.project_dir, "runs")
         
         # Determine target run directory

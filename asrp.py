@@ -23,12 +23,14 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 asrp_dir = os.path.join(script_dir, "Application Security Review Platform (ASRP)")
 
 # Add module paths to sys.path
+sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.1 Source Acquisition"))
 sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.4 Rule Evaluation"))
 sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.6 Findings"))
 sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.7 Risk Assessment"))
 sys.path.append(os.path.join(asrp_dir, "5. Reporting"))
 
 try:
+    from source_acquisition import SourceAcquisition
     from rule_resolver import RuleResolver
     from scanner_orchestrator import ScannerOrchestrator
     from findings_normalizer import FindingsNormalizer
@@ -47,7 +49,7 @@ def load_yaml(filepath):
 
 
 def cmd_scan(args):
-    """Run full End-to-End 5-step ASRP Security Review Pipeline."""
+    """Run full End-to-End 6-step ASRP Security Review Pipeline."""
     project_id = args.project
     print(f"\n=======================================================")
     print(f"🛡️  ASRP END-TO-END SECURITY REVIEW RUNNER")
@@ -55,34 +57,39 @@ def cmd_scan(args):
     print(f"📅 Audit Date    : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"=======================================================\n")
 
-    # Step 1: Rule Resolver
-    print("👉 [Step 1/5] Running Rule Resolver...")
-    resolver = RuleResolver(script_dir, project_id=project_id)
-    run_output = resolver.run()
-    run_id = resolver.run_id
+    # Step 1: Source Acquisition
+    print("👉 [Step 1/6] Running Source Acquisition...")
+    acquirer = SourceAcquisition(script_dir, project_id=project_id)
+    acquirer.run()
+    run_id = acquirer.run_id
 
-    # Step 2: Scanner Orchestrator
-    print("\n👉 [Step 2/5] Running Scanner Orchestrator...")
+    # Step 2: Rule Resolver
+    print("\n👉 [Step 2/6] Running Rule Resolver...")
+    resolver = RuleResolver(script_dir, project_id=project_id, run_id=run_id)
+    resolver.run()
+
+    # Step 3: Scanner Orchestrator
+    print("\n👉 [Step 3/6] Running Scanner Orchestrator...")
     orchestrator = ScannerOrchestrator(script_dir, project_id=project_id, run_id=run_id)
     orchestrator.run()
 
-    # Step 3: Findings Normalizer
-    print("\n👉 [Step 3/5] Running Findings Normalizer...")
+    # Step 4: Findings Normalizer
+    print("\n👉 [Step 4/6] Running Findings Normalizer...")
     normalizer = FindingsNormalizer(script_dir, project_id=project_id, run_id=run_id)
     normalizer.run()
 
-    # Step 4: Risk Assessor
-    print("\n👉 [Step 4/5] Running Risk Assessor...")
+    # Step 5: Risk Assessor
+    print("\n👉 [Step 5/6] Running Risk Assessor...")
     assessor = RiskAssessor(script_dir, project_id=project_id, run_id=run_id)
     assessor.run()
 
-    # Step 5: Report Generator
-    print("\n👉 [Step 5/5] Running Report Generator...")
+    # Step 6: Report Generator
+    print("\n👉 [Step 6/6] Running Report Generator...")
     generator = ReportGenerator(script_dir, project_id=project_id, run_id=run_id)
     html_path, md_path = generator.run()
 
     print(f"\n=======================================================")
-    print(f"🏆 ALL 5 PIPELINE STEPS COMPLETED SUCCESSFULLY!")
+    print(f"🏆 ALL 6 PIPELINE STEPS COMPLETED SUCCESSFULLY!")
     print(f"🌐 Executive HTML Dashboard: {html_path}")
     print(f"📄 Markdown Report Export  : {md_path}")
     print(f"=======================================================\n")

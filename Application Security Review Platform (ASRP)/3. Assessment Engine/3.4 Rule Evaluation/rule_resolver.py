@@ -28,17 +28,26 @@ def load_yaml(filepath):
 
 
 class RuleResolver:
-    def __init__(self, workspace_root, project_id="cleverdent"):
+    def __init__(self, workspace_root, project_id="cleverdent", run_id=None):
         self.workspace_root = workspace_root
         self.project_id = project_id
         
         # Paths setup
         self.asrp_dir = os.path.join(self.workspace_root, "Application Security Review Platform (ASRP)")
-        self.project_dir = os.path.join(self.asrp_dir, "1. Projects Registry", self.project_id)
+        registry_dir = os.path.join(self.asrp_dir, "1. Projects Registry")
+        
+        self.project_dir = os.path.join(registry_dir, self.project_id)
+        if os.path.exists(registry_dir):
+            for folder in os.listdir(registry_dir):
+                if folder.lower() == self.project_id.lower():
+                    self.project_dir = os.path.join(registry_dir, folder)
+                    self.project_id = folder
+                    break
+
         self.rule_lib_dir = os.path.join(
             self.asrp_dir, "2. Security Knowledge Base ⭐ (Core Asset)", "2.3 Rule Library"
         )
-        self.run_id = None
+        self.run_id = run_id
         
     def validate_human_gate(self):
         """Step 1: Check if project lifecycle_status is validated in manifest."""
@@ -66,13 +75,23 @@ class RuleResolver:
         # Extract tech stack
         languages = set()
         frameworks = set()
-        for comp in tech_data:
-            languages.add(comp.get("language", "").lower())
-            for fw in comp.get("frameworks", []):
-                frameworks.add(fw.lower())
+        if isinstance(tech_data, dict):
+            for lang in tech_data.get("languages", []):
+                languages.add(str(lang).lower())
+            for fw in tech_data.get("frameworks", []):
+                frameworks.add(str(fw).lower())
+        elif isinstance(tech_data, list):
+            for comp in tech_data:
+                if isinstance(comp, dict):
+                    if comp.get("language"):
+                        languages.add(str(comp.get("language")).lower())
+                    for fw in comp.get("frameworks", []):
+                        frameworks.add(str(fw).lower())
+                elif isinstance(comp, str):
+                    languages.add(comp.lower())
                 
         # Extract assessment lens
-        rule_sets = set(assessment_data.get("rule_set_ids", []))
+        rule_sets = set(assessment_data.get("rule_sets", assessment_data.get("rule_set_ids", [])))
         tools_enabled = assessment_data.get("tools_enabled", {})
         
         print(f"[OK] Profile Loaded: Languages={list(languages)}, Frameworks={list(frameworks)}, RuleSets={list(rule_sets)}")
@@ -153,8 +172,10 @@ class RuleResolver:
         resolved_rules, engines_summary = self.resolve_rules(profile)
         
         # Create output directory
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.run_id = f"run-{timestamp}"
+        if not self.run_id:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self.run_id = f"run-{timestamp}"
+            
         run_dir = os.path.join(self.project_dir, "runs", self.run_id)
         os.makedirs(run_dir, exist_ok=True)
         

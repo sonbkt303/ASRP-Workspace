@@ -9,15 +9,27 @@ venv/
 ENV/
 .venv/
 
-# ASRP Dynamic Run Artifacts (Scan Outputs, Raw Outputs, Run Folders)
+# ASRP Dynamic Run Artifacts & Generated Reports
+**/runs/
 **/runs/run-*/
-**/runs/raw_outputs/
+**/raw_outputs/
+**/source_workspace/
 *.log
+
+# Project-specific generated run outputs
+**/acquisition_metadata.json
+**/resolved-rules.json
+**/findings.json
+**/findings_summary.json
+**/risk_assessment.json
+**/security_review_report.html
+**/security_review_report.md
 
 # Temporary Source Acquisition & Cloned Workspaces
 **/3.1 Source Acquisition/clones/
 **/3.2 Workspace/clones/
 **/tmp/
+**/scratch/
 
 # IDE & System Files
 .vscode/
@@ -32,3 +44,7 @@ Thumbs.db
 .env.local
 *.pem
 *.key
+
+# Specific project test folders / local target repos
+cleverdent/
+**/cleverdent/runs/
