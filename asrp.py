@@ -59,9 +59,15 @@ def cmd_scan(args):
 
     # Step 1: Source Acquisition
     print("👉 [Step 1/6] Running Source Acquisition...")
-    acquirer = SourceAcquisition(script_dir, project_id=project_id)
+    acquirer = SourceAcquisition(
+        script_dir,
+        project_id=project_id,
+        source_input=args.source if hasattr(args, "source") else None,
+        interactive=args.interactive if hasattr(args, "interactive") else False
+    )
     acquirer.run()
     run_id = acquirer.run_id
+    project_id = acquirer.project_id  # Update project_id if interactive choice was made
 
     # Step 2: Rule Resolver
     print("\n👉 [Step 2/6] Running Rule Resolver...")
@@ -93,6 +99,17 @@ def cmd_scan(args):
     print(f"🌐 Executive HTML Dashboard: {html_path}")
     print(f"📄 Markdown Report Export  : {md_path}")
     print(f"=======================================================\n")
+
+
+def cmd_acquire(args):
+    """Run standalone 3-step Source Acquisition Flow."""
+    acquirer = SourceAcquisition(
+        script_dir,
+        project_id=args.project,
+        source_input=args.source,
+        interactive=args.interactive
+    )
+    acquirer.run()
 
 
 def cmd_validate(args):
@@ -221,9 +238,18 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="ASRP CLI Subcommands")
 
     # Command: scan
-    parser_scan = subparsers.add_parser("scan", help="Run full End-to-End 5-step security review pipeline")
+    parser_scan = subparsers.add_parser("scan", help="Run full End-to-End 6-step security review pipeline")
     parser_scan.add_argument("--project", default="cleverdent", help="Target project ID in Projects Registry")
+    parser_scan.add_argument("--source", default=None, help="Local directory path or Git repository URL")
+    parser_scan.add_argument("--interactive", action="store_true", help="Enable interactive project & source prompts")
     parser_scan.set_defaults(func=cmd_scan)
+
+    # Command: acquire
+    parser_acq = subparsers.add_parser("acquire", help="Run 3-step Source Acquisition Flow")
+    parser_acq.add_argument("--project", default="cleverdent", help="Target project ID")
+    parser_acq.add_argument("--source", default=None, help="Local directory path or Git repository URL")
+    parser_acq.add_argument("--interactive", action="store_true", help="Enable interactive project & source prompts")
+    parser_acq.set_defaults(func=cmd_acquire)
 
     # Command: validate
     parser_val = subparsers.add_parser("validate", help="Validate project profile YAML files and human gate")

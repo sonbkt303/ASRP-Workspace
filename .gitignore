@@ -48,3 +48,7 @@ Thumbs.db
 # Specific project test folders / local target repos
 cleverdent/
 **/cleverdent/runs/
+
+# Auto-added for project 'test-app'
+test-app/
+**/test-app/runs/
