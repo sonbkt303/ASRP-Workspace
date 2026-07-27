@@ -38,6 +38,7 @@ class RuleResolver:
         self.rule_lib_dir = os.path.join(
             self.asrp_dir, "2. Security Knowledge Base ⭐ (Core Asset)", "2.3 Rule Library"
         )
+        self.run_id = None
         
     def validate_human_gate(self):
         """Step 1: Check if project lifecycle_status is validated in manifest."""
@@ -153,12 +154,12 @@ class RuleResolver:
         
         # Create output directory
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        run_id = f"run-{timestamp}"
-        run_dir = os.path.join(self.project_dir, "runs", run_id)
+        self.run_id = f"run-{timestamp}"
+        run_dir = os.path.join(self.project_dir, "runs", self.run_id)
         os.makedirs(run_dir, exist_ok=True)
         
         output_payload = {
-            "run_id": run_id,
+            "run_id": self.run_id,
             "project_id": self.project_id,
             "resolved_at": datetime.now().isoformat() + "Z",
             "manifest_hash": manifest.get("profile_hash"),
