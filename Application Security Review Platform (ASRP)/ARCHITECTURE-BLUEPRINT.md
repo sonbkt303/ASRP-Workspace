@@ -33,9 +33,9 @@ flowchart TB
 |-------|-----------|--------|
 | L1 — Projects Registry | [1. Projects Registry/BLUEPRINT.md](1.%20Projects%20Registry/BLUEPRINT.md) | **Done** |
 | L2 — Rule Library | [2.3 Rule Library/BLUEPRINT.md](2.%20Security%20Knowledge%20Base%20%E2%AD%90%20%28Core%20Asset%29/2.3%20Rule%20Library/BLUEPRINT.md) | **Done** |
-| L3 — Assessment Engine | [3. Assessment Engine/BLUEPRINT.md](3.%20Assessment%20Engine/BLUEPRINT.md) | **In Progress** (Rule Resolver Done) |
+| L3 — Assessment Engine | [3. Assessment Engine/BLUEPRINT.md](3.%20Assessment%20Engine/BLUEPRINT.md) | **Done** (Resolver, Orchestrator, Normalizer, Risk Assessor) |
 | L4 — Integrations | — | Planned |
-| L5 — Reporting | — | Planned |
+| L5 — Reporting | [5. Reporting/BLUEPRINT.md](5.%20Reporting/BLUEPRINT.md) | **Done** (Executive HTML & MD Report Generator) |
 | L6 — Dashboard & Analytics | — | Planned |
 
 ---
