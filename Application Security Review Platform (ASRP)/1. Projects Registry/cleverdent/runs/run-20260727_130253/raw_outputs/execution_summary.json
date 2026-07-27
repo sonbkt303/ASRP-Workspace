@@ -1,0 +1,25 @@
+{
+  "run_id": "run-20260727_130253",
+  "project_id": "cleverdent",
+  "executed_at": "2026-07-27T13:02:59.705277Z",
+  "duration_seconds": 0.23,
+  "total_raw_findings": 15,
+  "findings_summary_by_engine": {
+    "gitleaks": 4,
+    "semgrep": 9,
+    "trivy": 1,
+    "custom_ai": 1
+  },
+  "execution_modes": {
+    "gitleaks": "Emulated Runner",
+    "semgrep": "Emulated Runner",
+    "trivy": "Emulated Runner",
+    "custom_ai": "Internal LLM Agent"
+  },
+  "raw_output_files": [
+    "raw_outputs/gitleaks_raw.json",
+    "raw_outputs/semgrep_raw.json",
+    "raw_outputs/trivy_raw.json",
+    "raw_outputs/custom_ai_raw.json"
+  ]
+}

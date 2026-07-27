@@ -131,6 +131,7 @@ class RuleResolver:
                 resolved_rule_entry = {
                     "id": rule_data.get("id"),
                     "name": rule_data.get("name"),
+                    "description": rule_data.get("description"),
                     "severity": rule_data.get("severity"),
                     "engine": engine,
                     "category": rule_data.get("category"),

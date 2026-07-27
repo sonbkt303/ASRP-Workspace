@@ -1,0 +1,13 @@
+{
+  "ai_findings": [
+    {
+      "rule_id": "ASRP-AI-001",
+      "focus_domain": "business_logic",
+      "target_file": "app/api/v1/orders.py",
+      "target_endpoint": "GET /api/v1/orders/{order_id}",
+      "confidence_score": 0.92,
+      "reasoning": "Endpoint retrieves order details by URL path parameter without verifying if order.owner_id matches current_user.id from JWT Token.",
+      "suggested_fix": "Add 'if order.owner_id != current_user.id: raise HTTPException(status_code=403)'"
+    }
+  ]
+}
