@@ -44,6 +44,20 @@ def save_yaml(data, filepath):
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
 
+def ignore_unwanted_dirs(src, names):
+    """Filter out build artifacts, dependencies, and IDE configuration folders."""
+    ignored = set()
+    unwanted_names = {
+        "node_modules", "dist", "build", ".devcontainer", ".vscode", ".idea",
+        ".mongo", ".git", ".svn", "venv", ".venv", "env", "ENV", "__pycache__",
+        "coverage", ".next", ".nuxt", "target", "bin", "obj", "tmp", "temp"
+    }
+    for name in names:
+        if name.lower() in unwanted_names or name.startswith(".mongo") or name.startswith(".devcontainer"):
+            ignored.add(name)
+    return ignored
+
+
 class SourceAcquisition:
     def __init__(self, workspace_root, project_id="cleverdent", run_id=None, source_input=None, interactive=False):
         self.workspace_root = workspace_root
@@ -68,7 +82,8 @@ class SourceAcquisition:
             self.run_id = f"run-{timestamp}"
             
         self.target_run_dir = os.path.join(self.runs_dir, self.run_id)
-        self.source_workspace_dir = os.path.join(self.target_run_dir, "source_workspace")
+        self.clones_dir = os.path.join(self.asrp_dir, "3. Assessment Engine", "3.1 Source Acquisition", "clones")
+        self.source_workspace_dir = os.path.join(self.clones_dir, self.project_id, self.run_id)
 
     def step1_select_or_create_project(self, project_id, interactive=False):
         """Step 1: Select existing project or create new project profile."""
@@ -258,11 +273,11 @@ class SourceAcquisition:
             commit_sha = "b3c9f210d321a89f76e2d100099ab2c761"
             acquisition_method = "Local Workspace Link"
 
-            # Case A: Local Directory Path -> Copy files recursively!
+            # Case A: Local Directory Path -> Copy files recursively (ignoring build/dev folders)!
             if repo_url and os.path.isdir(repo_url):
-                acquisition_method = "Local Directory Copy"
-                print(f"  [+] Copying local project directory from '{repo_url}' into '{comp_workspace}'...")
-                shutil.copytree(repo_url, comp_workspace, dirs_exist_ok=True)
+                acquisition_method = "Local Directory Copy (Smart Filtered)"
+                print(f"  [+] Copying local project directory from '{repo_url}' into '{comp_workspace}' (filtering node_modules, dist, .vscode...)...")
+                shutil.copytree(repo_url, comp_workspace, dirs_exist_ok=True, ignore=ignore_unwanted_dirs)
                 commit_sha = self.get_git_commit_sha(repo_url)
 
             # Case B: Git URL -> Clone via Git
@@ -309,6 +324,7 @@ class SourceAcquisition:
             f"# ASRP Auto-ignored project data for {self.project_id}",
             f"{self.project_id}/",
             f"**/{self.project_id}/runs/",
+            f"**/3.1 Source Acquisition/clones/",
             f"**/source_workspace/"
         ]
 
