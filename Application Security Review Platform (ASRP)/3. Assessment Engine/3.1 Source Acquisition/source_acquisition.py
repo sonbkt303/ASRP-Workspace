@@ -83,7 +83,8 @@ class SourceAcquisition:
             
         self.target_run_dir = os.path.join(self.runs_dir, self.run_id)
         self.clones_dir = os.path.join(self.asrp_dir, "3. Assessment Engine", "3.1 Source Acquisition", "clones")
-        self.source_workspace_dir = os.path.join(self.clones_dir, self.project_id, self.run_id)
+        # Persistent workspace per project (3.1 Source Acquisition/clones/{project_id}/)
+        self.source_workspace_dir = os.path.join(self.clones_dir, self.project_id)
 
     def step1_select_or_create_project(self, project_id, interactive=False):
         """Step 1: Select existing project or create new project profile."""
@@ -265,6 +266,19 @@ class SourceAcquisition:
                 repo_url = repo_val.get("url", "")
             else:
                 repo_url = str(repo_val) if repo_val else ""
+
+            # Dynamically set component ID from source path/URL name if custom source provided
+            if user_source:
+                clean_src = user_source.rstrip("/\\")
+                # Handle SSH URL like git@github.com:vtsw/dent-api-nestjs.git
+                if ":" in clean_src and not os.path.exists(clean_src) and not clean_src.startswith("http"):
+                    clean_src = clean_src.split(":")[-1]
+                base_name = os.path.basename(clean_src)
+                if base_name.endswith(".git"):
+                    base_name = base_name[:-4]
+                if base_name and base_name not in ["cleverdent", "components.yaml"]:
+                    comp_id = base_name
+                    comp_name = base_name
                 
             target_branch = comp.get("branch", "main")
             comp_workspace = os.path.join(self.source_workspace_dir, comp_id)
@@ -273,29 +287,65 @@ class SourceAcquisition:
             commit_sha = "b3c9f210d321a89f76e2d100099ab2c761"
             acquisition_method = "Local Workspace Link"
 
-            # Case A: Local Directory Path -> Copy files recursively (ignoring build/dev folders)!
-            if repo_url and os.path.isdir(repo_url):
+            is_git_url = (
+                repo_url.startswith("http") or
+                repo_url.startswith("git@") or
+                repo_url.startswith("ssh://") or
+                repo_url.endswith(".git")
+            )
+            is_sample_dummy = ("github.com/cleverdent/cleverdent" in repo_url or "example.com" in repo_url)
+
+            # Check if persistent clone already exists
+            has_existing_git = os.path.exists(os.path.join(comp_workspace, ".git"))
+            has_existing_files = os.path.exists(comp_workspace) and len(os.listdir(comp_workspace)) > 0
+
+            # Case A: Persistent Git workspace already cloned -> Git Pull to update!
+            if has_existing_git and not user_source:
+                acquisition_method = "Persistent Workspace (Git Updated)"
+                print(f"  [✓] Persistent workspace found at '{comp_workspace}'. Using existing code...")
+                try:
+                    subprocess.run(["git", "pull"], cwd=comp_workspace, capture_output=True, text=True, check=False, timeout=5)
+                except Exception:
+                    pass
+                commit_sha = self.get_git_commit_sha(comp_workspace)
+
+            # Case B: Local Directory Path -> Copy files recursively (ignoring build/dev folders)!
+            elif repo_url and os.path.isdir(repo_url):
                 acquisition_method = "Local Directory Copy (Smart Filtered)"
                 print(f"  [+] Copying local project directory from '{repo_url}' into '{comp_workspace}' (filtering node_modules, dist, .vscode...)...")
                 shutil.copytree(repo_url, comp_workspace, dirs_exist_ok=True, ignore=ignore_unwanted_dirs)
                 commit_sha = self.get_git_commit_sha(repo_url)
 
-            # Case B: Git URL -> Clone via Git
-            elif repo_url and repo_url.startswith("http") and not ("github.com/cleverdent" in repo_url or "example.com" in repo_url):
+            # Case C: Git URL (HTTPS or SSH) -> Clone via Git into persistent workspace
+            elif repo_url and is_git_url and not is_sample_dummy:
                 acquisition_method = "Git Shallow Clone"
+                print(f"  [+] Cloning Git repository '{repo_url}' into persistent workspace '{comp_workspace}'...")
                 try:
-                    cmd = ["git", "clone", "--depth", "1", "--branch", target_branch, repo_url, comp_workspace]
-                    res = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=5)
+                    cmd = ["git", "clone", "--depth", "1", repo_url, comp_workspace]
+                    res = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=60)
                     if res.returncode == 0:
                         fetched_sha = self.get_git_commit_sha(comp_workspace)
                         if fetched_sha and fetched_sha != "b3c9f210d321a89f76e2d100099ab2c761":
                             commit_sha = fetched_sha
                     else:
-                        acquisition_method = "Local Workspace Link (Fallback)"
-                except Exception:
-                    acquisition_method = "Local Workspace Link (Fallback)"
+                        print(f"  [!] Warning: Git clone failed: {res.stderr.strip()}")
+                        acquisition_method = "Git Clone Failed (Fallback)"
+                except Exception as e:
+                    print(f"  [!] Warning: Git clone exception: {e}")
+                    acquisition_method = "Git Clone Failed (Fallback)"
+            
+            elif has_existing_files:
+                acquisition_method = "Persistent Workspace (Verified)"
+                commit_sha = self.get_git_commit_sha(comp_workspace)
             else:
                 acquisition_method = "Local Workspace Link (Verified)"
+
+            # Save updated components.yaml with new repository URL
+            if user_source:
+                comp["id"] = comp_id
+                comp["name"] = comp_name
+                comp["repository"] = repo_url
+                save_yaml({"components": components_list}, components_path)
 
             # Populate sample files if empty
             self.populate_workspace_files(comp_workspace)
