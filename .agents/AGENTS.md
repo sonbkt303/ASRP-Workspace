@@ -19,4 +19,12 @@
 - **AI-Driven Orchestration:** Mô hình ASRP hướng tới sử dụng AI làm Trí tuệ điều phối trung tâm (Agentic Orchestrator). AI tự động hiểu ngữ cảnh dự án, chọn Tooling và Rules phù hợp thay vì phụ thuộc hoàn toàn vào Script cố định.
 - **Hybrid Contextual Verification:** AI chịu trách nhiệm kiểm tra lại kết quả quét từ các công cụ tĩnh, lọc bỏ False Positives, phát hiện lỗi Logic Nghiệp vụ phức tạp và đưa ra khuyến nghị sửa lỗi (Code Remediation).
 
+## ASRP 4-Step AI Master Workflow Invariant
+
+1. **Layer 3.1 Source Acquisition:** Clone/copy mã nguồn cố định tại `3.1 Source Acquisition/clones/{project_id}/{component_id}/`.
+2. **Layer 1 AI Auto-Profiling:** AI tự đọc mã nguồn clone để tự động sinh 100% tệp Hồ sơ Dự án Layer 1 theo template `1.1 Template` (Không nhập thủ công YAML).
+3. **Layer 3.4/3.6 AI Orchestrated Scan:** AI tự chọn Tooling/Rules, lọc False Positives và xuất dữ liệu chuẩn `findings.json`.
+4. **Layer 3.7/5 Risk & Reporting:** Tự động tính điểm Health Score, lập lộ trình SLA và xuất Executive HTML Dashboard.
+
+
 
