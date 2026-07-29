@@ -1,0 +1,29 @@
+template_id: ASRP-TM-STRIDE-001
+name: STRIDE Threat Modeling Template for Web APIs and Microservices
+version: 1.0
+description: Structured threat modeling framework evaluating Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege.
+
+threat_categories:
+  - category: Spoofing Identity
+    description: Authenticate every request user session and API caller to prevent identity impersonation.
+    controls: [MFA, Strong Password Hashing, Signed JWT Tokens]
+
+  - category: Tampering with Data
+    description: Protect data integrity in transit (TLS 1.3) and at rest (AES-256-GCM) with HMAC/Digital Signatures.
+    controls: [TLS 1.3, Database Encryption, Integrity Hash Verification]
+
+  - category: Repudiation
+    description: Ensure non-repudiation by logging critical security actions into immutable audit logs.
+    controls: [Centralized Logging, Audit Trail, Timestamping]
+
+  - category: Information Disclosure
+    description: Prevent data leakage of PII, secrets, API keys, or verbose stack traces in responses/logs.
+    controls: [Masking PII, Environment Secret Vaults, Disabling Debug Mode]
+
+  - category: Denial of Service (DoS)
+    description: Protect against resource exhaustion by enforcing rate limits, timeout bounds, and maximum request sizes.
+    controls: [Rate Limiting, Request Size Caps, Asynchronous Queues]
+
+  - category: Elevation of Privilege
+    description: Enforce Least Privilege, RBAC/ABAC authorization checks, and non-root execution inside containers.
+    controls: [RBAC/ABAC, BOLA/IDOR Checks, Non-Root Container Execution]

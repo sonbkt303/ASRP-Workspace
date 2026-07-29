@@ -1,0 +1,17 @@
+guideline_id: ASRP-SCG-NESTJS-001
+name: NestJS & TypeScript Secure Coding Guidelines
+version: 1.0
+applicable_stack: [nestjs, typescript, express, fastify]
+
+guidelines:
+  - id: SCG-NEST-01
+    title: Enforce Class Validator & ValidationPipe globally
+    rule: Always configure app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })) to strip unexpected payload fields.
+
+  - id: SCG-NEST-02
+    title: GraphQL Resolver Authorization & Tenant Isolation
+    rule: Ensure GraphQL Query and Mutation resolvers enforce Guards (@UseGuards(JwtAuthGuard, RolesGuard)) and explicitly filter queries by current user's hospital/tenant ID.
+
+  - id: SCG-NEST-03
+    title: Secrets Management via ConfigService
+    rule: Never hardcode fallback strings in ConfigService.getOrThrow() for sensitive secrets. Force environment variable injection or KMS/Vault fetching.

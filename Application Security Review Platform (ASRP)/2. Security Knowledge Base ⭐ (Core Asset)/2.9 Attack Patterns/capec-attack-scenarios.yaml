@@ -1,0 +1,16 @@
+pattern_id: ASRP-AP-CAPEC-001
+name: Real-World Adversary Attack Scenarios & Patterns
+version: 1.0
+
+scenarios:
+  - id: SCEN-01
+    name: BOLA Exploitation on Healthcare Patient API
+    target_vulnerability: CWE-639 (BOLA / IDOR)
+    attack_vector: Adversary authenticates as regular patient (ID: 101) and modifies GraphQL query argument to request getPatient(patientId: 999), dumping ePHI data due to missing ownership authorization check.
+    mitigation: Enforce hospital tenant & session user ID authorization in GraphQL Resolver.
+
+  - id: SCEN-02
+    name: AWS Access Key Leak via Git Commit History
+    target_vulnerability: CWE-798 (Hardcoded Credentials)
+    attack_vector: Developer commits AWS_SECRET_ACCESS_KEY into codebase. Automated bot scripts scrape repository within 5 minutes and launch unauthorized EC2 crypto-mining instances.
+    mitigation: Revoke key immediately on AWS IAM console, use git-filter-repo, and migrate to IAM Roles.

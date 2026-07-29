@@ -1,0 +1,39 @@
+checklist_id: ASRP-CHK-INJ-001
+name: Input Validation & Code Injection Review Checklist
+domain: 2.2.4 Input Validation
+applicable_technologies: [nodejs, python, java, go, php, dotnet, sql, mongodb]
+standard_references:
+  owasp_top10_2021: [A03:2021-Injection, A08:2021-Software and Data Integrity Failures]
+  cwe: [CWE-89, CWE-78, CWE-22, CWE-79, CWE-502]
+  asvs_v4: [V5.1.1, V5.3.1, V5.3.4, V5.3.8, V5.5.1]
+
+checklist_items:
+  - item_id: INJ-CHK-01
+    title: SQL & NoSQL Injection Prevention
+    verification_requirement: Ensure database queries use parameterized prepared statements or ORM binding instead of string concatenation or template literal formatting with untrusted inputs.
+    severity: CRITICAL
+    rule_mapping: ASRP-INJ-001
+
+  - item_id: INJ-CHK-02
+    title: OS Command Injection Prevention
+    verification_requirement: Verify system command executions avoid invoking subshells with unescaped string concatenation; use parameter array execution functions (execFile/execFileAsync).
+    severity: CRITICAL
+    rule_mapping: ASRP-INJ-002
+
+  - item_id: INJ-CHK-03
+    title: Path Traversal & Unsafe File Access
+    verification_requirement: Check that file system read/write operations sanitize path inputs using path.basename() and verify destination paths remain strictly within target root directory bounds.
+    severity: HIGH
+    rule_mapping: ASRP-PATH-001
+
+  - item_id: INJ-CHK-04
+    title: Cross-Site Scripting (XSS) Prevention
+    verification_requirement: Ensure HTML/GraphQL/JSON server responses containing user input undergo proper HTML entity encoding or DOM sanitization before rendering.
+    severity: HIGH
+    rule_mapping: ASRP-XSS-001
+
+  - item_id: INJ-CHK-05
+    title: Insecure Deserialization Safeguards
+    verification_requirement: Verify binary or object deserialization uses safe JSON/Protobuf parsers instead of unsafe pickle, yaml.load(), or native object streams.
+    severity: CRITICAL
+    rule_mapping: ASRP-DESER-001

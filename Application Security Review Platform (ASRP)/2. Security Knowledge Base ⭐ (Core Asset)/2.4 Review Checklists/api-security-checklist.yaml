@@ -1,0 +1,33 @@
+checklist_id: ASRP-CHK-API-001
+name: API Security & Business Logic Review Checklist
+domain: 2.2.8 API Security
+applicable_technologies: [nestjs, express, fastapi, spring-boot, django, graphql, REST]
+standard_references:
+  owasp_api_top10_2023: [API1:2023-BOLA, API2:2023-Broken Authentication, API3:2023-BOPLA, API4:2023-Unrestricted Resource Consumption, API7:2023-Server Side Request Forgery]
+  cwe: [CWE-639, CWE-284, CWE-770, CWE-918]
+  asvs_v4: [V4.1.1, V5.2.6, V13.2.1]
+
+checklist_items:
+  - item_id: API-CHK-01
+    title: Broken Object Level Authorization (BOLA / IDOR)
+    verification_requirement: Verify every API endpoint that accepts a resource identifier (ID parameter) checks if the authenticated session user has ownership or explicit permission to access that specific object ID.
+    severity: CRITICAL
+    rule_mapping: ASRP-AI-001
+
+  - item_id: API-CHK-02
+    title: Unrestricted Resource Consumption & Rate Limiting
+    verification_requirement: Ensure endpoints performing expensive operations (DB queries, file generation, SMS/Email sending) enforce rate limiting and maximum page size limits.
+    severity: HIGH
+    rule_mapping: ASRP-MISCFG-001
+
+  - item_id: API-CHK-03
+    title: Server-Side Request Forgery (SSRF) in Outbound Webhooks/APIs
+    verification_requirement: Ensure any user-supplied URL used for webhooks or external HTTP requests is validated against a strict domain whitelist and blocks internal IP ranges (127.0.0.1, 169.254.169.254, 10.0.0.0/8).
+    severity: HIGH
+    rule_mapping: ASRP-SSRF-001
+
+  - item_id: API-CHK-04
+    title: Permissive CORS Configuration
+    verification_requirement: Ensure CORS configuration does not specify Access-Control-Allow-Origin wildcard '*' when Access-Control-Allow-Credentials is set to true.
+    severity: MEDIUM
+    rule_mapping: ASRP-MISCFG-002

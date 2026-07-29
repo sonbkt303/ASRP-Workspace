@@ -1,0 +1,27 @@
+checklist_id: ASRP-CHK-SESS-001
+name: Session Management & Data Protection Review Checklist
+domain: 2.2.3 Session Management & Data Protection
+applicable_technologies: [jwt, cookies, redis, nestjs, express, spring-boot, oauth2]
+standard_references:
+  owasp_top10_2021: [A02:2021-Cryptographic Failures, A07:2021-Identification and Authentication Failures]
+  cwe: [CWE-384, CWE-613, CWE-319, CWE-312]
+  asvs_v4: [V3.1.1, V3.2.1, V3.4.1, V6.2.1]
+
+checklist_items:
+  - item_id: SESS-CHK-01
+    title: Secure Cookie Attributes (HttpOnly, Secure, SameSite)
+    verification_requirement: Ensure session and auth tokens stored in cookies enforce HttpOnly=true, Secure=true (HTTPS only), and SameSite=Lax/Strict flags.
+    severity: HIGH
+    rule_mapping: ASRP-MISCFG-002
+
+  - item_id: SESS-CHK-02
+    title: JWT Validation & Signature Verification
+    verification_requirement: Verify JWT tokens explicitly enforce strong signing algorithms (RS256/HS256) and reject 'none' algorithm or unverified token signatures.
+    severity: CRITICAL
+    rule_mapping: ASRP-SEC-004
+
+  - item_id: SESS-CHK-03
+    title: Sensitive Data Leakage in Transit & At Rest
+    verification_requirement: Ensure sensitive data (PII, passwords, credit card numbers) is encrypted at rest using AES-256-GCM and encrypted in transit via TLS 1.3.
+    severity: HIGH
+    rule_mapping: ASRP-CRYPTO-001

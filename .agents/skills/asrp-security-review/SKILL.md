@@ -69,47 +69,75 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
 
 ## Step 2: AI-Driven Security Scanning & Verification (Layer 3.4 & 3.6)
 
-### 1. Context & Scope Loading & Rule Resolution
-1. Access Layer 1 profiles in `1. Projects Registry/{project_id}/`:
-   - Read `components.yaml` and `scope.yaml` to identify target component directories, `scan_paths`, and mandatory `exclude_paths`.
-   - Read `technologies.yaml` and `assessment.yaml` to load resolved `rule_set_ids` and security standards.
-   - Read Layer 2 Rule Library catalog from `2. Security Knowledge Base ⭐ (Core Asset)/2.3 Rule Library/index.yaml` (currently 19 core executable rules).
-2. Resolve enabled `rule_id` entries matching project `rule_set_ids`.
+### 1. Multi-Module Knowledge Base Scope Loading
+1. Load Layer 1 Security Matrix (`standards`, `security_domains`, `rule_set_ids`, `checklists`).
+2. Load Layer 2 knowledge base artifacts from:
+   - `2.1 Security Standards` (OWASP ASVS v4.0, OWASP Top 10 2021, NIST SSDF, CWE Top 25, CIS Benchmarks)
+   - `2.2 Security Domains` (11 core security domains)
+   - `2.3 Rule Library/index.yaml` (currently 19 core executable rules)
+   - `2.4 Review Checklists` (Domain & architecture review checklists)
+   - `2.9 Attack Patterns` (CAPEC attack scenarios)
 
-### 2. Primary AI Contextual Code Audit
-AI Agent performs direct contextual security analysis on in-scope source code in `clones/{project_id}/{component_id}/`:
-- **Business Logic & Access Control:** BOLA / IDOR, broken object-level authorization, authentication bypass.
-- **Injection & Input Validation:** SQL/NoSQL Injection, Command Injection, Path Traversal, SSRF, XSS.
-- **Data Protection & Cryptography:** Hardcoded secrets/tokens, weak hashing/encryption, unsafe deserialization.
-- **Security Misconfigurations:** Debug modes enabled, CORS wildcards, permissive CORS, insecure defaults.
-- **Container & IaC Security:** Dockerfile root execution, unpinned base images, permissive K8s securityContext.
+### 2. Multi-Dimensional AI Code Audit & Checklist Verification
+AI Agent performs direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/`:
+- **Layer 2.3 Static & AI Rules:** Run executable rules across engines.
+- **Layer 2.4 Review Checklists:** Systematically evaluate checklist items per enabled Security Domain (Authz, BOLA check, Session invalidation, Cryptography key rotation).
+- **Layer 2.1 Standards Verification:** Verify compliance against OWASP ASVS v4.0 requirements.
+- **Layer 2.9 CAPEC Attack Scenarios:** Simulate attack patterns against endpoints & data flows.
 
 ### 3. Auxiliary Python CLI Tooling Integration
 Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) to gather supplementary static tool findings (`raw_outputs/`).
 
-### 4. Verification, Deduplication & Normalization (Layer 3.6)
-1. Cross-verify raw tool findings against AI contextual code analysis.
+### 4. Verification, Deduplication & Comprehensive Normalization (Layer 3.6)
+1. Cross-verify raw tool findings against AI contextual code analysis and Review Checklists.
 2. Eliminate False Positives and duplicate findings across engines.
-3. **STRICT RULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference a valid `rule_id` from Layer 2.3 (e.g. `ASRP-SEC-001`, `ASRP-INJ-001`, `ASRP-AI-001`) and inherit its standard severity, CWE, and OWASP mappings.
+3. **STRICT MULTI-MODULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference:
+   - Valid `rule_id` from Layer 2.3 (e.g. `ASRP-AI-001`, `ASRP-SEC-004`).
+   - `security_domain` from Layer 2.2 (e.g. `access_control`, `secrets`).
+   - Standard mappings from Layer 2.1 (CWE ID, OWASP Top 10 2021, OWASP ASVS v4.0).
+   - Corresponding Review Checklist item reference from Layer 2.4 (`review_checklist_ref`).
 4. Enrich verified findings with:
    - Severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`)
-   - Mandatory standard mappings: CWE ID, OWASP Top 10 2021, OWASP ASVS v4.0.
    - Precise file path, line numbers, and code snippet.
    - Root cause description and actionable code remediation guidance.
 5. Save normalized findings to:
    `1. Projects Registry/{project_id}/runs/{run_id}/findings.json`
 
-
 ### 5. Summary Output
 Output a clean, professional summary table of discovered vulnerabilities categorized by severity, engine source, and target component.
+
 
 ---
 
 ## Step 3: Risk Assessment & Executive Reporting (Layer 3.7 & Layer 5)
-*(To be executed when report generation is triggered)*
 
----
+### 1. Input Data Loading
+1. Access target run directory: `1. Projects Registry/{project_id}/runs/{run_id}/`.
+2. Load verified findings: `findings.json` (from Step 2).
+3. Load project context: `context.yaml`, `project.yaml`, `architecture.yaml` (from Step 1).
 
-### Summary Output
-Output a clean, highly professional summary table of the executed step results, auto-discovered tech stack, selected security standards, and updated output files.
+### 2. Layer 3.7 Risk Assessment Engine Execution
+Calculate Security Health Score and Risk Metrics:
+- **Health Score Calculation (0 - 100):** Deduct severity weights from 100 base score (`CRITICAL`: -25, `HIGH`: -10, `MEDIUM`: -5, `LOW`: -2).
+- **Security Grade Assignment:**
+  - `Grade A`: 90 - 100 (Pass)
+  - `Grade B`: 80 - 89 (Pass)
+  - `Grade C`: 70 - 79 (Conditional)
+  - `Grade D`: 50 - 69 (Action Required)
+  - `Grade F`: < 50 (Fail / Critical Risk)
+- **Gate Status Evaluation:** Mark status as `PASSED` or `ACTION REQUIRED`.
+- **SLA Remediation Roadmap Creation:**
+  - `Phase 1 (Immediate SLA 24-48h)`: Critical & High secrets / RCE / Injection flaws.
+  - `Phase 2 (Short-term SLA 7d)`: High severity access control & dependency flaws.
+  - `Phase 3 (Maintenance SLA 30d)`: Medium severity misconfigurations.
+- Save output to: `1. Projects Registry/{project_id}/runs/{run_id}/risk_assessment.json`.
+
+### 3. Layer 5 Report Generation Execution
+Invoke Python report generator `python asrp.py status --project {project_id}` or `ReportGenerator` module to build:
+1. **Markdown Report:** `1. Projects Registry/{project_id}/runs/{run_id}/security_review_report.md`
+2. **Executive HTML Dashboard:** `1. Projects Registry/{project_id}/runs/{run_id}/security_review_report.html`
+
+### 4. Summary Output
+Output a clean, professional executive summary table including Security Health Score, Grade, Rating, Gate Status, SLA Roadmap breakdown, and clickable links to the generated HTML & Markdown reports.
+
 

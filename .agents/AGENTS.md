@@ -46,7 +46,17 @@
   - `full` / `review`: Thực hiện lần lượt toàn bộ 3 bước.
 ## ASRP Strict Rule Library Traceability Guardrail
 
-- **Strict Rule ID Traceability:** Trong quá trình thực hiện Step 2 (`scan`), 100% kết quả phát hiện lỗ hổng (findings trong `findings.json`) BẮT BUỘC phải quy chiếu và tuân thủ chặt chẽ theo đúng mã `rule_id` đã được khai báo và kích hoạt trong Layer 2.3 Rule Library (`index.yaml`). AI Agent tuyệt đối không tự tạo mã rule ID ngẫu nhiên không thuộc thư viện quy tắc chuẩn của hệ thống.
+## ASRP Layer 2 Multi-Module Knowledge Base Scanning Guardrail
+
+## ASRP Layer 2 Knowledge Base Pre-Building Guardrail
+
+- **Pre-Scan Knowledge Base Completeness:** Trước khi tiến hành quét mã nguồn (Step 2), AI Agent BẮT BUỘC phải chủ động rà soát và xây dựng đầy đủ các bộ Tiêu chuẩn (Layer 2.1), Miền An ninh (Layer 2.2), Checklist kiểm thử (Layer 2.4), Playbooks (Layer 2.5) và Threat Models (Layer 2.6). AI Agent không thực hiện quét rỗng khi chưa có tri thức checklist và quy chuẩn đối soát cụ thể.
+
+## ASRP Autonomous Non-Destructive CLI Execution Guardrail
+
+- **Autonomous CLI Operations:** AI Agent được quyền tự động thực thi các câu lệnh CLI Python `python asrp.py` không gây phá hủy (`validate`, `status`, `rules`, `scan`, `acquire`) trong workspace để phục vụ kiểm thử và vận hành hệ thống một cách chủ động mà không cần yêu cầu người dùng phê duyệt từng lệnh.
+
+
 
 
 

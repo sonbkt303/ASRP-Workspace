@@ -1,0 +1,27 @@
+checklist_id: ASRP-CHK-CFG-001
+name: Configuration & Hardening Security Checklist
+domain: 2.2.9 Configuration Security
+applicable_technologies: [nginx, apache, docker, kubernetes, aws, azure, gcp, nestjs, express, django]
+standard_references:
+  owasp_top10_2021: [A05:2021-Security Misconfiguration]
+  cwe: [CWE-16, CWE-215, CWE-1004]
+  asvs_v4: [V14.3.1, V14.4.1]
+
+checklist_items:
+  - item_id: CFG-CHK-01
+    title: HTTP Security Response Headers Hardening
+    verification_requirement: Verify web servers and application middleware enforce Content-Security-Policy (CSP), Strict-Transport-Security (HSTS), X-Content-Type-Options (nosniff), and X-Frame-Options (DENY/SAMEORIGIN).
+    severity: HIGH
+    rule_mapping: ASRP-MISCFG-002
+
+  - item_id: CFG-CHK-02
+    title: Disabling Server Tokens & Banner Grabbing
+    verification_requirement: Check that web server banners (Server: nginx/1.18.0, X-Powered-By: Express/NestJS) are stripped to prevent adversary technology fingerprinting.
+    severity: LOW
+    rule_mapping: ASRP-MISCFG-001
+
+  - item_id: CFG-CHK-03
+    title: Production Environment Isolation & Debug Flag Removal
+    verification_requirement: Verify application runtime configurations (NODE_ENV=production, DEBUG=false) ensure debugging tools, Swagger UI, and diagnostic endpoints are disabled or restricted in production.
+    severity: HIGH
+    rule_mapping: ASRP-MISCFG-001

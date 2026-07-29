@@ -1,0 +1,16 @@
+adr_id: ASRP-ADR-001
+name: ASRP Platform Architecture Decision Records (ADR)
+version: 1.0
+
+decisions:
+  - adr_number: ADR-001
+    title: Adoption of AI-Primary Contextual Code Reviewer Model
+    status: Accepted
+    context: Static analysis tools produce high false positives and miss business logic flaws (BOLA/IDOR).
+    decision: AI Agent acts as Primary Code Audit Engine, using CLI static tools (Gitleaks, Semgrep, Trivy) as auxiliary data providers.
+
+  - adr_number: ADR-002
+    title: Mandatory Multi-Module Layer 2 Knowledge Base Traceability
+    status: Accepted
+    context: Security findings must map to international standards, domain classifications, and review checklists.
+    decision: 100% of findings in findings.json must trace back to Layer 2.1 Standards, Layer 2.2 Domains, Layer 2.3 Rules, and Layer 2.4 Review Checklists.

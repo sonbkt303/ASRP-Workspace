@@ -1,0 +1,22 @@
+checklist_id: ASRP-CHK-INFRA-001
+name: Container & Infrastructure Security Checklist
+domain: 2.2.13 Infrastructure Security
+applicable_technologies: [docker, kubernetes, terraform, cloudformation]
+standard_references:
+  cis_benchmarks: [CIS Docker Benchmark v1.6.0, CIS Kubernetes Benchmark v1.8.0]
+  owasp_top10_2021: [A05:2021-Security Misconfiguration]
+  cwe: [CWE-250, CWE-269]
+  asvs_v4: [V14.1.1]
+
+checklist_items:
+  - item_id: INFRA-CHK-01
+    title: Non-Root Execution in Containers
+    verification_requirement: Verify Dockerfile configurations explicitly define a non-root USER instruction (e.g. USER node) to prevent container processes running with host root privileges.
+    severity: HIGH
+    rule_mapping: ASRP-TRIVY-001
+
+  - item_id: INFRA-CHK-02
+    title: Outdated and Vulnerable Base Images & Dependencies
+    verification_requirement: Ensure container base images and package manager lockfiles rely on actively maintained LTS releases without critical CVE vulnerabilities.
+    severity: HIGH
+    rule_mapping: ASRP-SCA-001

@@ -1,0 +1,27 @@
+playbook_id: ASRP-PLY-001
+name: Application Security Review Execution Playbook
+version: 1.0
+description: Standard operational procedure for executing AI end-to-end security audits.
+
+phases:
+  - phase_id: P1
+    name: Phase 1 - Source Acquisition & Layer 1 AI Profiling
+    actions:
+      - Acquire source code persistently at 3.1 Source Acquisition/clones/{project_id}/{component_id}/.
+      - Execute AI Auto-Profiling to generate 8 Layer 1 YAML profiles following 1.1 Template schemas.
+      - Verify manifest hash using python asrp.py validate --project {project_id}.
+
+  - phase_id: P2
+    name: Phase 2 - Multi-Module Knowledge Base Audit & Scanning
+    actions:
+      - Load Layer 2.1 Standards, Layer 2.2 Domains, Layer 2.3 Executable Rules, and Layer 2.4 Checklists.
+      - Conduct AI Primary Contextual Code Audit for BOLA, Injection, Secrets, and Logic flaws.
+      - Execute auxiliary CLI scanner python asrp.py scan --project {project_id}.
+      - Deduplicate and normalize findings into findings.json.
+
+  - phase_id: P3
+    name: Phase 3 - Risk Assessment & Executive Reporting
+    actions:
+      - Calculate Security Health Score (0-100), Grade (A-F), and Gate Status.
+      - Build SLA Remediation Roadmap in risk_assessment.json.
+      - Generate executive HTML Dashboard (security_review_report.html) and Markdown report.

@@ -1,0 +1,16 @@
+case_study_id: ASRP-CS-001
+name: Real-World Security Incident Case Studies & Root Cause Analysis
+version: 1.0
+
+case_studies:
+  - id: CS-01
+    title: Healthcare ePHI Leak via Unprotected API Resolver
+    impact: Critical PII/ePHI Data Breach
+    root_cause: Lack of tenant authorization check in GraphQL endpoint accepting client-supplied patient ID.
+    lessons_learned: Always enforce automated BOLA/IDOR checks in CI/CD pipeline before releasing healthcare microservices.
+
+  - id: CS-02
+    title: Cloud Infrastructure Hijack via Hardcoded Credentials
+    impact: $50,000 unauthorized cloud resource consumption
+    root_cause: AWS secret key hardcoded in config file committed to public repository.
+    lessons_learned: Mandate secret scanning (Gitleaks) on pre-commit hooks and enforce short-lived IAM roles.

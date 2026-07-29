@@ -1,0 +1,27 @@
+checklist_id: ASRP-CHK-SCA-001
+name: Dependency & Software Supply Chain Security Checklist
+domain: 2.2.7 Dependency Management
+applicable_technologies: [npm, pnpm, yarn, pip, poetry, maven, gradle, go-modules, github-actions]
+standard_references:
+  owasp_top10_2021: [A06:2021-Vulnerable and Outdated Components, A08:2021-Software and Data Integrity Failures]
+  cwe: [CWE-1104, CWE-1395]
+  asvs_v4: [V14.2.3, V14.2.4]
+
+checklist_items:
+  - item_id: SCA-CHK-01
+    title: Vulnerable Dependency Scanning (SCA)
+    verification_requirement: Ensure third-party libraries and transitive dependencies are continuously audited against vulnerability databases (CVE/NVD/GHSA) and contain no Critical/High vulnerabilities.
+    severity: HIGH
+    rule_mapping: ASRP-SCA-001
+
+  - item_id: SCA-CHK-02
+    title: Package Lockfile & Integrity Hash Verification
+    verification_requirement: Check that package manager lockfiles (package-lock.json, pnpm-lock.yaml, yarn.lock) are committed and enforce SHA-512 subresource integrity verification during build.
+    severity: HIGH
+    rule_mapping: ASRP-SCA-001
+
+  - item_id: SCA-CHK-03
+    title: CI/CD Third-Party Action & Pipeline Pinning
+    verification_requirement: Verify GitHub Actions or CI/CD pipelines pin third-party actions to immutable full 40-character commit SHAs rather than mutable version tags.
+    severity: MEDIUM
+    rule_mapping: ASRP-MISCFG-001

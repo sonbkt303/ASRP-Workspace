@@ -1,0 +1,27 @@
+checklist_id: ASRP-CHK-BIZ-001
+name: File Upload & Business Logic Security Review Checklist
+domain: 2.2.11 File Upload & 2.2.12 Business Logic Security
+applicable_technologies: [nestjs, express, spring-boot, django, aws-s3, minio, multer]
+standard_references:
+  owasp_top10_2021: [A01:2021-Broken Access Control, A04:2021-Insecure Design]
+  cwe: [CWE-434, CWE-840, CWE-362]
+  asvs_v4: [V11.1.1, V12.1.1, V12.4.1]
+
+checklist_items:
+  - item_id: BIZ-CHK-01
+    title: File Extension & MIME Type Whitelisting
+    verification_requirement: Check that file upload handlers validate file extension and magic byte signatures against a strict whitelist (e.g. .jpg, .png, .pdf) and prevent execution of uploaded scripts (.php, .jsp, .exe, .sh).
+    severity: CRITICAL
+    rule_mapping: ASRP-PATH-001
+
+  - item_id: BIZ-CHK-02
+    title: Storage Isolation & Non-Executable Upload Directories
+    verification_requirement: Ensure uploaded files are stored outside web server root or in dedicated object storage (AWS S3) with public access blocked and execution permissions revoked.
+    severity: HIGH
+    rule_mapping: ASRP-MISCFG-001
+
+  - item_id: BIZ-CHK-03
+    title: Business Logic & Workflow State Validation
+    verification_requirement: Ensure multi-step workflows (payment processing, order checkout, approval flows) enforce strict state validation and prevent price/quantity manipulation.
+    severity: HIGH
+    rule_mapping: ASRP-AI-001

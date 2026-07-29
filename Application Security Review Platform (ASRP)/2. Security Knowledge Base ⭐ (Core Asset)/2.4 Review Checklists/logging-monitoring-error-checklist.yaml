@@ -1,0 +1,27 @@
+checklist_id: ASRP-CHK-LOG-001
+name: Logging, Monitoring & Error Handling Review Checklist
+domain: 2.2.10 Logging & Monitoring
+applicable_technologies: [winston, log4j, loguru, slf4j, morgan, Sentry]
+standard_references:
+  owasp_top10_2021: [A05:2021-Security Misconfiguration, A09:2021-Security Logging and Monitoring Failures]
+  cwe: [CWE-209, CWE-532, CWE-117]
+  asvs_v4: [V7.1.1, V7.4.1, V14.3.1]
+
+checklist_items:
+  - item_id: LOG-CHK-01
+    title: Production Debug Mode & Stack Trace Masking
+    verification_requirement: Verify application debug flags (DEBUG=true, mongoose.set('debug', true)) are disabled in staging/production environments and error handlers mask verbose stack traces from HTTP responses.
+    severity: MEDIUM
+    rule_mapping: ASRP-MISCFG-001
+
+  - item_id: LOG-CHK-02
+    title: PII & Credential Sanitization in Application Logs
+    verification_requirement: Check that logging frameworks scrub or mask sensitive fields (passwords, credit card numbers, JWT tokens, AWS keys) before writing to stdout or log files.
+    severity: HIGH
+    rule_mapping: ASRP-SEC-004
+
+  - item_id: LOG-CHK-03
+    title: Audit Logging for Security Events
+    verification_requirement: Ensure critical security events (login attempts, privilege escalation, password resets, data deletion) generate immutable audit logs with timestamp, user ID, and IP address.
+    severity: HIGH
+    rule_mapping: ASRP-AI-001

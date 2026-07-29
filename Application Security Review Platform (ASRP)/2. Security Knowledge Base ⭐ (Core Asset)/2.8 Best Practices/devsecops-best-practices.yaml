@@ -1,0 +1,14 @@
+practice_id: ASRP-BP-DEVSECOPS-001
+name: Cloud-Native DevSecOps Best Practices
+version: 1.0
+
+practices:
+  - id: BP-01
+    name: Shift-Left AI & SAST Security Scanning
+    description: Automate security reviews at PR creation time using AI contextual code audit and SAST scanners.
+  - id: BP-02
+    name: Immutable Infrastructure & Non-Root Containers
+    description: Package microservices into minimal alpine/distroless container images running under unprivileged service accounts.
+  - id: BP-03
+    name: Zero-Trust Network Architecture
+    description: Enforce mTLS between internal microservices and block all unauthenticated east-west traffic.
