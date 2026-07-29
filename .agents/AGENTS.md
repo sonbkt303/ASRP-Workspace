@@ -35,6 +35,9 @@
 - **Mandatory Excluded Paths:**
   - Dependencies & Build Artifacts: `node_modules`, `vendor`, `dist`, `build`, `out`, `coverage`, `.pnpm-store`
   - Tooling & IDE Configurations: `.vscode`, `.idea`, `.devcontainer`, `.husky`, `.github`, `.agents`
-  - System, Logs & Temp Files: `.git`, `yarn-error.log`, `npm-debug.log`, `*.log`, `tmp`, `temp`
+  ## ASRP Stack-Aware Security Standards Auto-Selection Guardrail
+
+- **Mandatory Intelligent Rule & Standard Selection:** Khi thực hiện Step 1 (AI Auto-Profiling), AI Agent BẮT BUỘC phải đọc toàn bộ mã nguồn, cấu hình (`package.json`, `Dockerfile`, framework, database) và domain nghiệp vụ để tự động lựa chọn & mapping chính xác danh sách Security Standards & Rule Sets từ `2.1 Security Standards` vào `technologies.yaml` (`rule_set_ids`) và `assessment.yaml` (`rule_sets`). Tuyệt đối không để trống hoặc bỏ qua bước tự động chọn quy tắc theo tech stack.
+
 
 

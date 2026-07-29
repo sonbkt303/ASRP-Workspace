@@ -41,6 +41,12 @@ Analyze the discovered code, tech stack, and business domain to select optimal s
 - **CIS Benchmarks** (Kubernetes, Docker & Container Hardening)
 - **Internal Standards** (HIPAA, GDPR, PCI-DSS, ISO 27001 Domain Compliance)
 
+**STRICT COMPLIANCE MANDATE:**
+AI Agent MUST automatically write and map the selected standard IDs into:
+1. `technologies.yaml` -> `technologies[].rule_set_ids` (mapped specifically per component tech stack).
+2. `assessment.yaml` -> `assessment.rule_sets` (aggregated project-wide security standards).
+
+
 ### 4. Non-Destructive Merging into Layer 1 Profiles
 Update profile YAML files in `1. Projects Registry/{project_id}/` following template schemas from `1. Projects Registry/1.1 Template`:
 - **CRITICAL SAFE MERGE RULE:** When updating a specific sub-repo/component (e.g. `dent-api-nestjs`), update or append ONLY its entry in `components.yaml` and `technologies.yaml`. **DO NOT overwrite, wipe, or affect existing other components** (e.g., preserve `dent-monorepo` intact).
