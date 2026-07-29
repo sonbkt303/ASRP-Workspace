@@ -16,6 +16,10 @@ When the user asks to run review or profile a project or specific component (e.g
 2. Check if a specific target component/sub-repo is specified (e.g., `dent-api-nestjs`):
    - **If specific component requested:** Focus inspection ONLY on `clones/{project_id}/{target_component_id}/`.
    - **If entire project requested:** Discover and inspect all component subdirectories under `clones/{project_id}/`.
+3. **RESOURCE OPTIMIZATION EXCLUSION RULE:**
+   - Always exclude non-essential folders and files that do not contain project source code: `node_modules`, `.devcontainer`, `.husky`, `.vscode`, `.idea`, `.github`, `.agents`, `dist`, `build`, `coverage`, `.pnpm-store`, `yarn-error.log`, `.git`, `tmp`, `temp`.
+   - Populating `exclude_paths` in `components.yaml` and `out_of_scope_paths` in `scope.yaml` is MANDATORY to prevent AI orchestrator and SAST tools from wasting CPU, memory, and LLM context resources on non-project artifacts.
+
 
 ### 2. Deep Component Code & Stack Inspection
 Deep-dive into the target component's repository and inspect structural configuration files:

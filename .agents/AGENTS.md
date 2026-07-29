@@ -25,6 +25,16 @@
 2. **Layer 1 AI Auto-Profiling:** AI tự đọc mã nguồn clone để tự động sinh 100% tệp Hồ sơ Dự án Layer 1 theo template `1.1 Template` (Không nhập thủ công YAML).
 3. **Layer 3.4/3.6 AI Orchestrated Scan:** AI tự chọn Tooling/Rules, lọc False Positives và xuất dữ liệu chuẩn `findings.json`.
 4. **Layer 3.7/5 Risk & Reporting:** Tự động tính điểm Health Score, lập lộ trình SLA và xuất Executive HTML Dashboard.
+## ASRP Strict Skill Execution & AI Workflow Guardrail
 
+- **Strict Skill Step-by-Step Compliance:** Khi nhận câu lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC phải tuân thủ nghiêm ngặt từng bước chi tiết được mô tả trong `SKILL.md` (bắt đầu bằng Step 1: AI Auto-Profiling & Layer 1 Registry Generation từ mã nguồn clone). Không tự ý bỏ qua bước hoặc thực hiện lệnh CLI tắt nếu chưa hoàn tất đúng quy trình chỉ định.
+
+## ASRP Resource Optimization & Non-Essential Exclusion Guardrail
+
+- **Strict Non-Essential Path Exclusion:** Khi thực hiện AI Auto-Profiling, Rule Resolution hoặc Scanner Orchestration, AI Agent & Scanner Orchestrator BẮT BUỘC phải loại trừ hoàn toàn các thư mục/tệp phụ trợ không trực tiếp chứa mã nguồn nghiệp vụ để tối ưu tài nguyên tính toán (avoid unnecessary token & CPU resource consumption).
+- **Mandatory Excluded Paths:**
+  - Dependencies & Build Artifacts: `node_modules`, `vendor`, `dist`, `build`, `out`, `coverage`, `.pnpm-store`
+  - Tooling & IDE Configurations: `.vscode`, `.idea`, `.devcontainer`, `.husky`, `.github`, `.agents`
+  - System, Logs & Temp Files: `.git`, `yarn-error.log`, `npm-debug.log`, `*.log`, `tmp`, `temp`
 
 
