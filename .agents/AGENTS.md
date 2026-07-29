@@ -37,7 +37,18 @@
   - Tooling & IDE Configurations: `.vscode`, `.idea`, `.devcontainer`, `.husky`, `.github`, `.agents`
   ## ASRP Stack-Aware Security Standards Auto-Selection Guardrail
 
-- **Mandatory Intelligent Rule & Standard Selection:** Khi thực hiện Step 1 (AI Auto-Profiling), AI Agent BẮT BUỘC phải đọc toàn bộ mã nguồn, cấu hình (`package.json`, `Dockerfile`, framework, database) và domain nghiệp vụ để tự động lựa chọn & mapping chính xác danh sách Security Standards & Rule Sets từ `2.1 Security Standards` vào `technologies.yaml` (`rule_set_ids`) và `assessment.yaml` (`rule_sets`). Tuyệt đối không để trống hoặc bỏ qua bước tự động chọn quy tắc theo tech stack.
+## ASRP Modular Step Execution & AI-Primary Scanning Guardrail
+
+- **Modular Independent Step Execution:** Khi nhận câu lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC hỗ trợ thực thi độc lập từng bước tùy theo tham số/yêu cầu của người dùng:
+  - `profile` (hoặc `step 1`): Chỉ thực hiện Step 1 (AI Auto-Profiling & Layer 1 Profile Generation).
+  - `scan` (hoặc `step 2`): Chỉ thực hiện Step 2 (AI-Primary Security Scanning & Verification từ nguồn clone).
+  - `report` (hoặc `step 3`): Chỉ thực hiện Step 3 (Risk Assessment & Executive HTML/MD Report Generation).
+  - `full` / `review`: Thực hiện lần lượt toàn bộ 3 bước.
+## ASRP Strict Rule Library Traceability Guardrail
+
+- **Strict Rule ID Traceability:** Trong quá trình thực hiện Step 2 (`scan`), 100% kết quả phát hiện lỗ hổng (findings trong `findings.json`) BẮT BUỘC phải quy chiếu và tuân thủ chặt chẽ theo đúng mã `rule_id` đã được khai báo và kích hoạt trong Layer 2.3 Rule Library (`index.yaml`). AI Agent tuyệt đối không tự tạo mã rule ID ngẫu nhiên không thuộc thư viện quy tắc chuẩn của hệ thống.
+
+
 
 
 

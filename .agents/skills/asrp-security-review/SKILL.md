@@ -5,7 +5,12 @@ description: Execute the full 4-step AI End-to-End Security Review workflow for 
 
 # ASRP AI Security Review Skill Workflow
 
-When the user asks to run review or profile a project or specific component (e.g. `cleverdent` or sub-repo `dent-api-nestjs` of project `cleverdent`), the AI Agent executes the workflow sequentially:
+## Step Invocation & Routing
+AI Agent supports running steps independently or as a complete workflow:
+- **Command `/asrp-security-review profile [project_id]`** (or `step 1`): Runs **Step 1 ONLY** (Layer 1 AI Auto-Profiling & Registry Generation).
+- **Command `/asrp-security-review scan [project_id]`** (or `step 2`): Runs **Step 2 ONLY** (AI-Primary Security Scanning & Verification using Layer 1 profiles as input).
+- **Command `/asrp-security-review report [project_id]`** (or `step 3`): Runs **Step 3 ONLY** (Risk Assessment & Executive HTML/MD Report Generation using `findings.json` as input).
+- **Command `/asrp-security-review review [project_id]`** (or `full` / default): Runs **Full Workflow (Step 1 -> Step 2 -> Step 3)**.
 
 ---
 
@@ -62,8 +67,41 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
 
 ---
 
-## Step 2: AI-Orchestrated Security Scanning & Verification (Layer 3.4 & 3.6)
-*(To be executed when scan phase is triggered)*
+## Step 2: AI-Driven Security Scanning & Verification (Layer 3.4 & 3.6)
+
+### 1. Context & Scope Loading & Rule Resolution
+1. Access Layer 1 profiles in `1. Projects Registry/{project_id}/`:
+   - Read `components.yaml` and `scope.yaml` to identify target component directories, `scan_paths`, and mandatory `exclude_paths`.
+   - Read `technologies.yaml` and `assessment.yaml` to load resolved `rule_set_ids` and security standards.
+   - Read Layer 2 Rule Library catalog from `2. Security Knowledge Base ⭐ (Core Asset)/2.3 Rule Library/index.yaml` (currently 19 core executable rules).
+2. Resolve enabled `rule_id` entries matching project `rule_set_ids`.
+
+### 2. Primary AI Contextual Code Audit
+AI Agent performs direct contextual security analysis on in-scope source code in `clones/{project_id}/{component_id}/`:
+- **Business Logic & Access Control:** BOLA / IDOR, broken object-level authorization, authentication bypass.
+- **Injection & Input Validation:** SQL/NoSQL Injection, Command Injection, Path Traversal, SSRF, XSS.
+- **Data Protection & Cryptography:** Hardcoded secrets/tokens, weak hashing/encryption, unsafe deserialization.
+- **Security Misconfigurations:** Debug modes enabled, CORS wildcards, permissive CORS, insecure defaults.
+- **Container & IaC Security:** Dockerfile root execution, unpinned base images, permissive K8s securityContext.
+
+### 3. Auxiliary Python CLI Tooling Integration
+Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) to gather supplementary static tool findings (`raw_outputs/`).
+
+### 4. Verification, Deduplication & Normalization (Layer 3.6)
+1. Cross-verify raw tool findings against AI contextual code analysis.
+2. Eliminate False Positives and duplicate findings across engines.
+3. **STRICT RULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference a valid `rule_id` from Layer 2.3 (e.g. `ASRP-SEC-001`, `ASRP-INJ-001`, `ASRP-AI-001`) and inherit its standard severity, CWE, and OWASP mappings.
+4. Enrich verified findings with:
+   - Severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`)
+   - Mandatory standard mappings: CWE ID, OWASP Top 10 2021, OWASP ASVS v4.0.
+   - Precise file path, line numbers, and code snippet.
+   - Root cause description and actionable code remediation guidance.
+5. Save normalized findings to:
+   `1. Projects Registry/{project_id}/runs/{run_id}/findings.json`
+
+
+### 5. Summary Output
+Output a clean, professional summary table of discovered vulnerabilities categorized by severity, engine source, and target component.
 
 ---
 
@@ -73,4 +111,5 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
 ---
 
 ### Summary Output
-Output a clean, highly professional summary table of the profiled component(s), auto-discovered tech stack, selected security standards, and updated Layer 1 YAML files.
+Output a clean, highly professional summary table of the executed step results, auto-discovered tech stack, selected security standards, and updated output files.
+
