@@ -1,0 +1,14 @@
+domain_id: 2.2.8
+domain_code: api_security
+name: API & Web Service Security Domain
+description: REST and GraphQL API endpoint security, BOLA/IDOR verification, rate limiting, and SSRF defense.
+
+core_vulnerabilities:
+  - CWE-639  # BOLA / IDOR
+  - CWE-918  # SSRF
+  - CWE-770  # Unrestricted Resource Consumption
+
+layer2_mappings:
+  rule_ids: [ASRP-AI-001]
+  checklist_files: [api-security-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

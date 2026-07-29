@@ -1,0 +1,13 @@
+domain_id: 2.2.12
+domain_code: business_logic_security
+name: Business Logic & Workflow Security Domain
+description: State machine transition checks, parameter sequence validation, and rate limiting against automated business flow abuse.
+
+core_vulnerabilities:
+  - CWE-840  # Business Logic Errors
+  - CWE-362  # Race Conditions
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [file-upload-business-logic-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

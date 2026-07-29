@@ -1,0 +1,5 @@
+domain_id: 2.2.3
+domain_code: session_management
+name: Session Management Domain
+spec_file: domain-spec.yaml
+enabled: true

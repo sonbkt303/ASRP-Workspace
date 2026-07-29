@@ -1,0 +1,13 @@
+domain_id: 2.2.7
+domain_code: dependency_management
+name: Dependency & Supply Chain Security Domain
+description: Software Composition Analysis (SCA), vulnerable third-party package scanning, and lockfile integrity.
+
+core_vulnerabilities:
+  - CWE-1104 # Use of Unmaintained Component
+  - CWE-1395 # Dependency Confusion
+
+layer2_mappings:
+  rule_ids: [ASRP-TRIVY-001]
+  checklist_files: [dependency-supply-chain-checklist.yaml]
+  guidelines: [devsecops-best-practices.yaml]

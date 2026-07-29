@@ -1,0 +1,5 @@
+domain_id: 2.2.2
+domain_code: authorization
+name: Authorization & Access Control Domain
+spec_file: domain-spec.yaml
+enabled: true

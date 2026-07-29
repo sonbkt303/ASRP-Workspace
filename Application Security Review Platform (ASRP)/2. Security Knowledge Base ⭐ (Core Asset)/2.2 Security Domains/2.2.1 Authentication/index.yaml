@@ -1,0 +1,5 @@
+domain_id: 2.2.1
+domain_code: authentication
+name: Authentication Domain
+spec_file: domain-spec.yaml
+enabled: true

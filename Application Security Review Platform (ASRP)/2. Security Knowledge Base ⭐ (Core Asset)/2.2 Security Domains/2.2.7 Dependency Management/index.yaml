@@ -1,0 +1,5 @@
+domain_id: 2.2.7
+domain_code: dependency_management
+name: Dependency Management Domain
+spec_file: domain-spec.yaml
+enabled: true

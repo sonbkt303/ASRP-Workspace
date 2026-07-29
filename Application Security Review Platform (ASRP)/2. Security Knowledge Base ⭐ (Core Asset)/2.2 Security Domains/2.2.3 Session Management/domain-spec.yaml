@@ -1,0 +1,14 @@
+domain_id: 2.2.3
+domain_code: session_management
+name: Session Management Domain
+description: Cookie flag security (HttpOnly, Secure, SameSite), JWT validation, session timeout, and token revocation.
+
+core_vulnerabilities:
+  - CWE-384  # Session Fixation
+  - CWE-613  # Insufficient Session Expiration
+  - CWE-352  # CSRF
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [session-data-protection-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

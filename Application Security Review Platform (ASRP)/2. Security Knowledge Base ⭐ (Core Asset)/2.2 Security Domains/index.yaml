@@ -1,0 +1,98 @@
+domain_registry_metadata:
+  registry_id: ASRP-DOM-REGISTRY-001
+  name: ASRP Technical Security Domain Taxonomy Registry
+  version: 1.0.0
+  total_domains: 13
+  last_updated: "2026-07-29"
+
+domains:
+  - id: 2.2.1
+    code: authentication
+    name: Authentication Domain
+    path: 2.2.1 Authentication/index.yaml
+    spec_file: 2.2.1 Authentication/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.2
+    code: authorization
+    name: Authorization & Access Control Domain
+    path: 2.2.2 Authorization/index.yaml
+    spec_file: 2.2.2 Authorization/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.3
+    code: session_management
+    name: Session Management Domain
+    path: 2.2.3 Session Management/index.yaml
+    spec_file: 2.2.3 Session Management/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.4
+    code: input_validation
+    name: Input Validation & Injection Defense Domain
+    path: 2.2.4 Input Validation/index.yaml
+    spec_file: 2.2.4 Input Validation/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.5
+    code: cryptography
+    name: Cryptography & Encryption Domain
+    path: 2.2.5 Cryptography/index.yaml
+    spec_file: 2.2.5 Cryptography/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.6
+    code: secrets_management
+    name: Secrets & Credential Management Domain
+    path: 2.2.6 Secrets Management/index.yaml
+    spec_file: 2.2.6 Secrets Management/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.7
+    code: dependency_management
+    name: Dependency & Supply Chain Security Domain
+    path: 2.2.7 Dependency Management/index.yaml
+    spec_file: 2.2.7 Dependency Management/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.8
+    code: api_security
+    name: API & Web Service Security Domain
+    path: 2.2.8 API Security/index.yaml
+    spec_file: 2.2.8 API Security/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.9
+    code: configuration_security
+    name: Configuration & Hardening Domain
+    path: 2.2.9 Configuration Security/index.yaml
+    spec_file: 2.2.9 Configuration Security/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.10
+    code: logging_monitoring
+    name: Logging, Audit & Error Handling Domain
+    path: 2.2.10 Logging & Monitoring/index.yaml
+    spec_file: 2.2.10 Logging & Monitoring/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.11
+    code: file_upload_security
+    name: File Upload Security Domain
+    path: 2.2.11 File Upload Security/index.yaml
+    spec_file: 2.2.11 File Upload Security/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.12
+    code: business_logic_security
+    name: Business Logic & Workflow Security Domain
+    path: 2.2.12 Business Logic Security/index.yaml
+    spec_file: 2.2.12 Business Logic Security/domain-spec.yaml
+    enabled: true
+
+  - id: 2.2.13
+    code: infrastructure_security
+    name: Container & Infrastructure Security Domain
+    path: 2.2.13 Infrastructure Security/index.yaml
+    spec_file: 2.2.13 Infrastructure Security/domain-spec.yaml
+    enabled: true

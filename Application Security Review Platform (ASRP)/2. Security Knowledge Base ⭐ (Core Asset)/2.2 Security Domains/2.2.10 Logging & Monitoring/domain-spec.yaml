@@ -1,0 +1,14 @@
+domain_id: 2.2.10
+domain_code: logging_monitoring
+name: Logging, Audit & Error Handling Domain
+description: Centralized audit logging, PII/secret scrubbing from log streams, and safe error handling without stack trace disclosure.
+
+core_vulnerabilities:
+  - CWE-532  # Insertion of Sensitive Information into Log File
+  - CWE-209  # Generation of Error Message Containing Sensitive Information
+  - CWE-778  # Insufficient Logging
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [logging-monitoring-error-checklist.yaml]
+  guidelines: [devsecops-best-practices.yaml]

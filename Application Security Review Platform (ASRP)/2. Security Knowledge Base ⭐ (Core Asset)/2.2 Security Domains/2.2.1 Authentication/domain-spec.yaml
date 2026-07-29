@@ -1,0 +1,14 @@
+domain_id: 2.2.1
+domain_code: authentication
+name: Authentication & User Identity Domain
+description: Verifies user authentication mechanisms, password hashing algorithms (Argon2id/bcrypt), and multi-factor authentication.
+
+core_vulnerabilities:
+  - CWE-287  # Improper Authentication
+  - CWE-798  # Hardcoded Credentials
+  - CWE-259  # Hard-coded Password
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [authentication-secrets-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

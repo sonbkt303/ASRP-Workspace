@@ -1,0 +1,13 @@
+domain_id: 2.2.11
+domain_code: file_upload_security
+name: File Upload Security Domain
+description: Extension whitelisting, MIME type magic number validation, storage location isolation, and antivirus scanning.
+
+core_vulnerabilities:
+  - CWE-434  # Unrestricted Upload of File with Dangerous Type
+  - CWE-22   # Path Traversal
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [file-upload-business-logic-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

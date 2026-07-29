@@ -1,0 +1,5 @@
+domain_id: 2.2.10
+domain_code: logging_monitoring
+name: Logging & Monitoring Domain
+spec_file: domain-spec.yaml
+enabled: true

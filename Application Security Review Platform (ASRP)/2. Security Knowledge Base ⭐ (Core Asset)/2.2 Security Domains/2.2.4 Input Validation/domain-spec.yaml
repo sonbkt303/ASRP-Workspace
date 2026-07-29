@@ -1,0 +1,16 @@
+domain_id: 2.2.4
+domain_code: input_validation
+name: Input Validation & Injection Defense Domain
+description: Defense against SQL Injection, OS Command Injection, Path Traversal, XSS, and Insecure Deserialization.
+
+core_vulnerabilities:
+  - CWE-89   # SQL Injection
+  - CWE-78   # OS Command Injection
+  - CWE-79   # XSS
+  - CWE-22   # Path Traversal
+  - CWE-502  # Insecure Deserialization
+
+layer2_mappings:
+  rule_ids: [ASRP-INJ-001, ASRP-INJ-002, ASRP-INJ-003, ASRP-INJ-004]
+  checklist_files: [input-validation-injection-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

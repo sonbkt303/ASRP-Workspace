@@ -1,0 +1,5 @@
+domain_id: 2.2.12
+domain_code: business_logic_security
+name: Business Logic Security Domain
+spec_file: domain-spec.yaml
+enabled: true

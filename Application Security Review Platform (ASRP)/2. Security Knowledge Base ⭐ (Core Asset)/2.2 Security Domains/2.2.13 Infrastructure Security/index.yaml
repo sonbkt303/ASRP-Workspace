@@ -1,0 +1,5 @@
+domain_id: 2.2.13
+domain_code: infrastructure_security
+name: Infrastructure Security Domain
+spec_file: domain-spec.yaml
+enabled: true

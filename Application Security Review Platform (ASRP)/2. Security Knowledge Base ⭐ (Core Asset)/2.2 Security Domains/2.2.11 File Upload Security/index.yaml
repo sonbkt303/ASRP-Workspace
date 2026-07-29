@@ -1,0 +1,5 @@
+domain_id: 2.2.11
+domain_code: file_upload_security
+name: File Upload Security Domain
+spec_file: domain-spec.yaml
+enabled: true

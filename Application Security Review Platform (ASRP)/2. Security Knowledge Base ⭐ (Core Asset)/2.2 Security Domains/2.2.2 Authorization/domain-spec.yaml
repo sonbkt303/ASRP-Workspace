@@ -1,0 +1,14 @@
+domain_id: 2.2.2
+domain_code: authorization
+name: Authorization & Access Control Domain
+description: Access control verification, Object-Level Authorization (BOLA/IDOR), and Function-Level Authorization (BFLA).
+
+core_vulnerabilities:
+  - CWE-639  # BOLA / IDOR
+  - CWE-285  # Improper Authorization
+  - CWE-862  # Missing Authorization
+
+layer2_mappings:
+  rule_ids: [ASRP-AI-001, ASRP-SEC-004]
+  checklist_files: [api-security-checklist.yaml, authentication-secrets-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

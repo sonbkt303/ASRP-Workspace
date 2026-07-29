@@ -1,0 +1,13 @@
+domain_id: 2.2.13
+domain_code: infrastructure_security
+name: Container & Infrastructure Security Domain
+description: Non-root container execution, read-only root filesystems, Kubernetes SecurityContext, and IaC template hardening.
+
+core_vulnerabilities:
+  - CWE-250  # Execution with Unnecessary Privileges
+  - CWE-16   # Infrastructure Misconfiguration
+
+layer2_mappings:
+  rule_ids: [ASRP-CHECKOV-001]
+  checklist_files: [container-infrastructure-checklist.yaml]
+  guidelines: [devsecops-best-practices.yaml]

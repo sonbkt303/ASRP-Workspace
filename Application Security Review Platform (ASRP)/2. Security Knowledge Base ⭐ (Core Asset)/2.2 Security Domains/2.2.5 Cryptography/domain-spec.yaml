@@ -1,0 +1,14 @@
+domain_id: 2.2.5
+domain_code: cryptography
+name: Cryptography & Encryption Domain
+description: Strong symmetric/asymmetric cipher selection (AES-256-GCM, TLS 1.3), random number generators, and key length compliance.
+
+core_vulnerabilities:
+  - CWE-327  # Broken/Risky Crypto Algorithm
+  - CWE-331  # Insufficient Entropy
+  - CWE-319  # Cleartext Transmission
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [cryptography-secrets-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

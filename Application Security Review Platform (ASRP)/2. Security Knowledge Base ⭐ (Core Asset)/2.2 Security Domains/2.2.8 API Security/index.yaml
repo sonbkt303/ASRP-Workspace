@@ -1,0 +1,5 @@
+domain_id: 2.2.8
+domain_code: api_security
+name: API Security Domain
+spec_file: domain-spec.yaml
+enabled: true

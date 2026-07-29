@@ -1,0 +1,5 @@
+domain_id: 2.2.9
+domain_code: configuration_security
+name: Configuration Security Domain
+spec_file: domain-spec.yaml
+enabled: true

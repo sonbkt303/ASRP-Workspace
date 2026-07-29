@@ -1,0 +1,14 @@
+domain_id: 2.2.9
+domain_code: configuration_security
+name: Configuration & Hardening Domain
+description: HTTP security response headers (CSP, HSTS, X-Frame-Options), CORS wildcards, and debug flag disablement.
+
+core_vulnerabilities:
+  - CWE-16   # Configuration Misconfiguration
+  - CWE-215  # Insertion of Sensitive Information Into Debugging Code
+  - CWE-942  # Overly Permissive CORS Policy
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [configuration-hardening-checklist.yaml]
+  guidelines: [devsecops-best-practices.yaml]

@@ -1,0 +1,13 @@
+domain_id: 2.2.6
+domain_code: secrets_management
+name: Secrets & Credential Management Domain
+description: Hardcoded API key detection, environment secret vaults (HashiCorp Vault, AWS KMS), and key rotation policies.
+
+core_vulnerabilities:
+  - CWE-798  # Hard-coded Credentials
+  - CWE-259  # Hard-coded Password
+
+layer2_mappings:
+  rule_ids: [ASRP-SEC-004]
+  checklist_files: [authentication-secrets-checklist.yaml, cryptography-secrets-checklist.yaml]
+  guidelines: [nestjs-secure-coding-guidelines.yaml]

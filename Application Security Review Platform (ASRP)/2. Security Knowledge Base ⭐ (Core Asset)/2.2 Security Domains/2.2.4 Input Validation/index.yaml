@@ -1,0 +1,5 @@
+domain_id: 2.2.4
+domain_code: input_validation
+name: Input Validation & Injection Defense Domain
+spec_file: domain-spec.yaml
+enabled: true
