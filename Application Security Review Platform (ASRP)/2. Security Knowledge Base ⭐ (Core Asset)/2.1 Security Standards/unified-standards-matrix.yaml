@@ -45,6 +45,48 @@ mappings:
     pci_dss: [PCI-REQ-6.2]
     iso_27001: [A.8.28 System Architecture]
 
+  - cwe_id: CWE-79
+    cwe_name: Improper Neutralization of Input During Web Page Generation (Cross-Site Scripting - XSS)
+    severity_default: HIGH
+    security_domain: 2.2.4 Input Validation
+    asvs_v4: [V5.1.1, V5.3.1]
+    owasp_top10_2021: [A03:2021-Injection]
+    owasp_api_top10_2023: [API8:2023-Security Misconfiguration]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-63]
+    hipaa_safeguard: [164.312(e)(1) Transmission Security]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-6.2]
+    iso_27001: [A.8.25 Secure Coding]
+
+  - cwe_id: CWE-22
+    cwe_name: Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)
+    severity_default: HIGH
+    security_domain: 2.2.4 Input Validation & 2.2.11 File Upload Security
+    asvs_v4: [V12.4.1]
+    owasp_top10_2021: [A01:2021-Broken Access Control]
+    owasp_api_top10_2023: [API1:2023-BOLA]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-126]
+    hipaa_safeguard: [164.312(a)(1) Technical Access Control]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-6.2]
+    iso_27001: [A.8.28 System Architecture]
+
+  - cwe_id: CWE-502
+    cwe_name: Deserialization of Untrusted Data
+    severity_default: CRITICAL
+    security_domain: 2.2.4 Input Validation
+    asvs_v4: [V5.5.1]
+    owasp_top10_2021: [A08:2021-Software and Data Integrity Failures]
+    owasp_api_top10_2023: [API8:2023-Security Misconfiguration]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-586]
+    hipaa_safeguard: [164.312(e)(1) Transmission Security]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-6.2]
+    iso_27001: [A.8.28 System Architecture]
+
   - cwe_id: CWE-798
     cwe_name: Use of Hard-coded Credentials
     severity_default: HIGH
@@ -58,6 +100,48 @@ mappings:
     gdpr_article: [Article 32 Security of Processing]
     pci_dss: [PCI-REQ-3.4, PCI-REQ-8.2]
     iso_27001: [A.8.25 Secure Coding]
+
+  - cwe_id: CWE-287
+    cwe_name: Improper Authentication
+    severity_default: CRITICAL
+    security_domain: 2.2.1 Authentication
+    asvs_v4: [V2.1.1, V2.2.1]
+    owasp_top10_2021: [A07:2021-Identification and Authentication Failures]
+    owasp_api_top10_2023: [API2:2023-Broken Authentication]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-122]
+    hipaa_safeguard: [164.312(d) Person Authentication]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-8.2]
+    iso_27001: [A.5.15 Access Control]
+
+  - cwe_id: CWE-352
+    cwe_name: Cross-Site Request Forgery (CSRF)
+    severity_default: MEDIUM
+    security_domain: 2.2.3 Session Management
+    asvs_v4: [V3.4.1, V4.2.1]
+    owasp_top10_2021: [A01:2021-Broken Access Control]
+    owasp_api_top10_2023: [API8:2023-Security Misconfiguration]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-63]
+    hipaa_safeguard: [164.312(a)(1) Technical Access Control]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-6.2]
+    iso_27001: [A.8.25 Secure Coding]
+
+  - cwe_id: CWE-434
+    cwe_name: Unrestricted Upload of File with Dangerous Type
+    severity_default: CRITICAL
+    security_domain: 2.2.11 File Upload Security
+    asvs_v4: [V12.1.1, V12.4.1]
+    owasp_top10_2021: [A04:2021-Insecure Design]
+    owasp_api_top10_2023: [API8:2023-Security Misconfiguration]
+    nist_ssdf: [PW.5]
+    capec: [CAPEC-126]
+    hipaa_safeguard: [164.312(e)(1) Transmission Security]
+    gdpr_article: [Article 32 Security of Processing]
+    pci_dss: [PCI-REQ-6.2]
+    iso_27001: [A.8.28 System Architecture]
 
   - cwe_id: CWE-918
     cwe_name: Server-Side Request Forgery (SSRF)
