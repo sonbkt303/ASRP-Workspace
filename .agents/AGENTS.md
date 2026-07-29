@@ -52,9 +52,22 @@
 
 - **Pre-Scan Knowledge Base Completeness:** Trước khi tiến hành quét mã nguồn (Step 2), AI Agent BẮT BUỘC phải chủ động rà soát và xây dựng đầy đủ các bộ Tiêu chuẩn (Layer 2.1), Miền An ninh (Layer 2.2), Checklist kiểm thử (Layer 2.4), Playbooks (Layer 2.5) và Threat Models (Layer 2.6). AI Agent không thực hiện quét rỗng khi chưa có tri thức checklist và quy chuẩn đối soát cụ thể.
 
-## ASRP Layer 2 Standard Kernel Guardrail
+## ASRP Layer 2 Complete Single Responsibility & Zero-Overlap Guardrail
 
-- **Standard Kernel Integration:** Module 2.1 (`2.1 Security Standards`) đóng vai trò là Hạt nhân Tiêu chuẩn An ninh Trung tâm (Central Security Standard Kernel). Module `standard_resolver.py` chịu trách nhiệm quy chiếu 100% các tiêu chuẩn quốc tế (OWASP ASVS, OWASP Top 10, NIST SSDF, CAPEC, HIPAA, GDPR, PCI-DSS, ISO 27001) dựa trên Khóa chính `CWE ID`, đảm bảo không trùng lặp và nhất quán dữ liệu giữa Layer 1, Layer 2, Layer 3 và Layer 5.
+- **Strict Separation of Concerns across Layer 2 Assets:** Tất cả 12 module trong Layer 2 BẮT BUỘC tuân thủ phạm vi chức năng duy nhất, tuyệt đối không xâm phạm ranh giới của nhau:
+  1. `2.1 Security Standards`: Tri thức định danh & Ma trận quy chiếu tiêu chuẩn quốc tế tĩnh (Khóa chính CWE ID).
+  2. `2.2 Security Domains`: Danh mục phân loại miền an ninh kỹ thuật nghiệp vụ (13 Domains).
+  3. `2.3 Rule Library`: Pattern thực thi tĩnh dành cho Tooling & AI Prompts (Semgrep AST, Gitleaks Regex, AI System Prompts).
+  4. `2.4 Review Checklists`: Câu hỏi thẩm định đối soát dành cho Auditor / AI Reviewer (`verification_requirement`).
+  5. `2.5 Playbooks`: Quy trình Vận hành Chuẩn (SOP) từng bước thực hiện đợt Security Review từ Step 1 đến Step 3.
+  6. `2.6 Threat Models`: Khung Phân tích Mối đe dọa Kiến trúc (STRIDE Framework) trước khi phát triển.
+  7. `2.7 Secure Coding Guidelines`: Hướng dẫn lập trình an toàn dành cho Developer theo từng Framework (NestJS, Django, React).
+  8. `2.8 Best Practices`: Nguyên tắc khuyên dùng cấp Kiến trúc & DevSecOps.
+  9. `2.9 Attack Patterns`: Kịch bản tấn công giả lập của Hacker (CAPEC Scenarios) dành cho Red Team.
+  10. `2.10 Remediation Guides`: Hướng dẫn sửa lỗi chi tiết & Code Diff Patches cho Developer sau khi phát hiện lỗ hổng.
+  11. `2.11 Case Studies`: Bài học kinh nghiệm sự cố thực tế (Post-Mortem Incident Reports).
+  12. `2.12 Decision Logs`: Nhật ký quyết định kiến trúc an toàn thông tin (Architecture Decision Records - ADR).
+
 
 
 
