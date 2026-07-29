@@ -1,0 +1,7 @@
+module_id: 2.1.6
+name: NIST SSDF Catalog
+specs:
+  - id: NIST-SSDF-V1.1
+    name: NIST SP 800-218 Secure Software Development Framework v1.1
+    file: nist-sp800-218-ssdf.yaml
+    enabled: true

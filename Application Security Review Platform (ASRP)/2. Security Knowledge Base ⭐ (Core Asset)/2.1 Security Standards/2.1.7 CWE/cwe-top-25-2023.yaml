@@ -1,0 +1,81 @@
+standard_id: ASRP-STD-CWE-TOP25-2023
+name: CWE Top 25 Most Dangerous Software Weaknesses 2023
+version: 2023
+description: The 25 most frequent and critical software vulnerabilities compiled by MITRE.
+
+weaknesses:
+  - cwe_id: CWE-787
+    name: Out-of-bounds Write
+    score: 63.56
+  - cwe_id: CWE-79
+    name: Improper Neutralization of Input During Web Page Generation (XSS)
+    score: 45.70
+  - cwe_id: CWE-89
+    name: Improper Neutralization of Special Elements used in an SQL Command (SQL Injection)
+    score: 34.33
+  - cwe_id: CWE-416
+    name: Use After Free
+    score: 24.08
+  - cwe_id: CWE-78
+    name: Improper Neutralization of Special Elements used in an OS Command (OS Command Injection)
+    score: 23.23
+  - cwe_id: CWE-20
+    name: Improper Input Validation
+    score: 20.47
+  - cwe_id: CWE-125
+    name: Out-of-bounds Read
+    score: 18.07
+  - cwe_id: CWE-22
+    name: Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)
+    score: 16.74
+  - cwe_id: CWE-352
+    name: Cross-Site Request Forgery (CSRF)
+    score: 15.60
+  - cwe_id: CWE-434
+    name: Unrestricted Upload of File with Dangerous Type
+    score: 14.80
+  - cwe_id: CWE-862
+    name: Missing Authorization
+    score: 13.91
+  - cwe_id: CWE-476
+    name: NULL Pointer Dereference
+    score: 13.20
+  - cwe_id: CWE-287
+    name: Improper Authentication
+    score: 12.01
+  - cwe_id: CWE-190
+    name: Integer Overflow or Wraparound
+    score: 10.45
+  - cwe_id: CWE-502
+    name: Deserialization of Untrusted Data
+    score: 9.87
+  - cwe_id: CWE-77
+    name: Command Injection
+    score: 9.42
+  - cwe_id: CWE-119
+    name: Improper Restriction of Operations within the Bounds of a Memory Buffer
+    score: 8.95
+  - cwe_id: CWE-798
+    name: Use of Hard-coded Credentials
+    score: 8.50
+  - cwe_id: CWE-918
+    name: Server-Side Request Forgery (SSRF)
+    score: 8.12
+  - cwe_id: CWE-306
+    name: Missing Authentication for Critical Function
+    score: 7.90
+  - cwe_id: CWE-362
+    name: Concurrent Execution using Shared Resource with Improper Synchronization (Race Condition)
+    score: 7.43
+  - cwe_id: CWE-269
+    name: Improper Privilege Management
+    score: 7.15
+  - cwe_id: CWE-94
+    name: Improper Control of Generation of Code (Code Injection)
+    score: 6.90
+  - cwe_id: CWE-863
+    name: Incorrect Authorization
+    score: 6.55
+  - cwe_id: CWE-639
+    name: Authorization Bypass Through User-Controlled Key (BOLA / IDOR)
+    score: 6.20

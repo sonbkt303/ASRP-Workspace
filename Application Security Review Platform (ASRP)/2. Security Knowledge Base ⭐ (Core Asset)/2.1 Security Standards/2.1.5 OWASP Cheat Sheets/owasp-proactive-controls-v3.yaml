@@ -1,0 +1,26 @@
+standard_id: ASRP-STD-OWASP-PC-3.0
+name: OWASP Top 10 Proactive Controls v3.0
+version: 3.0
+description: Top developer security controls for proactive software defense.
+
+controls:
+  - id: C1
+    name: Define Security Requirements
+  - id: C2
+    name: Leverage Security Frameworks and Libraries
+  - id: C3
+    name: Secure Database Access (Parameterized Queries)
+  - id: C4
+    name: Encode and Sanitize Data
+  - id: C5
+    name: Validate All Inputs
+  - id: C6
+    name: Implement Digital Identity (Authentication)
+  - id: C7
+    name: Enforce Access Controls (Authorization)
+  - id: C8
+    name: Protect Data Everywhere (Cryptography & Secrets)
+  - id: C9
+    name: Implement Security Logging and Monitoring
+  - id: C10
+    name: Handle All Errors and Exceptions Safely

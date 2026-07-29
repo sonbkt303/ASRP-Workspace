@@ -1,0 +1,20 @@
+standard_id: ASRP-STD-CIS-BENCHMARKS-1.0
+name: CIS Container & Infrastructure Security Benchmarks
+version: 1.6.0
+description: Center for Internet Security benchmarks for Docker and Kubernetes infrastructure.
+
+benchmarks:
+  - id: CIS-DOCKER-4.1
+    title: Create a user for the container
+    description: Ensure containers run as a non-root user (USER instruction in Dockerfile).
+    severity: HIGH
+
+  - id: CIS-DOCKER-4.6
+    title: Add HEALTHCHECK instruction to the container image
+    description: Ensure Dockerfile contains HEALTHCHECK to monitor container process health.
+    severity: MEDIUM
+
+  - id: CIS-K8S-5.2.1
+    title: Minimize the admission of privileged containers
+    description: Ensure Kubernetes SecurityContext sets privileged=false and readOnlyRootFilesystem=true.
+    severity: HIGH

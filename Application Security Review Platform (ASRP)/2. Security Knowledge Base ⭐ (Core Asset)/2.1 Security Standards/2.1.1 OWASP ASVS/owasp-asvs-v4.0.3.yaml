@@ -1,0 +1,135 @@
+standard_id: ASRP-STD-ASVS-4.0.3
+name: OWASP Application Security Verification Standard (ASVS) v4.0.3
+version: 4.0.3
+description: Complete security verification requirements across all 14 ASVS chapters for web applications, APIs, and microservices.
+
+categories:
+  - id: V1
+    name: Architecture, Design and Threat Modeling
+    items:
+      - req_id: V1.1.1
+        description: Verify that all application components are documented with threat modeling.
+      - req_id: V1.4.1
+        description: Verify trust boundaries and tenant isolation enforced in multi-tenant architectures.
+      - req_id: V1.5.1
+        description: Verify all sensitive data flows across trust boundaries are encrypted and authenticated.
+
+  - id: V2
+    name: Authentication Verification Requirements
+    items:
+      - req_id: V2.1.1
+        description: Verify passwords are hashed using salted Argon2id, PBKDF2, or bcrypt with appropriate work factor.
+      - req_id: V2.2.1
+        description: Verify multi-factor authentication (MFA) is enforced for administrative and sensitive roles.
+      - req_id: V2.5.1
+        description: Verify credential recovery mechanisms do not reveal account existence or bypass MFA.
+
+  - id: V3
+    name: Session Management Verification Requirements
+    items:
+      - req_id: V3.1.1
+        description: Verify session tokens are generated using cryptographically strong pseudo-random number generators.
+      - req_id: V3.3.1
+        description: Verify logout invalidates session tokens server-side (and revokes JWT tokens/blacklists).
+      - req_id: V3.4.1
+        description: Verify cookie-based session tokens enforce HttpOnly, Secure, and SameSite=Lax/Strict flags.
+
+  - id: V4
+    name: Access Control Verification Requirements
+    items:
+      - req_id: V4.1.1
+        description: Verify access control checks enforce user authorization per object ID (prevent BOLA/IDOR).
+      - req_id: V4.2.1
+        description: Verify sensitive business logic functions check user permissions prior to execution (prevent BFLA).
+      - req_id: V4.3.1
+        description: Verify administrative interfaces and APIs are restricted to authorized admin roles (RBAC/ABAC).
+
+  - id: V5
+    name: Validation, Sanitization and Encoding Verification Requirements
+    items:
+      - req_id: V5.1.1
+        description: Verify all input data from HTTP requests is validated against a strict allowed-type pattern.
+      - req_id: V5.3.4
+        description: Verify parameterized queries or ORM binding are used to prevent SQL Injection.
+      - req_id: V5.3.8
+        description: Verify OS command invocations pass parameterized argument arrays to prevent Command Injection.
+      - req_id: V5.5.1
+        description: Verify application avoids insecure deserialization of untrusted binary/YAML data streams.
+
+  - id: V6
+    name: Stored Cryptography Verification Requirements
+    items:
+      - req_id: V6.2.1
+        description: Verify strong symmetric encryption (AES-256-GCM) is used for data at rest.
+      - req_id: V6.4.1
+        description: Verify secret keys are stored in secure Vault/KMS rather than hardcoded in source code.
+
+  - id: V7
+    name: Error Handling and Logging Verification Requirements
+    items:
+      - req_id: V7.1.1
+        description: Verify application error responses do not leak verbose stack traces or internal system paths.
+      - req_id: V7.2.1
+        description: Verify audit logging records security-critical events (login failures, privilege escalation, data access).
+      - req_id: V7.4.1
+        description: Verify log messages are sanitized to scrub PII, passwords, session tokens, and credit card numbers.
+
+  - id: V8
+    name: Data Protection Verification Requirements
+    items:
+      - req_id: V8.1.1
+        description: Verify sensitive data (PII, ePHI, PAN) is minimized and masked in user interfaces.
+      - req_id: V8.3.1
+        description: Verify sensitive data cached in client storage (localStorage, sessionStorage) is encrypted or avoided.
+
+  - id: V9
+    name: Communications Security Verification Requirements
+    items:
+      - req_id: V9.1.1
+        description: Verify TLS 1.2/1.3 is enforced for all external network communications with strong ciphers.
+      - req_id: V9.2.1
+        description: Verify HTTP Strict Transport Security (HSTS) header is enabled with long max-age and includeSubDomains.
+
+  - id: V10
+    name: Malicious Code Verification Requirements
+    items:
+      - req_id: V10.1.1
+        description: Verify code repositories do not contain backdoors, time bombs, or unauthorized remote access code.
+      - req_id: V10.3.1
+        description: Verify third-party dependencies are continuously scanned for known malicious supply chain packages.
+
+  - id: V11
+    name: Business Logic Verification Requirements
+    items:
+      - req_id: V11.1.1
+        description: Verify business logic flows enforce state transitions and prevent out-of-sequence parameter manipulation.
+      - req_id: V11.2.1
+        description: Verify high-frequency API operations implement rate limiting and anti-bot protection mechanisms.
+
+  - id: V12
+    name: File and Resources Verification Requirements
+    items:
+      - req_id: V12.1.1
+        description: Verify file uploads restrict allowed file extensions using server-side MIME type and magic number validation.
+      - req_id: V12.4.1
+        description: Verify file upload paths do not allow Directory/Path Traversal (CWE-22).
+
+  - id: V13
+    name: API and Web Service Verification Requirements
+    items:
+      - req_id: V13.2.1
+        description: Verify APIs enforce authentication and authorization on all REST/GraphQL endpoints.
+      - req_id: V13.3.1
+        description: Verify outbound HTTP requests from webhooks validate URLs against domain whitelists (prevent SSRF).
+
+  - id: V14
+    name: Configuration Verification Requirements
+    items:
+      - req_id: V14.1.1
+        description: Verify container images run as non-root users and specify minimum required Linux capabilities.
+      - req_id: V14.2.1
+        description: Verify production environments do not contain hardcoded API keys or default credentials.
+      - req_id: V14.3.1
+        description: Verify application debug mode and interactive debuggers are disabled in production.
+      - req_id: V14.4.1
+        description: Verify security response headers (CSP, X-Frame-Options, X-Content-Type-Options) are enforced.

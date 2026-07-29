@@ -52,9 +52,11 @@
 
 - **Pre-Scan Knowledge Base Completeness:** Trước khi tiến hành quét mã nguồn (Step 2), AI Agent BẮT BUỘC phải chủ động rà soát và xây dựng đầy đủ các bộ Tiêu chuẩn (Layer 2.1), Miền An ninh (Layer 2.2), Checklist kiểm thử (Layer 2.4), Playbooks (Layer 2.5) và Threat Models (Layer 2.6). AI Agent không thực hiện quét rỗng khi chưa có tri thức checklist và quy chuẩn đối soát cụ thể.
 
-## ASRP Autonomous Non-Destructive CLI Execution Guardrail
+## ASRP Layer 2 Standard Kernel Guardrail
 
-- **Autonomous CLI Operations:** AI Agent được quyền tự động thực thi các câu lệnh CLI Python `python asrp.py` không gây phá hủy (`validate`, `status`, `rules`, `scan`, `acquire`) trong workspace để phục vụ kiểm thử và vận hành hệ thống một cách chủ động mà không cần yêu cầu người dùng phê duyệt từng lệnh.
+- **Standard Kernel Integration:** Module 2.1 (`2.1 Security Standards`) đóng vai trò là Hạt nhân Tiêu chuẩn An ninh Trung tâm (Central Security Standard Kernel). Module `standard_resolver.py` chịu trách nhiệm quy chiếu 100% các tiêu chuẩn quốc tế (OWASP ASVS, OWASP Top 10, NIST SSDF, CAPEC, HIPAA, GDPR, PCI-DSS, ISO 27001) dựa trên Khóa chính `CWE ID`, đảm bảo không trùng lặp và nhất quán dữ liệu giữa Layer 1, Layer 2, Layer 3 và Layer 5.
+
+
 
 
 

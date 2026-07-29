@@ -1,0 +1,30 @@
+standard_id: ASRP-STD-OWASP-CRG-2.0
+name: OWASP Code Review Guide v2.0
+version: 2.0
+description: Core methodology for static code review and automated AST analysis across key vulnerability patterns.
+
+review_areas:
+  - id: CRG-AUTH
+    name: Authentication and Session Management Code Review
+    key_patterns: [jwt.verify, bcrypt.compare, passport.authenticate, session.destroy]
+    description: Inspect token verification, password hashing algorithms, and session invalidation functions.
+
+  - id: CRG-AUTHZ
+    name: Authorization & Access Control Code Review
+    key_patterns: [req.user.id, @UseGuards, @Roles, CanAccess, UserContext.getTenantId]
+    description: Audit object-level authorization checks (BOLA) and role-based decorator guards.
+
+  - id: CRG-INJ
+    name: Injection and Input Data Sanitization Code Review
+    key_patterns: [db.query, cursor.execute, child_process.exec, path.resolve, dangerouslySetInnerHTML]
+    description: Trace user input data flows into SQL queries, OS shell commands, file path parameters, and HTML templates.
+
+  - id: CRG-SECR
+    name: Cryptography and Secret Key Code Review
+    key_patterns: [crypto.createCipheriv, process.env, KMS.decrypt, Vault.read]
+    description: Detect hardcoded API keys, symmetric cipher selections (AES-GCM), and secret manager usage.
+
+  - id: CRG-LOG
+    name: Error Handling & Logging Code Review
+    key_patterns: [logger.info, console.log, catch (e), stackTrace]
+    description: Verify PII scrubbing in log statements and disablement of verbose error stack trace returns in HTTP responses.

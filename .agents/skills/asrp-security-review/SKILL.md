@@ -78,15 +78,16 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
    - `2.4 Review Checklists` (Domain & architecture review checklists)
    - `2.9 Attack Patterns` (CAPEC attack scenarios)
 
-### 2. Multi-Dimensional AI Code Audit & Checklist Verification
-AI Agent performs direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/`:
+### 2. Multi-Dimensional AI Code Audit & Checklist Verification (AI-Primary Engine)
+AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/`:
 - **Layer 2.3 Static & AI Rules:** Run executable rules across engines.
 - **Layer 2.4 Review Checklists:** Systematically evaluate checklist items per enabled Security Domain (Authz, BOLA check, Session invalidation, Cryptography key rotation).
 - **Layer 2.1 Standards Verification:** Verify compliance against OWASP ASVS v4.0 requirements.
 - **Layer 2.9 CAPEC Attack Scenarios:** Simulate attack patterns against endpoints & data flows.
 
-### 3. Auxiliary Python CLI Tooling Integration
-Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) to gather supplementary static tool findings (`raw_outputs/`).
+### 3. Auxiliary Python CLI Tooling Integration (Auxiliary Data)
+Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) as auxiliary helper tools to gather supplementary static tool findings (`raw_outputs/`).
+
 
 ### 4. Verification, Deduplication & Comprehensive Normalization (Layer 3.6)
 1. Cross-verify raw tool findings against AI contextual code analysis and Review Checklists.

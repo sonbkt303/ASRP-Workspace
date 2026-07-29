@@ -1,0 +1,21 @@
+standard_id: ASRP-STD-PCI-DSS-4.0
+name: Payment Card Industry Data Security Standard (PCI-DSS) v4.0
+version: 4.0
+description: Technical security requirements for applications processing payment cardholder data.
+
+requirements:
+  - req_id: PCI-REQ-3.4
+    title: Render Primary Account Number (PAN) Unreadable
+    description: Render PAN unreadable anywhere it is stored using strong cryptography (AES-256-GCM, salted hashes, or tokenization).
+
+  - req_id: PCI-REQ-6.2
+    title: Bespoke and Custom Software Development Security
+    description: Ensure custom software is developed securely, preventing common vulnerabilities (SQLi, XSS, Command Injection, BOLA).
+
+  - req_id: PCI-REQ-8.2
+    title: User Authentication & Credentials Management
+    description: Enforce strong multi-factor authentication (MFA) and prevent hardcoded passwords/secrets in source code.
+
+  - req_id: PCI-REQ-10.2
+    title: Audit Log Generation & Event Logging
+    description: Implement automated audit logs for all administrative access and security events.

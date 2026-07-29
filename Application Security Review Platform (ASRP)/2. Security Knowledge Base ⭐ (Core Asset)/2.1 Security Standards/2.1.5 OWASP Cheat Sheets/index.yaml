@@ -1,0 +1,7 @@
+module_id: 2.1.5
+name: OWASP Cheat Sheets & Proactive Controls Catalog
+specs:
+  - id: OWASP-CSP-V3
+    name: OWASP Top 10 Proactive Controls v3.0
+    file: owasp-proactive-controls-v3.yaml
+    enabled: true

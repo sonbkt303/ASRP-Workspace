@@ -225,6 +225,18 @@ def cmd_status(args):
         print(f"📌 Latest Run ID: {latest_run} (Incomplete / In progress)\n")
 
 
+def cmd_coverage(args):
+    """Calculate platform security coverage percentage against international standards."""
+    coverage_path = os.path.join(asrp_dir, "3. Assessment Engine", "3.4 Rule Evaluation", "coverage_analyzer.py")
+    if os.path.exists(coverage_path):
+        sys.path.append(os.path.dirname(coverage_path))
+        from coverage_analyzer import CoverageAnalyzer
+        analyzer = CoverageAnalyzer(script_dir)
+        analyzer.run(standard=args.standard)
+    else:
+        print("[X] FAIL: coverage_analyzer.py not found.")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="ASRP Central CLI Controller",
@@ -233,6 +245,7 @@ def main():
                "  python asrp.py scan --project cleverdent\n"
                "  python asrp.py validate --project cleverdent\n"
                "  python asrp.py rules list\n"
+               "  python asrp.py coverage --standard asvs-v4\n"
                "  python asrp.py status --project cleverdent\n"
     )
     subparsers = parser.add_subparsers(dest="command", help="ASRP CLI Subcommands")
@@ -262,6 +275,11 @@ def main():
     parser_rules_list = rules_sub.add_parser("list", help="List all rules in catalog")
     parser_rules_list.set_defaults(func=cmd_rules_list)
 
+    # Command: coverage
+    parser_cov = subparsers.add_parser("coverage", help="Calculate platform security coverage percentage against international standards")
+    parser_cov.add_argument("--standard", default="asvs-v4", help="Target security standard (e.g. asvs-v4, cwe-top-25)")
+    parser_cov.set_defaults(func=cmd_coverage)
+
     # Command: status
     parser_status = subparsers.add_parser("status", help="Show project audit status and latest run summary")
     parser_status.add_argument("--project", default="cleverdent", help="Target project ID")
@@ -281,3 +299,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -1,0 +1,50 @@
+standard_kernel_metadata:
+  kernel_id: ASRP-STD-KERNEL-001
+  name: ASRP Unified Security Standard Kernel
+  version: 1.0.0
+  total_standard_modules: 10
+  last_updated: "2026-07-29"
+
+standard_modules:
+  - id: 2.1.1
+    name: OWASP ASVS
+    path: 2.1.1 OWASP ASVS/index.yaml
+    enabled: true
+  - id: 2.1.2
+    name: OWASP Top 10
+    path: 2.1.2 OWASP Top 10/index.yaml
+    enabled: true
+  - id: 2.1.3
+    name: OWASP WSTG
+    path: 2.1.3 OWASP WSTG/index.yaml
+    enabled: true
+  - id: 2.1.4
+    name: OWASP Code Review Guide
+    path: 2.1.4 OWASP Code Review Guide/index.yaml
+    enabled: true
+  - id: 2.1.5
+    name: OWASP Cheat Sheets
+    path: 2.1.5 OWASP Cheat Sheets/index.yaml
+    enabled: true
+  - id: 2.1.6
+    name: NIST SSDF
+    path: 2.1.6 NIST SSDF/index.yaml
+    enabled: true
+  - id: 2.1.7
+    name: CWE
+    path: 2.1.7 CWE/index.yaml
+    enabled: true
+  - id: 2.1.8
+    name: CAPEC
+    path: 2.1.8 CAPEC/index.yaml
+    enabled: true
+  - id: 2.1.9
+    name: CIS Benchmarks
+    path: 2.1.9 CIS Benchmarks/index.yaml
+    enabled: true
+  - id: 2.1.10
+    name: Internal Standards & Compliance
+    path: 2.1.10 Internal Standards/index.yaml
+    enabled: true
+
+unified_matrix_path: unified-standards-matrix.yaml

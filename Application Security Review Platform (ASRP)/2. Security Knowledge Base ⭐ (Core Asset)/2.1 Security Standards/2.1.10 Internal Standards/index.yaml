@@ -1,0 +1,19 @@
+module_id: 2.1.10
+name: Internal Standards & Industry Compliance Catalog
+specs:
+  - id: HIPAA-GDPR-PCI
+    name: Healthcare, Privacy and Payment Security Specifications
+    file: hipaa-gdpr-pci-compliance.yaml
+    enabled: true
+  - id: PCI-DSS-V4.0
+    name: Payment Card Industry Data Security Standard v4.0
+    file: pci-dss-v4.0.yaml
+    enabled: true
+  - id: ISO-27001-2022
+    name: ISO/IEC 27001:2022 Annex A Controls
+    file: iso-27001-annex-a.yaml
+    enabled: true
+  - id: VN-ND13-2023
+    name: Nghị định 13/2023/NĐ-CP Bảo vệ Dữ liệu Cá nhân
+    file: nd-13-2023-bhtdcn.yaml
+    enabled: true

@@ -1,0 +1,38 @@
+standard_id: ASRP-STD-INTERNAL-COMPLIANCE-1.0
+name: HIPAA, GDPR & PCI-DSS Domain Compliance Standards
+version: 1.0
+description: Regulatory compliance security requirements for healthcare (HIPAA), data privacy (GDPR), and payment card industry (PCI-DSS).
+
+frameworks:
+  - id: HIPAA-TECHNICAL-SAFEGUARDS
+    name: Health Insurance Portability and Accountability Act (HIPAA)
+    requirements:
+      - id: HIPAA-164.312(a)(1)
+        name: Access Control
+        description: Implement technical policies and procedures for electronic information systems that maintain electronic protected health information (ePHI) to allow access only to authorized personnel.
+      - id: HIPAA-164.312(a)(2)(iv)
+        name: Encryption and Decryption
+        description: Implement a mechanism to encrypt and decrypt ePHI in transit and at rest.
+      - id: HIPAA-164.312(b)
+        name: Audit Controls
+        description: Implement hardware, software, and procedural mechanisms that record and examine activity in information systems that contain ePHI.
+
+  - id: GDPR-DATA-PRIVACY
+    name: General Data Protection Regulation (GDPR)
+    requirements:
+      - id: GDPR-ARTICLE-25
+        name: Data Protection by Design and Default
+        description: Implement appropriate technical and organizational measures for ensuring data minimization and privacy by default.
+      - id: GDPR-ARTICLE-32
+        name: Security of Processing
+        description: Ensure pseudonymization, encryption of personal data, and ability to ensure ongoing confidentiality, integrity, and availability.
+
+  - id: PCI-DSS-V4.0
+    name: Payment Card Industry Data Security Standard (PCI-DSS) v4.0
+    requirements:
+      - id: PCI-REQ-3.4
+        name: Render PAN Unreadable
+        description: Render Primary Account Number (PAN) unreadable anywhere it is stored using strong cryptography.
+      - id: PCI-REQ-6.2
+        name: Secure Software Development
+        description: Software is developed securely in accordance with industry standards and addresses common software vulnerabilities.

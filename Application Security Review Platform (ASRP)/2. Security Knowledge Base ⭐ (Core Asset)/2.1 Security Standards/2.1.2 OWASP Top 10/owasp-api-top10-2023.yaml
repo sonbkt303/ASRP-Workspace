@@ -1,0 +1,45 @@
+standard_id: ASRP-STD-OWASP-API-TOP10-2023
+name: OWASP API Security Top 10 2023
+version: 2023
+description: The 10 most critical security risks specific to Web APIs and Microservices.
+
+items:
+  - id: API1:2023-Broken Object Level Authorization (BOLA)
+    cwe_mappings: [CWE-639, CWE-284]
+    description: API endpoints accepting resource IDs fail to verify if session user owns or has permission to access the target object ID.
+
+  - id: API2:2023-Broken Authentication
+    cwe_mappings: [CWE-287, CWE-798]
+    description: Weak authentication implementations allowing credential stuffing, weak JWT validation, or unauthenticated endpoints.
+
+  - id: API3:2023-Broken Object Property Level Authorization (BOPLA)
+    cwe_mappings: [CWE-213, CWE-915]
+    description: Exposure of sensitive internal object properties (excessive data exposure) or mass assignment flaws.
+
+  - id: API4:2023-Unrestricted Resource Consumption
+    cwe_mappings: [CWE-770, CWE-400]
+    description: Missing rate limiting, payload size limits, or unbounded page query parameters leading to Denial of Service (DoS).
+
+  - id: API5:2023-Broken Function Level Authorization (BFLA)
+    cwe_mappings: [CWE-285]
+    description: Administrative API functions accessible to regular non-privileged users due to missing role checks.
+
+  - id: API6:2023-Unrestricted Access to Sensitive Business Flows
+    cwe_mappings: [CWE-840]
+    description: Automated abuse of sensitive business features (ticket purchasing, registration, comment posting) without captcha/rate checks.
+
+  - id: API7:2023-Server Side Request Forgery (SSRF)
+    cwe_mappings: [CWE-918]
+    description: API accepting user-supplied URLs to fetch external resources without IP/domain whitelisting.
+
+  - id: API8:2023-Security Misconfiguration
+    cwe_mappings: [CWE-16, CWE-942]
+    description: Permissive CORS wildcards, unpatched API frameworks, or detailed stack trace leakage.
+
+  - id: API9:2023-Improper Inventory Management
+    cwe_mappings: [CWE-1059]
+    description: Exposed shadow APIs, unversioned legacy endpoints, or undocumented staging API environments.
+
+  - id: API10:2023-Unsafe Consumption of APIs
+    cwe_mappings: [CWE-20]
+    description: Implicitly trusting data received from third-party APIs without input sanitization or TLS verification.

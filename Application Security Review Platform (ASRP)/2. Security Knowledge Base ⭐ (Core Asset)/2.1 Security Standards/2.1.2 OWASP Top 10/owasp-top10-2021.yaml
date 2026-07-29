@@ -1,0 +1,45 @@
+standard_id: ASRP-STD-OWASP-TOP10-2021
+name: OWASP Top 10 Web Application Security Risks 2021
+version: 2021
+description: The 10 most critical web application security risks defined by OWASP.
+
+items:
+  - id: A01:2021-Broken Access Control
+    cwe_mappings: [CWE-200, CWE-201, CWE-284, CWE-285, CWE-639]
+    description: Failures leading to unauthorized information disclosure, modification, or destruction of data beyond user permissions.
+
+  - id: A02:2021-Cryptographic Failures
+    cwe_mappings: [CWE-259, CWE-319, CWE-321, CWE-327, CWE-331]
+    description: Failures related to cryptography leading to exposure of sensitive data in transit or at rest.
+
+  - id: A03:2021-Injection
+    cwe_mappings: [CWE-79, CWE-89, CWE-78, CWE-94]
+    description: User-supplied data is not sanitized or filtered by the application leading to SQL, OS Command, or XSS Injection.
+
+  - id: A04:2021-Insecure Design
+    cwe_mappings: [CWE-209, CWE-256, CWE-501, CWE-522]
+    description: Risks related to design and architectural flaws that cannot be fixed by proper implementation alone.
+
+  - id: A05:2021-Security Misconfiguration
+    cwe_mappings: [CWE-16, CWE-215, CWE-611, CWE-942]
+    description: Unnecessary features enabled, default accounts/passwords, or debug error handling enabled in production.
+
+  - id: A06:2021-Vulnerable and Outdated Components
+    cwe_mappings: [CWE-1104, CWE-1395]
+    description: Using outdated libraries or OS packages containing known CVE security vulnerabilities.
+
+  - id: A07:2021-Identification and Authentication Failures
+    cwe_mappings: [CWE-255, CWE-287, CWE-384, CWE-798]
+    description: Hardcoded credentials, weak session management, or vulnerable password recovery mechanisms.
+
+  - id: A08:2021-Software and Data Integrity Failures
+    cwe_mappings: [CWE-345, CWE-353, CWE-502]
+    description: Applications relying on unverified software updates, untrusted CI/CD pipelines, or insecure deserialization.
+
+  - id: A09:2021-Security Logging and Monitoring Failures
+    cwe_mappings: [CWE-117, CWE-223, CWE-778]
+    description: Insufficient logging and monitoring preventing real-time detection and post-incident investigation.
+
+  - id: A10:2021-Server-Side Request Forgery (SSRF)
+    cwe_mappings: [CWE-918]
+    description: Fetching remote resources without validating the user-supplied URL allowing access to internal networks.

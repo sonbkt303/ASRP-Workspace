@@ -1,0 +1,111 @@
+standard_id: ASRP-STD-OWASP-WSTG-4.2
+name: OWASP Web Security Testing Guide (WSTG) v4.2
+version: 4.2
+description: Comprehensive testing framework for web application security assessments with detailed test IDs.
+
+test_categories:
+  - id: WSTG-INFO
+    name: Information Gathering
+    tests:
+      - test_id: WSTG-INFO-02
+        title: Test Network Application Server Fingerprint
+      - test_id: WSTG-INFO-05
+        title: Review Webpage Comments and Metadata for Information Leakage
+
+  - id: WSTG-CONF
+    name: Configuration and Deployment Management Testing
+    tests:
+      - test_id: WSTG-CONF-01
+        title: Test Network Infrastructure Configuration
+      - test_id: WSTG-CONF-04
+        title: Test Old Backup and Unreferenced Files for Sensitive Information
+      - test_id: WSTG-CONF-07
+        title: Test Content Security Policy (CSP)
+
+  - id: WSTG-IDNT
+    name: Identity Management Testing
+    tests:
+      - test_id: WSTG-IDNT-01
+        title: Test Role Definitions and Least Privilege Access Controls
+      - test_id: WSTG-IDNT-04
+        title: Test Account Provisioning Process
+
+  - id: WSTG-ATHN
+    name: Authentication Testing
+    tests:
+      - test_id: WSTG-ATHN-01
+        title: Testing for Credentials Transported over Encrypted Channels
+      - test_id: WSTG-ATHN-02
+        title: Testing for Default Credentials
+      - test_id: WSTG-ATHN-03
+        title: Testing for Weak Lock Out Mechanisms
+
+  - id: WSTG-ATHZ
+    name: Authorization Testing
+    tests:
+      - test_id: WSTG-ATHZ-01
+        title: Testing Directory Traversal File Include
+      - test_id: WSTG-ATHZ-02
+        title: Testing for Bypassing Authorization Schema (BOLA / IDOR)
+      - test_id: WSTG-ATHZ-03
+        title: Testing for Privilege Escalation (BFLA)
+
+  - id: WSTG-SESS
+    name: Session Management Testing
+    tests:
+      - test_id: WSTG-SESS-01
+        title: Testing for Session Management Schema
+      - test_id: WSTG-SESS-02
+        title: Testing for Cookie Attributes (HttpOnly, Secure, SameSite)
+      - test_id: WSTG-SESS-06
+        title: Testing for Logout Functionality
+
+  - id: WSTG-INPV
+    name: Input Validation Testing
+    tests:
+      - test_id: WSTG-INPV-01
+        title: Testing for Reflected Cross Site Scripting
+      - test_id: WSTG-INPV-02
+        title: Testing for Stored Cross Site Scripting
+      - test_id: WSTG-INPV-05
+        title: Testing for SQL Injection
+      - test_id: WSTG-INPV-11
+        title: Testing for Code Injection
+      - test_id: WSTG-INPV-12
+        title: Testing for Command Injection
+      - test_id: WSTG-INPV-19
+        title: Testing for Server-Side Request Forgery (SSRF)
+
+  - id: WSTG-ERRH
+    name: Error Handling Testing
+    tests:
+      - test_id: WSTG-ERRH-01
+        title: Testing for Improper Error Handling and Stack Trace Disclosure
+      - test_id: WSTG-ERRH-02
+        title: Testing for Stack Traces in Production Responses
+
+  - id: WSTG-CRYP
+    name: Cryptography Testing
+    tests:
+      - test_id: WSTG-CRYP-01
+        title: Testing for Weak Transport Layer Security (TLS)
+      - test_id: WSTG-CRYP-02
+        title: Testing for Sensitive Information Sent via Unencrypted Channels
+      - test_id: WSTG-CRYP-04
+        title: Testing for Weak Encryption Ciphers and Algorithms
+
+  - id: WSTG-BUSL
+    name: Business Logic Testing
+    tests:
+      - test_id: WSTG-BUSL-01
+        title: Test Business Logic Data Validation
+      - test_id: WSTG-BUSL-02
+        title: Test Ability to Forge Requests and Process Out of Sequence
+
+  - id: WSTG-CLNT
+    name: Client-Side Testing
+    tests:
+      - test_id: WSTG-CLNT-01
+        title: Testing for DOM-based Cross Site Scripting
+      - test_id: WSTG-CLNT-12
+        title: Testing for CORS Misconfigurations

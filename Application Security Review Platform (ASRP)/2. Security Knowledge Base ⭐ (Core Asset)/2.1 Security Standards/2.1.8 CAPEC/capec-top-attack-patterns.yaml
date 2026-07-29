@@ -1,0 +1,47 @@
+standard_id: ASRP-STD-CAPEC-3.9
+name: Common Attack Pattern Enumeration and Classification (CAPEC) Top Attack Patterns
+version: 3.9
+description: Dictionary of known adversary attack patterns and technical mechanisms.
+
+attack_patterns:
+  - capec_id: CAPEC-66
+    name: SQL Injection
+    abstraction: Detailed
+    prerequisites: User input concatenated into SQL query without parameterization.
+    cwe_mappings: [CWE-89]
+
+  - capec_id: CAPEC-88
+    name: OS Command Injection
+    abstraction: Detailed
+    prerequisites: Application invokes system shell passing unescaped user string.
+    cwe_mappings: [CWE-78]
+
+  - capec_id: CAPEC-122
+    name: Accessing Functionality Only Accessible to Particular User Roles (BOLA / IDOR)
+    abstraction: Standard
+    prerequisites: Predictable resource IDs accepted by API without authorization checks.
+    cwe_mappings: [CWE-639, CWE-284]
+
+  - capec_id: CAPEC-126
+    name: Path Traversal
+    abstraction: Detailed
+    prerequisites: File paths constructed using unvalidated user-supplied filenames.
+    cwe_mappings: [CWE-22]
+
+  - capec_id: CAPEC-63
+    name: Simple Injection (XSS)
+    abstraction: Detailed
+    prerequisites: User input rendered into web pages without HTML entity encoding.
+    cwe_mappings: [CWE-79]
+
+  - capec_id: CAPEC-664
+    name: Server-Side Request Forgery (SSRF)
+    abstraction: Standard
+    prerequisites: Endpoint fetches remote URLs supplied by user without domain whitelist.
+    cwe_mappings: [CWE-918]
+
+  - capec_id: CAPEC-586
+    name: Object Deserialization Execution
+    abstraction: Detailed
+    prerequisites: Untrusted binary/YAML stream deserialized using native unsafe parsers.
+    cwe_mappings: [CWE-502]

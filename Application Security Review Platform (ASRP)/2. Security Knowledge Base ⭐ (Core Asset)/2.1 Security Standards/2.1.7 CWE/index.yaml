@@ -1,0 +1,7 @@
+module_id: 2.1.7
+name: CWE Weakness Catalog
+specs:
+  - id: CWE-TOP25-2023
+    name: CWE Top 25 Most Dangerous Software Weaknesses 2023
+    file: cwe-top-25-2023.yaml
+    enabled: true

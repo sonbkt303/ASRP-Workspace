@@ -1,0 +1,43 @@
+standard_id: ASRP-STD-NIST-SSDF-1.1
+name: NIST SP 800-218 Secure Software Development Framework (SSDF) Version 1.1
+version: 1.1
+description: Core recommendations for mitigating vulnerabilities in software development lifecycle.
+
+practice_groups:
+  - group_id: PO
+    name: Prepare the Organization
+    practices:
+      - id: PO.1
+        description: Define Security Requirements for Software Development.
+      - id: PO.2
+        description: Implement Security Roles and Responsibilities.
+
+  - group_id: PS
+    name: Protect the Software
+    practices:
+      - id: PS.1
+        description: Protect All Forms of Code from Unauthorized Access and Tampering.
+      - id: PS.2
+        description: Provide a Mechanism for Verifying Software Release Integrity.
+
+  - group_id: PW
+    name: Produce Well-Secured Software
+    practices:
+      - id: PW.1
+        description: Design Software to Meet Security Requirements and Mitigate Security Risks.
+      - id: PW.4
+        description: Reuse Existing Well-Secured Components (SCA & Dependency Management).
+      - id: PW.5
+        description: Create Source Code Adhering to Secure Coding Practices (SAST & AI Audit).
+      - id: PW.7
+        description: Configure the Compilation and Build Process to Enhance Software Security.
+      - id: PW.8
+        description: Test Executable Code to Configure Security Requirements.
+
+  - group_id: RV
+    name: Respond to Vulnerabilities
+    practices:
+      - id: RV.1
+        description: Identify and Confirm Vulnerabilities on an Ongoing Basis.
+      - id: RV.3
+        description: Analyze Vulnerabilities to Identify Root Causes.

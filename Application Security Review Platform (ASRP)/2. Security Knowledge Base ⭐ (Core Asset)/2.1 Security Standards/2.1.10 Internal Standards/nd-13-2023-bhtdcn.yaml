@@ -1,0 +1,13 @@
+standard_id: ASRP-STD-VN-ND13-2023
+name: Nghị định 13/2023/NĐ-CP Bảo vệ Dữ liệu Cá nhân Việt Nam
+version: 2023
+description: Các quy định bảo vệ dữ liệu cá nhân và biện pháp bảo mật kỹ thuật áp dụng tại Việt Nam.
+
+articles:
+  - article_id: ND13-DIEU-26
+    title: Biện pháp bảo vệ dữ liệu cá nhân kỹ thuật
+    description: Áp dụng các biện pháp quản lý, kỹ thuật (mã hóa dữ liệu cá nhân, quản lý quyền truy cập, ghi vết nhật ký) để ngăn chặn truy cập trái phép.
+
+  - article_id: ND13-DIEU-27
+    title: Đánh giá tác động xử lý dữ liệu cá nhân
+    description: Thực hiện đánh giá tác động và áp dụng mã hóa dữ liệu cá nhân nhạy cảm (dữ liệu y tế, tài chính, định danh).

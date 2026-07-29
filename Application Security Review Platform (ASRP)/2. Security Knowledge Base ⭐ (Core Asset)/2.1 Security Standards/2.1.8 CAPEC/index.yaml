@@ -1,0 +1,7 @@
+module_id: 2.1.8
+name: CAPEC Attack Pattern Catalog
+specs:
+  - id: CAPEC-TOP-PATTERNS
+    name: CAPEC Top Attack Patterns Specification
+    file: capec-top-attack-patterns.yaml
+    enabled: true

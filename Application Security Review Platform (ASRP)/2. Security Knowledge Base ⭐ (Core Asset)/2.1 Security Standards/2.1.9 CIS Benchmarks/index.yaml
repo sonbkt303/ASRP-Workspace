@@ -1,0 +1,7 @@
+module_id: 2.1.9
+name: CIS Container Benchmarks Catalog
+specs:
+  - id: CIS-CONTAINERS-V1.6
+    name: CIS Docker & Kubernetes Container Benchmarks
+    file: cis-container-benchmarks.yaml
+    enabled: true
