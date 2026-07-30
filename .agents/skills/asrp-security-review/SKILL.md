@@ -131,11 +131,16 @@ Calculate Security Health Score and Risk Metrics:
 - Save output to: `1. Projects Registry/{project_id}/runs/{run_id}/risk_assessment.json`.
 
 ### 3. Layer 5 Report Generation Execution
-Invoke Python report generator `python asrp.py status --project {project_id}` or `ReportGenerator` module to build:
-1. **Markdown Report:** `1. Projects Registry/{project_id}/runs/{run_id}/security_review_report.md`
-2. **Executive HTML Dashboard:** `1. Projects Registry/{project_id}/runs/{run_id}/security_review_report.html`
+Invoke Report Generator to build multi-level reports:
+1. **Component-Specific Reports:** Generate independent reports for each repository defined in `components.yaml`:
+   - `security_review_report_{component_id}.html`
+   - `security_review_report_{component_id}.md`
+2. **Executive Project Dashboard:** Generate consolidated project dashboard showing side-by-side health scores & grade comparisons across all components:
+   - `security_review_report.html`
+   - `security_review_report.md`
 
 ### 4. Summary Output
-Output a clean, professional executive summary table including Security Health Score, Grade, Rating, Gate Status, SLA Roadmap breakdown, and clickable links to the generated HTML & Markdown reports.
+Output a clean, professional executive summary table including Security Health Score, Grade, Rating, Gate Status, SLA Roadmap breakdown, and clickable links to all generated HTML & Markdown reports (both component-level and project-level).
+
 
 

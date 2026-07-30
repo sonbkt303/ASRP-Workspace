@@ -85,3 +85,10 @@
 - **Recursive Real Codebase Discovery:** AI Agent & Scanner Orchestrator BẮT BUỘC thực hiện rà soát đệ quy toàn bộ cây thư mục mã nguồn thực tế của dự án (đặc biệt là các thư mục `apps/`, `libs/`, `src/`, `packages/`, `services/`, `controllers/`, `dockerfiles/`, `k8s/`). Tuyệt đối không chỉ quét tệp mẫu hoặc tệp thử nghiệm ở thư mục gốc (`main.py`, `test.py`).
 - **Framework & Technology Stack Alignment:** Khi quét dự án (ví dụ NestJS Monorepo), AI Agent BẮT BUỘC phải đọc các tệp mã nguồn thuộc đúng techstack chính (`.ts`, `.js`, `.json`, `.yaml`, NestJS `@Controller`, `@Injectable`, `package.json`, `docker-compose.yaml`) của tất cả các microservices trong dự án.
 
+## ASRP Multi-Component Independent Reporting Guardrail
+
+- **Multi-Repo / Multi-Component Separation:** Khi một dự án chứa nhiều repositories/components trong `components.yaml` có techstack khác nhau (như `dent-api-nestjs` cho Backend và `dent-monorepo` cho Frontend), AI Agent & Report Generator BẮT BUỘC:
+  1. Đánh giá và xuất báo cáo độc lập cho từng component: `security_review_report_{component_id}.html` & `.md` (Ví dụ: `security_review_report_dent-api-nestjs.html` và `security_review_report_dent-monorepo.html`).
+  2. Tạo báo cáo tổng hợp **Executive Project Dashboard** (`security_review_report.html`) hiển thị thẻ điểm Health Score, xếp hạng Grade và bảng so sánh rủi ro song song của tất cả các repository component thuộc dự án.
+
+
