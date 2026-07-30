@@ -68,12 +68,20 @@
   11. `2.11 Case Studies`: Bài học kinh nghiệm sự cố thực tế (Post-Mortem Incident Reports).
   12. `2.12 Decision Logs`: Nhật ký quyết định kiến trúc an toàn thông tin (Architecture Decision Records - ADR).
 
+## ASRP Layer 2 Modular Stage JSON Output Guardrail
 
+- **Modular Stage Output Files:** Trong Step 2, kết quả đánh giá của từng module Layer 2 (2.1 Standards, 2.2 Domains, 2.3 Rules, 2.4 Checklists, 2.6 Threat Models, 2.10 Remediation) BẮT BUỘC được ghi nhận riêng thành các tệp JSON tương ứng tại `runs/{run_id}/stage_outputs/`:
+  - `stage_2_1_standards.json`
+  - `stage_2_2_domains.json`
+  - `stage_2_3_rules.json`
+  - `stage_2_4_checklists.json`
+  - `stage_2_6_threats.json`
+  - `stage_2_10_remediations.json`
+- **Common Template Compliance:** Tất cả các file stage output PHẢI tuân thủ 100% Common Stage JSON Schema với các trường cố định: `stage_id`, `layer_module_ref`, `summary`, `results` (`item_id`, `status`, `evidence`, `standard_mappings`, `remediation`).
+- **Report Aggregation Requirement:** Layer 3.7 (Risk Assessor) và Layer 5 (Report Generator) sẽ đọc và hợp nhất dữ liệu từ tất cả các tệp `stage_outputs/*.json` để tính điểm Health Score và tổng hợp báo cáo Executive HTML/MD Report.
 
+## ASRP Real Codebase Deep Discovery Guardrail
 
-
-
-
-
-
+- **Recursive Real Codebase Discovery:** AI Agent & Scanner Orchestrator BẮT BUỘC thực hiện rà soát đệ quy toàn bộ cây thư mục mã nguồn thực tế của dự án (đặc biệt là các thư mục `apps/`, `libs/`, `src/`, `packages/`, `services/`, `controllers/`, `dockerfiles/`, `k8s/`). Tuyệt đối không chỉ quét tệp mẫu hoặc tệp thử nghiệm ở thư mục gốc (`main.py`, `test.py`).
+- **Framework & Technology Stack Alignment:** Khi quét dự án (ví dụ NestJS Monorepo), AI Agent BẮT BUỘC phải đọc các tệp mã nguồn thuộc đúng techstack chính (`.ts`, `.js`, `.json`, `.yaml`, NestJS `@Controller`, `@Injectable`, `package.json`, `docker-compose.yaml`) của tất cả các microservices trong dự án.
 

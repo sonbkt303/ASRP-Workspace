@@ -77,32 +77,29 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
    - `2.3 Rule Library/index.yaml` (currently 19 core executable rules)
    - `2.4 Review Checklists` (Domain & architecture review checklists)
    - `2.9 Attack Patterns` (CAPEC attack scenarios)
+### 2. Multi-Dimensional AI Code Audit & Modular Stage JSON Generation (AI-Primary Engine)
+AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/` and generate individual stage output files in `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:
 
-### 2. Multi-Dimensional AI Code Audit & Checklist Verification (AI-Primary Engine)
-AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/`:
-- **Layer 2.3 Static & AI Rules:** Run executable rules across engines.
-- **Layer 2.4 Review Checklists:** Systematically evaluate checklist items per enabled Security Domain (Authz, BOLA check, Session invalidation, Cryptography key rotation).
-- **Layer 2.1 Standards Verification:** Verify compliance against OWASP ASVS v4.0 requirements.
-- **Layer 2.9 CAPEC Attack Scenarios:** Simulate attack patterns against endpoints & data flows.
+- **Stage 2.1 Standards Audit:** Generate `stage_2_1_standards.json` verifying compliance against OWASP ASVS v4.0, CWE Top 25.
+- **Stage 2.2 Security Domains:** Generate `stage_2_2_domains.json` evaluating the 13 Security Domains.
+- **Stage 2.3 Executable Rules:** Generate `stage_2_3_rules.json` running static & AI rules across engines.
+- **Stage 2.4 Review Checklists:** Generate `stage_2_4_checklists.json` systematically evaluating domain checklist items (`verification_requirement`).
+- **Stage 2.6 Threat Models:** Generate `stage_2_6_threats.json` evaluating STRIDE architectural threat scenarios.
+- **Stage 2.10 Remediation Guides:** Generate `stage_2_10_remediations.json` containing actionable code diff patches.
 
 ### 3. Auxiliary Python CLI Tooling Integration (Auxiliary Data)
 Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) as auxiliary helper tools to gather supplementary static tool findings (`raw_outputs/`).
 
-
-### 4. Verification, Deduplication & Comprehensive Normalization (Layer 3.6)
+### 4. Verification, Deduplication & Aggregated Normalization (Layer 3.6)
 1. Cross-verify raw tool findings against AI contextual code analysis and Review Checklists.
 2. Eliminate False Positives and duplicate findings across engines.
-3. **STRICT MULTI-MODULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference:
+3. Aggregate all `stage_outputs/*.json` into a master `findings.json`.
+4. **STRICT MULTI-MODULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference:
    - Valid `rule_id` from Layer 2.3 (e.g. `ASRP-AI-001`, `ASRP-SEC-004`).
    - `security_domain` from Layer 2.2 (e.g. `access_control`, `secrets`).
    - Standard mappings from Layer 2.1 (CWE ID, OWASP Top 10 2021, OWASP ASVS v4.0).
    - Corresponding Review Checklist item reference from Layer 2.4 (`review_checklist_ref`).
-4. Enrich verified findings with:
-   - Severity (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFO`)
-   - Precise file path, line numbers, and code snippet.
-   - Root cause description and actionable code remediation guidance.
-5. Save normalized findings to:
-   `1. Projects Registry/{project_id}/runs/{run_id}/findings.json`
+5. Save normalized findings to `1. Projects Registry/{project_id}/runs/{run_id}/findings.json`.
 
 ### 5. Summary Output
 Output a clean, professional summary table of discovered vulnerabilities categorized by severity, engine source, and target component.
