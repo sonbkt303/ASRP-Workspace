@@ -131,16 +131,21 @@ Calculate Security Health Score and Risk Metrics:
 - Save output to: `1. Projects Registry/{project_id}/runs/{run_id}/risk_assessment.json`.
 
 ### 3. Layer 5 Report Generation Execution
-Invoke Report Generator to build multi-level reports:
-1. **Component-Specific Reports:** Generate independent reports for each repository defined in `components.yaml`:
+Invoke Report Generator to build multi-level reports using stage outputs from the designated run directory (e.g., `run-20260730_171130`):
+1. **Mandatory Report Template Usage:** AI Agent MUST load the standard HTML templates from `1. Projects Registry/1.1 Template/reports/`:
+   - `1.1 Template/reports/executive_dashboard.html` for project-wide dashboard reports.
+   - `1.1 Template/reports/component_report.html` for component-specific reports.
+2. **Interactive Stage Output Mapping:** Each report includes interactive stage pills (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.6 Threat Models, 2.10 Remediation Guides). Clicking a stage pill filters and lists only the findings mapped to that specific module.
+3. **Component-Specific Reports:** Generate independent reports for each repository defined in `components.yaml` using `component_report.html` as the baseline design:
    - `security_review_report_{component_id}.html`
    - `security_review_report_{component_id}.md`
-2. **Executive Project Dashboard:** Generate consolidated project dashboard showing side-by-side health scores & grade comparisons across all components:
+4. **Executive Project Dashboard:** Generate consolidated project dashboard showing side-by-side health scores & grade comparisons across all components using `executive_dashboard.html` as the baseline design:
    - `security_review_report.html`
    - `security_review_report.md`
 
 ### 4. Summary Output
 Output a clean, professional executive summary table including Security Health Score, Grade, Rating, Gate Status, SLA Roadmap breakdown, and clickable links to all generated HTML & Markdown reports (both component-level and project-level).
+
 
 
 

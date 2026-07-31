@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{PROJECT_NAME}} – Executive Security Dashboard | ASRP</title>
+<meta name="description" content="Executive Security Dashboard – {{PROJECT_NAME}} Full Security Assessment – ASRP AI Review {{RUN_ID}}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ASRP DESIGN SYSTEM – Executive Dashboard Template
+   Version: 2026.07.31
+   DO NOT modify CSS variables – they define the design system.
+   ============================================================ */
+:root {
+  /* Background layers */
+  --bg-primary:   #060912;
+  --bg-secondary: #0a0f1e;
+  --bg-card:      #0f1628;
+  --bg-card2:     #131c30;
+  --bg-card-hover:#1a2340;
+  /* Borders */
+  --border:       #1a2845;
+  --border-accent:#2a3f6f;
+  /* Text */
+  --text-primary:  #e8edf5;
+  --text-secondary:#8ba0be;
+  --text-muted:    #4e6388;
+  /* Accent palette */
+  --accent-blue:  #4f8ef7;
+  --accent-cyan:  #22d3ee;
+  --accent-purple:#a78bfa;
+  --accent-green: #34d399;
+  /* Severity – DO NOT CHANGE */
+  --critical:    #f43f5e;  --critical-bg: rgba(244,63,94,0.10);
+  --high:        #fb923c;  --high-bg:     rgba(251,146,60,0.10);
+  --medium:      #fbbf24;  --medium-bg:   rgba(251,191,36,0.10);
+  --low:         #60a5fa;  --low-bg:      rgba(96,165,250,0.10);
+  --pass:        #34d399;  --pass-bg:     rgba(52,211,153,0.10);
+  /* Shadows */
+  --shadow:      0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 40px rgba(79,142,247,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-primary); color: var(--text-primary);
+  font-family: 'Inter', sans-serif; line-height: 1.6;
+  min-height: 100vh; overflow-x: hidden;
+}
+/* Ambient background gradients */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 30%, rgba(79,142,247,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 85% 70%, rgba(167,139,250,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(34,211,238,0.03) 0%, transparent 60%);
+}
+/* Subtle grid lines */
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: linear-gradient(rgba(79,142,247,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(79,142,247,0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* ── HEADER ──────────────────────────────────────────── */
+.header {
+  background: rgba(10,15,30,0.97); border-bottom: 1px solid var(--border);
+  padding: 16px 48px; position: sticky; top: 0; z-index: 200; backdrop-filter: blur(16px);
+}
+.header-inner { max-width: 1600px; margin: 0 auto; display: flex; align-items: center; gap: 20px; }
+.header-logo {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 10px;
+  background: linear-gradient(135deg, #4f8ef7 0%, #a78bfa 100%);
+  display: flex; align-items: center; justify-content: center; font-size: 20px;
+  box-shadow: 0 0 20px rgba(79,142,247,0.4);
+}
+.header-brand { font-size: 18px; font-weight: 800; }
+.header-brand span { color: var(--accent-blue); }
+.header-run { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.run-chip {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 14px; font-size: 11px; color: var(--text-muted);
+}
+.run-chip strong { color: var(--accent-blue); font-family: 'JetBrains Mono', monospace; }
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent-green); box-shadow: 0 0 8px rgba(52,211,153,0.6);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.main { max-width: 1600px; margin: 0 auto; padding: 40px 48px; position: relative; z-index: 1; }
+
+/* ── HERO BANNER ─────────────────────────────────────── */
+.hero-banner {
+  background: linear-gradient(135deg, #0f1628 0%, #111627 50%, #0e1422 100%);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 40px 48px; margin-bottom: 40px;
+  position: relative; overflow: hidden; box-shadow: var(--shadow);
+}
+.hero-banner::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 500px; height: 100%;
+  background: linear-gradient(135deg, transparent 30%, rgba(79,142,247,0.03) 70%, rgba(167,139,250,0.05) 100%);
+}
+.hero-banner::after {
+  content: '🔒'; position: absolute; right: 48px; top: 50%; transform: translateY(-50%);
+  font-size: 100px; opacity: 0.05;
+}
+.hero-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--accent-blue); font-weight: 600; margin-bottom: 12px; }
+.hero-title { font-size: 36px; font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+.hero-title em { color: var(--accent-blue); font-style: normal; }
+.hero-desc { font-size: 15px; color: var(--text-secondary); max-width: 600px; margin-bottom: 28px; }
+.hero-meta-row { display: flex; gap: 24px; flex-wrap: wrap; }
+.hero-meta-chip { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 12px; color: var(--text-secondary); }
+.hero-meta-chip strong { color: var(--text-primary); display: block; font-size: 14px; }
+
+/* ── PROJECT OVERALL SCORE ───────────────────────────── */
+.project-overall {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 32px 40px; margin-bottom: 40px;
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 32px;
+  box-shadow: var(--shadow);
+}
+.project-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+.project-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.project-sub { font-size: 13px; color: var(--text-secondary); }
+.overall-score-right { text-align: center; }
+/* NOTE: score color driven by data-grade attribute via JS */
+.overall-score-num { font-size: 56px; font-weight: 900; line-height: 1; }
+.overall-grade { font-size: 14px; font-weight: 700; padding: 4px 16px; border-radius: 20px; display: inline-block; margin-top: 8px; }
+.overall-status { margin-top: 8px; padding: 5px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; border: 1px solid; }
+
+/* ── COMPONENT SCORE GRID ─────────────────────────────── */
+.score-grid {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 24px; margin-bottom: 40px; align-items: center;
+}
+.score-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 32px; position: relative; overflow: hidden;
+  box-shadow: var(--shadow); transition: all 0.3s ease;
+}
+.score-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-glow); }
+/* Border-top color driven by JS based on grade */
+.score-card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 8px; }
+.score-card-name { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.score-card-stack { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+.score-display { display: flex; align-items: flex-end; gap: 16px; margin-bottom: 20px; }
+.score-num { font-size: 72px; font-weight: 900; line-height: 1; }
+.score-grade-badge { font-size: 14px; font-weight: 800; padding: 4px 16px; border-radius: 20px; margin-bottom: 8px; display: inline-block; }
+.score-progress { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; margin-bottom: 20px; }
+.score-progress-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.score-breakdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.score-bk { text-align: center; padding: 8px 4px; border-radius: 8px; background: rgba(255,255,255,0.03); }
+.score-bk-num { font-size: 22px; font-weight: 800; }
+.score-bk-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+.score-bk.crit .score-bk-num { color: var(--critical); }
+.score-bk.high .score-bk-num { color: var(--high); }
+.score-bk.med  .score-bk-num { color: var(--medium); }
+.score-bk.low  .score-bk-num { color: var(--low); }
+.vs-divider { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.vs-text { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.vs-icon { width: 48px; height: 48px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+/* ── QUICK LINKS ─────────────────────────────────────── */
+.quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.ql-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px; text-decoration: none; color: inherit;
+  transition: all 0.2s ease; display: flex; align-items: center; gap: 16px;
+}
+.ql-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.ql-icon { font-size: 28px; width: 48px; text-align: center; }
+.ql-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.ql-sub { font-size: 12px; color: var(--text-muted); }
+.ql-arrow { margin-left: auto; color: var(--text-muted); font-size: 18px; }
+
+/* ── SECTION CHROME ──────────────────────────────────── */
+.section { margin-bottom: 40px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.section-title { font-size: 18px; font-weight: 700; }
+.section-sub { font-size: 12px; color: var(--text-muted); }
+
+/* ── STAGE NAVIGATION (Layer 2 filter pills) ─────────── */
+.stage-nav { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+.stage-nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 14px; font-weight: 600; }
+.stage-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.stage-pill { display: flex; align-items: center; gap: 6px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; cursor: pointer; transition: all 0.2s ease; font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+.stage-pill:hover { border-color: var(--accent-blue); color: var(--text-primary); }
+.stage-pill.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(79,142,247,0.08); }
+.stage-pill-count { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+.stage-pill.active .stage-pill-count { background: rgba(79,142,247,0.2); }
+
+/* ── COMPONENT FILTER PILLS ──────────────────────────── */
+.comp-pills { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.comp-pill { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-muted); }
+.comp-pill:hover { color: var(--text-primary); border-color: var(--border-accent); }
+.comp-pill.active-all { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(79,142,247,0.08); }
+
+/* ── FILTER INFO BAR ─────────────────────────────────── */
+.filter-info { background: rgba(79,142,247,0.07); border: 1px solid rgba(79,142,247,0.2); border-radius: 8px; padding: 10px 16px; font-size: 12px; color: var(--accent-blue); margin-bottom: 14px; display: none; align-items: center; gap: 8px; }
+.filter-info.show { display: flex; }
+.clear-btn { margin-left: auto; cursor: pointer; background: rgba(79,142,247,0.15); border: none; border-radius: 6px; color: var(--accent-blue); padding: 3px 10px; font-size: 11px; transition: background 0.2s; }
+.clear-btn:hover { background: rgba(79,142,247,0.3); }
+
+/* ── FINDING CARDS ───────────────────────────────────── */
+.finding-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; transition: all 0.2s ease; }
+.finding-card:hover { border-color: var(--border-accent); }
+.finding-card.hidden { display: none; }
+.finding-header { display: flex; align-items: center; gap: 10px; padding: 14px 20px; cursor: pointer; }
+.finding-sev { flex-shrink: 0; padding: 3px 10px; border-radius: 5px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+.sev-critical { background: var(--critical-bg); color: var(--critical); border: 1px solid rgba(244,63,94,0.3); }
+.sev-high     { background: var(--high-bg);     color: var(--high);     border: 1px solid rgba(251,146,60,0.3); }
+.sev-medium   { background: var(--medium-bg);   color: var(--medium);   border: 1px solid rgba(251,191,36,0.3); }
+.sev-low      { background: var(--low-bg);      color: var(--low);      border: 1px solid rgba(96,165,250,0.3); }
+.finding-name { font-size: 13px; font-weight: 600; flex: 1; }
+.comp-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+.stage-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(167,139,250,0.1); color: var(--accent-purple); font-family: 'JetBrains Mono', monospace; }
+.find-toggle { color: var(--text-muted); font-size: 14px; transition: transform 0.2s; }
+.finding-card.open .find-toggle { transform: rotate(180deg); }
+.finding-body { display: none; border-top: 1px solid var(--border); padding: 16px 20px; background: rgba(0,0,0,0.12); }
+.finding-card.open .finding-body { display: block; }
+.fb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.fb-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); display: block; margin-bottom: 3px; }
+.fb-field p { font-size: 12px; color: var(--text-secondary); }
+.fb-field .path { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-cyan); background: rgba(34,211,238,0.07); padding: 2px 6px; border-radius: 3px; word-break: break-all; }
+.code-block { background: #080c14; border: 1px solid #1e2d4a; border-radius: 8px; padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #c8d3e8; overflow-x: auto; margin: 8px 0; line-height: 1.6; }
+.tags-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; }
+.tag-cwe   { background: var(--critical-bg); color: var(--critical); border: 1px solid rgba(244,63,94,0.2); }
+.tag-owasp { background: var(--high-bg);     color: var(--high);     border: 1px solid rgba(251,146,60,0.2); }
+.tag-asvs  { background: rgba(79,142,247,0.1); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.2); }
+.fix-box { background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.2); border-radius: 8px; padding: 10px 14px; margin-top: 10px; }
+.fix-box label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pass); display: block; margin-bottom: 5px; }
+.fix-box p { font-size: 12px; color: var(--text-secondary); }
+
+/* ── SLA ROADMAP TABLE ───────────────────────────────── */
+.sla-table { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+.sla-table-header { padding: 14px 20px; display: grid; grid-template-columns: 80px 1fr 110px 100px 100px; gap: 12px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600; }
+.sla-row { padding: 12px 20px; display: grid; grid-template-columns: 80px 1fr 110px 100px 100px; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); align-items: center; transition: background 0.15s; }
+.sla-row:last-child { border-bottom: none; }
+.sla-row:hover { background: rgba(255,255,255,0.02); }
+.sla-title { font-size: 12px; font-weight: 500; }
+.sla-phase-label { font-size: 11px; color: var(--text-muted); }
+.sla-effort { font-size: 11px; color: var(--text-secondary); }
+.sla-team { font-size: 10px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.phase-header { padding: 10px 20px; background: rgba(255,255,255,0.015); border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
+.phase-badge { font-size: 9px; padding: 1px 7px; border-radius: 4px; }
+.ph-1 { background: var(--critical-bg); color: var(--critical); }
+.ph-2 { background: var(--high-bg);     color: var(--high); }
+.ph-3 { background: var(--medium-bg);   color: var(--medium); }
+
+/* ── FOOTER ──────────────────────────────────────────── */
+.footer { border-top: 1px solid var(--border); padding: 24px 48px; text-align: center; color: var(--text-muted); font-size: 12px; position: relative; z-index: 1; }
+.footer span { color: var(--accent-blue); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .main { padding: 24px 20px; }
+  .header { padding: 16px 20px; }
+  .score-grid { grid-template-columns: 1fr; }
+  .vs-divider { flex-direction: row; }
+  .project-overall { grid-template-columns: 1fr; }
+  .quick-links { grid-template-columns: 1fr; }
+  .sla-table-header, .sla-row { grid-template-columns: 70px 1fr 90px; }
+  .sla-table-header span:nth-child(n+4), .sla-row span:nth-child(n+4) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║  HEADER – populate with {{PROJECT_NAME}}, {{RUN_ID}} ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">🛡️</div>
+    <div>
+      <div class="header-brand">ASRP · <span>{{PROJECT_NAME}}</span> Security Dashboard</div>
+    </div>
+    <div class="header-run">
+      <div class="run-chip">Run: <strong>{{RUN_ID}}</strong> · {{RUN_DATE}}</div>
+      <div class="live-dot" title="AI Analysis Complete"></div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ── HERO BANNER ──────────────────────────────────────── -->
+  <!-- Data: PROJECT_NAME, TOTAL_FINDINGS, COUNT_CRITICAL, COUNT_HIGH, COUNT_MEDIUM, component count -->
+  <div class="hero-banner">
+    <div class="hero-eyebrow">📋 Executive Security Assessment Report</div>
+    <h1 class="hero-title">{{PROJECT_NAME}}<br><em>Security Review</em> {{RUN_YEAR}}</h1>
+    <p class="hero-desc">AI-Primary Full-Stack Security Assessment của toàn bộ hệ thống {{PROJECT_NAME}}. Engine: {{ENGINE}}.</p>
+    <div class="hero-meta-row">
+      <div class="hero-meta-chip"><strong>{{TOTAL_FINDINGS}}</strong>Total Findings</div>
+      <div class="hero-meta-chip"><strong style="color:var(--critical)">{{COUNT_CRITICAL}}</strong>Critical</div>
+      <div class="hero-meta-chip"><strong style="color:var(--high)">{{COUNT_HIGH}}</strong>High</div>
+      <div class="hero-meta-chip"><strong style="color:var(--medium)">{{COUNT_MEDIUM}}</strong>Medium</div>
+      <div class="hero-meta-chip"><strong>{{COMPONENT_COUNT}}</strong>Components Reviewed</div>
+    </div>
+  </div>
+
+  <!-- ── PROJECT OVERALL SCORE ─────────────────────────────── -->
+  <!-- Data: PROJECT_OVERALL_SCORE, PROJECT_OVERALL_GRADE, GATE_STATUS_TEXT -->
+  <div class="project-overall">
+    <div>
+      <div class="project-label">🏢 Project Overall – {{PROJECT_NAME}}</div>
+      <div class="project-title">Security Health Score: Composite</div>
+      <div class="project-sub">Trung bình có trọng số của tất cả components theo mức độ critical surface area.</div>
+    </div>
+    <div class="overall-score-right">
+      <!-- Score color: ≥80=green, 60-79=yellow/medium, <60=red/critical -->
+      <div class="overall-score-num" id="overall-score">{{PROJECT_OVERALL_SCORE}}</div>
+      <div class="overall-grade" id="overall-grade">Grade {{PROJECT_OVERALL_GRADE}} – {{PROJECT_OVERALL_RATING}}</div>
+      <div class="overall-status" id="overall-status">{{GATE_STATUS_EMOJI}} {{GATE_STATUS_TEXT}}</div>
+    </div>
+  </div>
+
+  <!-- ── COMPONENT SCORE COMPARISON GRID ───────────────────── -->
+  <!-- INSTRUCTION: Repeat .score-card blocks for each component. -->
+  <!-- Add .vs-divider between every pair of components.          -->
+  <!-- Data per component: COMPONENT_ID, COMPONENT_NAME, COMPONENT_STACK, -->
+  <!--   COMPONENT_SCORE, COMPONENT_GRADE, COUNT_CRITICAL/HIGH/MEDIUM/LOW  -->
+  <div class="score-grid">
+    {{SCORE_GRID_CARDS}}
+  </div><!-- /score-grid -->
+
+  <!-- ── QUICK LINKS TO COMPONENT REPORTS ─────────────────── -->
+  <!-- INSTRUCTION: Quick access link list to individual component reports -->
+  <div class="quick-links">
+    {{QUICK_LINKS_CARDS}}
+  </div>
+
+  <!-- ── ALL FINDINGS – UNIFIED VIEW ──────────────────────── -->
+  <!-- Data: all findings from findings.json, grouped/sorted by severity -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(244,63,94,0.12)">🔍</div>
+      <div>
+        <div class="section-title">All Findings — Unified View</div>
+        <div class="section-sub">Filter theo Layer 2 Module hoặc Component</div>
+      </div>
+    </div>
+
+    <!-- Layer 2 Stage Navigation -->
+    <div class="stage-nav">
+      <div class="stage-nav-label">🔬 Filter by Layer 2 Security Module</div>
+      <div class="stage-pills">
+        <div class="stage-pill active" id="pill-all" onclick="filterStage('all')">
+          🌐 All Findings <span class="stage-pill-count" style="color:var(--text-primary)">{{TOTAL_FINDINGS}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.1" onclick="filterStage('2.1')">
+          📋 2.1 Standards <span class="stage-pill-count">{{STAGE_2_1_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.2" onclick="filterStage('2.2')">
+          🏛️ 2.2 Domains <span class="stage-pill-count">{{STAGE_2_2_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.3" onclick="filterStage('2.3')">
+          ⚙️ 2.3 Rules <span class="stage-pill-count">{{STAGE_2_3_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.4" onclick="filterStage('2.4')">
+          ✅ 2.4 Checklists <span class="stage-pill-count">{{STAGE_2_4_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.6" onclick="filterStage('2.6')">
+          ⚔️ 2.6 Threats <span class="stage-pill-count">{{STAGE_2_6_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.10" onclick="filterStage('2.10')">
+          🔧 2.10 Remediation <span class="stage-pill-count">{{STAGE_2_10_COUNT}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Component Filter Pills -->
+    <div class="comp-pills" id="comp-pills">
+      <div class="comp-pill active-all" id="cpill-all" onclick="filterComp('all')">🌐 All Components</div>
+      {{COMPONENT_PILLS_HTML}}
+    </div>
+
+    <div class="filter-info" id="filter-info">
+      <span id="filter-text"></span>
+      <button class="clear-btn" onclick="clearFilters()">✕ Clear All</button>
+    </div>
+
+    <div id="all-findings">
+      {{EXECUTIVE_FINDINGS_HTML}}
+    </div><!-- /all-findings -->
+  </div><!-- /section -->
+
+  <!-- ── SLA ROADMAP TABLE ──────────────────────────────────── -->
+  <!-- Data: risk_assessment.sla_roadmap -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(79,142,247,0.12)">📅</div>
+      <div>
+        <div class="section-title">SLA Remediation Roadmap – Full Project</div>
+        <div class="section-sub">Lộ trình khắc phục lỗ hổng theo ưu tiên cho tất cả teams</div>
+      </div>
+    </div>
+
+    <div class="sla-table">
+      <div class="sla-table-header">
+        <span>Severity</span>
+        <span>Finding</span>
+        <span>SLA Phase</span>
+        <span>Effort</span>
+        <span>Team</span>
+      </div>
+
+      <!-- Phase 1 -->
+      <div class="phase-header"><span class="phase-badge ph-1">Phase 1 · 24-48h</span> IMMEDIATE</div>
+      <!-- {{#EACH sla.phase_1}} -->
+      <div class="sla-row">
+        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
+        <span class="sla-title">{{item.title}} ({{item.component_id}})</span>
+        <span class="sla-phase-label">🚨 24-48h</span>
+        <span class="sla-effort">{{item.effort}}</span>
+        <span class="sla-team">{{item.team}}</span>
+      </div>
+      <!-- {{/EACH}} -->
+
+      <!-- Phase 2 -->
+      <div class="phase-header"><span class="phase-badge ph-2">Phase 2 · 7 Days</span> SHORT-TERM</div>
+      <!-- {{#EACH sla.phase_2}} -->
+      <div class="sla-row">
+        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
+        <span class="sla-title">{{item.title}}</span>
+        <span class="sla-phase-label">⚡ 7 days</span>
+        <span class="sla-effort">{{item.effort}}</span>
+        <span class="sla-team">{{item.team}}</span>
+      </div>
+      <!-- {{/EACH}} -->
+
+      <!-- Phase 3 -->
+      <div class="phase-header"><span class="phase-badge ph-3">Phase 3 · 30 Days</span> MAINTENANCE</div>
+      <!-- {{#EACH sla.phase_3}} -->
+      <div class="sla-row">
+        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
+        <span class="sla-title">{{item.title}}</span>
+        <span class="sla-phase-label">🔧 30 days</span>
+        <span class="sla-effort">{{item.effort}}</span>
+        <span class="sla-team">{{item.team}}</span>
+      </div>
+      <!-- {{/EACH}} -->
+
+    </div><!-- /sla-table -->
+  </div>
+
+</main>
+
+<footer class="footer">
+  <strong>ASRP AI Security Review Platform</strong> · Engine: <span>{{ENGINE}}</span>
+  · Project: {{PROJECT_NAME}} · Run: {{RUN_ID}} · {{RUN_DATE}}
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  INTERACTIVE JAVASCRIPT                                     -->
+<!--  NOTE: Do NOT modify this block – it handles all filtering. -->
+<!--  The only change allowed: add component IDs to COMP_COLOR_MAP. -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Component color map – AI Agent must populate this ── */
+  /* Format: 'component-id': { bg: 'rgba...', color: '#hex', activeClass: 'css-class-name' } */
+  const COMP_COLOR_MAP = {
+    /* example entries – replace with actual component IDs:
+    'dent-api-nestjs': { bg: 'rgba(251,146,60,0.1)', color: '#fb923c', activeClass: 'active-api' },
+    'dent-monorepo':   { bg: 'rgba(251,191,36,0.1)', color: '#fbbf24', activeClass: 'active-mono' },
+    */
+  };
+
+  let currentStage = 'all';
+  let currentComp  = 'all';
+
+  function updateVisible() {
+    const cards = document.querySelectorAll('#all-findings .finding-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const stages   = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
+      const comp     = card.getAttribute('data-comp') || '';
+      const stageOk  = (currentStage === 'all') ? stages.includes('all') : stages.includes(currentStage);
+      const compOk   = currentComp  === 'all' || comp === currentComp;
+      if (stageOk && compOk) { card.classList.remove('hidden'); visible++; }
+      else { card.classList.add('hidden'); }
+    });
+    const info = document.getElementById('filter-info');
+    if (currentStage === 'all' && currentComp === 'all') {
+      info.classList.remove('show');
+    } else {
+      info.classList.add('show');
+      let desc = `Showing ${visible} finding(s)`;
+      if (currentStage !== 'all') desc += ` · Stage ${currentStage}`;
+      if (currentComp  !== 'all') desc += ` · ${currentComp}`;
+      document.getElementById('filter-text').textContent = desc;
+    }
+  }
+
+  function filterStage(stage) {
+    currentStage = stage;
+    document.querySelectorAll('.stage-pill').forEach(p => p.classList.remove('active'));
+    const pill = document.getElementById('pill-' + stage);
+    if (pill) pill.classList.add('active');
+    updateVisible();
+  }
+
+  function filterComp(comp) {
+    currentComp = comp;
+    document.querySelectorAll('.comp-pill').forEach(p => {
+      Object.values({active:'active-all',...Object.fromEntries(Object.keys(COMP_COLOR_MAP).map(k=>[k,COMP_COLOR_MAP[k].activeClass]))})
+        .forEach(cls => p.classList.remove(cls));
+    });
+    const pill = document.getElementById('cpill-' + comp);
+    if (pill) {
+      if (comp === 'all') pill.classList.add('active-all');
+      else if (COMP_COLOR_MAP[comp]) pill.classList.add(COMP_COLOR_MAP[comp].activeClass);
+    }
+    updateVisible();
+  }
+
+  function clearFilters() { filterStage('all'); filterComp('all'); }
+
+  function toggleF(id) {
+    const card = document.getElementById(id);
+    if (card) {
+      card.classList.toggle('open');
+      card.classList.toggle('expanded');
+    }
+  }
+  function toggleFinding(id) {
+    toggleF(id);
+  }
+</script>
+</body>
+</html>

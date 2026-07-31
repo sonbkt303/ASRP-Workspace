@@ -18,6 +18,7 @@ Thứ tự ưu tiên khi điền profile — **không nằm trong tên file**, x
 | 6 | `context.yaml` | Business and security context (human-reviewed) | `project.id` |
 | 7 | `assessment.yaml` | Assessment lens configuration (human-reviewed) | `project.id` |
 | 8 | `registry.manifest.yaml` | Validation gate output (after human review) | all profile files |
+| 9 | `reports/` | Standard HTML report templates (Executive Dashboard & Component Reports) | `stage_outputs/*.json`, `findings.json` |
 
 Steps 5–7 có thể làm song song sau khi có components và technologies.
 

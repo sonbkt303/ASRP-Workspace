@@ -91,4 +91,27 @@
   1. Đánh giá và xuất báo cáo độc lập cho từng component: `security_review_report_{component_id}.html` & `.md` (Ví dụ: `security_review_report_dent-api-nestjs.html` và `security_review_report_dent-monorepo.html`).
   2. Tạo báo cáo tổng hợp **Executive Project Dashboard** (`security_review_report.html`) hiển thị thẻ điểm Health Score, xếp hạng Grade và bảng so sánh rủi ro song song của tất cả các repository component thuộc dự án.
 
+## ASRP Interactive Stage Module Navigation Guardrail
+
+- **Interactive Stage-to-Finding Mapping in HTML Reports:** Executive and Component HTML Security Reports generated in Step 3 MUST feature interactive navigation (click-to-filter / accordions). Clicking on any Layer 2 Stage Module (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.6 Threat Models, 2.10 Remediation Guides) MUST dynamically filter and display only the security findings/issues corresponding to that module.
+
+## ASRP Standard Report Template Reference Guardrail
+
+- **Standard Report Template Source:** Tất cả các báo cáo Security Review xuất ra ở Step 3 (bao gồm `security_review_report.html` và `security_review_report_{component_id}.html`) BẮT BUỘC lấy mẫu thiết kế từ bộ Template chuẩn tại `1. Projects Registry/1.1 Template/reports/` (`executive_dashboard.html` và `component_report.html`) làm chuẩn tham chiếu duy nhất cho tất cả các đợt review tiếp theo.
+
+## ASRP Smart Dynamic Stage Module Mapping Guardrail
+
+- **Granular Checks to Consolidated Findings Mapping:** Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_10`) contain granular check items. Layer 3 consolidates related stage check failures into normalized Findings (`findings.json`).
+- **Comprehensive Stage Tagging:** A finding in `findings.json` MUST be tagged with ALL Layer 2 stages where it failed or passed evaluation:
+  - `2.1 Standards`: Tagged if standard mapping (CWE / OWASP / ASVS) exists.
+  - `2.2 Security Domains`: Tagged if classified under a Security Domain.
+  - `2.3 Rule Library`: Tagged if triggered by AST/Semgrep/Regex or AI Rule patterns (`rule_id`).
+  - `2.4 Review Checklists`: Tagged if associated with auditor verification checklist items (`review_checklist_ref`).
+  - `2.6 Threat Models`: Tagged if linked to STRIDE threat model scenarios (`threat_model_ref`) or high architectural impact.
+  - `2.10 Remediation Guides`: Tagged if actionable remediation guidance, `remediation_ref`, or code diff patch is present.
+- **Dynamic Filter Counts:** Filter pills in HTML reports MUST reflect the exact count of findings satisfying each module's comprehensive mapping condition.
+
+
+
+
 

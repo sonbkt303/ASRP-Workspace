@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Review – {{COMPONENT_NAME}} | {{PROJECT_NAME}} ASRP</title>
+<meta name="description" content="AI-Powered Security Review Report for {{PROJECT_NAME}} – {{COMPONENT_NAME}} – Run {{RUN_ID}}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ASRP DESIGN SYSTEM – Component Report Template
+   Version: 2026.07.31
+   DO NOT modify CSS variables – they define the design system.
+   ============================================================ */
+:root {
+  --bg-primary:   #0a0e1a;
+  --bg-secondary: #0f1628;
+  --bg-card:      #141b2d;
+  --bg-card-hover:#1a2340;
+  --border:       #1e2d4a;
+  --border-accent:#2a3f6f;
+  --text-primary:  #e2e8f0;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+  --accent-blue:  #3b82f6;
+  --accent-cyan:  #06b6d4;
+  --accent-purple:#8b5cf6;
+  --accent-green: #10b981;
+  /* Severity – DO NOT CHANGE */
+  --critical:    #ef4444;  --critical-bg: rgba(239,68,68,0.12);
+  --high:        #f97316;  --high-bg:     rgba(249,115,22,0.12);
+  --medium:      #eab308;  --medium-bg:   rgba(234,179,8,0.12);
+  --low:         #3b82f6;  --low-bg:      rgba(59,130,246,0.12);
+  --pass:        #10b981;  --pass-bg:     rgba(16,185,129,0.12);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 30px rgba(59,130,246,0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg-primary); color: var(--text-primary);
+  font-family: 'Inter', sans-serif; line-height: 1.6; min-height: 100vh;
+}
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(59,130,246,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.05) 0%, transparent 60%);
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+.header {
+  background: rgba(15,22,40,0.98); border-bottom: 1px solid var(--border);
+  padding: 20px 40px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+}
+.header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
+.header-logo {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  /* INSTRUCTION: change gradient color to match component type:
+     Backend (NestJS/Django/etc): linear-gradient(135deg, #f97316, #ef4444)
+     Frontend (React/Vue/etc):    linear-gradient(135deg, #10b981, #06b6d4)
+     API/Gateway:                 linear-gradient(135deg, #3b82f6, #8b5cf6)   */
+  background: {{COMPONENT_HEADER_GRADIENT}};
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.header-title { font-size: 15px; font-weight: 600; }
+.header-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.header-badge { margin-left: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 11px; color: var(--text-muted); }
+.run-id { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-blue); }
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.main { max-width: 1400px; margin: 0 auto; padding: 32px 40px; position: relative; z-index: 1; }
+
+/* ── HERO ────────────────────────────────────────────── */
+.hero {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 32px; margin-bottom: 32px;
+  display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: center;
+  box-shadow: var(--shadow-card); position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 100%;
+  /* INSTRUCTION: use component-specific color with low opacity */
+  background: linear-gradient(135deg, transparent 50%, {{COMPONENT_HERO_TINT}} 100%);
+  pointer-events: none;
+}
+.hero-title { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.hero-title span { color: var(--accent-blue); }  /* Accent the component name suffix */
+.hero-sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
+.hero-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-meta-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+.hero-meta-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-blue); }
+
+/* Health Score Ring – SVG-based circular progress */
+.score-ring { width: 140px; height: 140px; flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: center; }
+.score-ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+/* INSTRUCTION: circumference of r=58 circle = 2πr ≈ 364.4
+   stroke-dashoffset = 364.4 * (1 - score/100)
+   Example: score=68 → offset = 364.4 * 0.32 = 116.6
+            score=75 → offset = 364.4 * 0.25 = 91.1
+            score=85 → offset = 364.4 * 0.15 = 54.7              */
+.score-ring-text { text-align: center; }
+.score-value { font-size: 38px; font-weight: 800; line-height: 1; }
+.score-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.score-grade { font-size: 13px; font-weight: 700; padding: 2px 10px; border-radius: 12px; margin-top: 4px; display: inline-block; }
+
+/* ── GATE BANNER ─────────────────────────────────────── */
+/* INSTRUCTION: set banner color based on gate_status:
+   ACTION REQUIRED → rgba(249,115,22,0.1) border rgba(249,115,22,0.3)
+   PASS            → rgba(16,185,129,0.1)  border rgba(16,185,129,0.3)   */
+.gate-banner {
+  border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px;
+  margin-bottom: 32px;
+  background: {{GATE_BANNER_BG}};
+  border: 1px solid {{GATE_BANNER_BORDER}};
+}
+.gate-icon { font-size: 28px; }
+.gate-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.gate-desc { font-size: 13px; color: var(--text-secondary); }
+.gate-status-badge {
+  margin-left: auto; padding: 6px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; white-space: nowrap; border: 1px solid;
+}
+
+/* ── STATS GRID ──────────────────────────────────────── */
+.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.2s ease; }
+.stat-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.stat-number { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.stat-label  { font-size: 12px; color: var(--text-muted); }
+.stat-critical .stat-number { color: var(--critical); }
+.stat-high    .stat-number { color: var(--high); }
+.stat-medium  .stat-number { color: var(--medium); }
+.stat-low     .stat-number { color: var(--low); }
+
+/* ── SECTION ─────────────────────────────────────────── */
+.section { margin-bottom: 40px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.section-title { font-size: 16px; font-weight: 700; }
+.section-sub { font-size: 12px; color: var(--text-muted); }
+
+/* ── STAGE NAVIGATION (Layer 2 filter pills) ─────────── */
+.stage-nav { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow-card); }
+.stage-nav-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+.stage-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.stage-pill { display: flex; align-items: center; gap: 8px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; cursor: pointer; transition: all 0.2s ease; font-size: 13px; color: var(--text-secondary); }
+.stage-pill:hover { border-color: var(--accent-blue); color: var(--text-primary); background: var(--bg-card-hover); }
+.stage-pill.active { border-color: var(--accent-blue); color: var(--accent-blue); background: rgba(59,130,246,0.1); }
+.stage-pill-count { background: var(--bg-card); border-radius: 10px; padding: 1px 7px; font-size: 11px; font-weight: 600; }
+.stage-pill.active .stage-pill-count { background: rgba(59,130,246,0.2); }
+
+/* ── FILTER INFO BAR ─────────────────────────────────── */
+.findings-filter-info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--accent-blue); margin-bottom: 16px; display: none; }
+.findings-filter-info.show { display: flex; align-items: center; gap: 8px; }
+.clear-filter { margin-left: auto; cursor: pointer; background: rgba(59,130,246,0.15); border: none; border-radius: 6px; color: var(--accent-blue); padding: 3px 10px; font-size: 11px; transition: background 0.2s; }
+.clear-filter:hover { background: rgba(59,130,246,0.3); }
+
+/* ── FINDING CARDS ───────────────────────────────────── */
+.finding-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; transition: all 0.2s ease; }
+.finding-card:hover { border-color: var(--border-accent); box-shadow: var(--shadow-card); }
+.finding-card.hidden { display: none; }
+.finding-header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; }
+.finding-severity { flex-shrink: 0; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.sev-critical { background: var(--critical-bg); color: var(--critical); border: 1px solid rgba(239,68,68,0.3); }
+.sev-high     { background: var(--high-bg);     color: var(--high);     border: 1px solid rgba(249,115,22,0.3); }
+.sev-medium   { background: var(--medium-bg);   color: var(--medium);   border: 1px solid rgba(234,179,8,0.3); }
+.sev-low      { background: var(--low-bg);      color: var(--low);      border: 1px solid rgba(59,130,246,0.3); }
+.finding-title  { font-size: 14px; font-weight: 600; flex: 1; }
+.finding-id     { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.stage-badge    { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3); color: var(--accent-purple); font-family: 'JetBrains Mono', monospace; }
+.finding-toggle { color: var(--text-muted); font-size: 16px; transition: transform 0.2s; }
+.finding-card.expanded .finding-toggle { transform: rotate(180deg); }
+
+.finding-body   { display: none; border-top: 1px solid var(--border); padding: 20px; background: rgba(0,0,0,0.15); }
+.finding-card.expanded .finding-body { display: block; }
+
+.finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+.finding-field label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px; display: block; }
+.finding-field p { font-size: 13px; color: var(--text-secondary); }
+.finding-field .file-path { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-cyan); background: rgba(6,182,212,0.08); padding: 2px 6px; border-radius: 4px; word-break: break-all; }
+.code-snippet { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #e6edf3; overflow-x: auto; margin: 8px 0; line-height: 1.7; }
+.finding-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.finding-tag   { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: var(--bg-secondary); border: 1px solid var(--border); color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+.finding-tag.cwe   { color: var(--critical); border-color: rgba(239,68,68,0.3);  background: var(--critical-bg); }
+.finding-tag.owasp { color: var(--high);     border-color: rgba(249,115,22,0.3); background: var(--high-bg); }
+.finding-tag.asvs  { color: var(--accent-blue); border-color: rgba(59,130,246,0.3); background: var(--low-bg); }
+.remediation-box { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 8px; padding: 12px 16px; margin-top: 12px; }
+.remediation-box label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pass); display: block; margin-bottom: 6px; }
+.remediation-box p { font-size: 13px; color: var(--text-secondary); }
+
+/* ── SLA ACCORDION ───────────────────────────────────── */
+.sla-phase { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+.sla-phase-header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; cursor: pointer; }
+.sla-phase-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.phase-1 .sla-phase-icon { background: var(--critical-bg); }
+.phase-2 .sla-phase-icon { background: var(--high-bg); }
+.phase-3 .sla-phase-icon { background: var(--medium-bg); }
+.sla-phase-title { font-size: 14px; font-weight: 600; flex: 1; }
+.sla-phase-badge { font-size: 11px; padding: 3px 10px; border-radius: 6px; font-weight: 600; }
+.phase-1 .sla-phase-badge { background: var(--critical-bg); color: var(--critical); }
+.phase-2 .sla-phase-badge { background: var(--high-bg);     color: var(--high); }
+.phase-3 .sla-phase-badge { background: var(--medium-bg);   color: var(--medium); }
+.sla-body { display: none; border-top: 1px solid var(--border); padding: 16px 20px; }
+.sla-phase.open .sla-body { display: block; }
+.sla-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.sla-item:last-child { border-bottom: none; }
+.sla-item-title { font-size: 13px; flex: 1; }
+.sla-effort { font-size: 11px; color: var(--text-muted); }
+
+/* ── POSITIVE FINDINGS (Strengths) ──────────────────── */
+.pos-card { background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 16px 20px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.pos-icon  { font-size: 18px; }
+.pos-title { font-size: 13px; font-weight: 600; color: var(--pass); }
+.pos-desc  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+/* ── FOOTER ──────────────────────────────────────────── */
+.footer { border-top: 1px solid var(--border); padding: 24px 40px; text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 40px; }
+.footer span { color: var(--accent-blue); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main { padding: 20px; }
+  .header { padding: 16px 20px; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero { grid-template-columns: 1fr; }
+  .finding-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!-- ║  HEADER                                              ║ -->
+<!-- ║  Placeholders: COMPONENT_ICON, PROJECT_NAME,         ║ -->
+<!-- ║                COMPONENT_NAME, COMPONENT_DESC,       ║ -->
+<!-- ║                RUN_ID, RUN_DATE                       ║ -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">{{COMPONENT_ICON}}</div>
+    <div>
+      <div class="header-title">ASRP Security Review — {{COMPONENT_NAME}}</div>
+      <div class="header-sub">{{PROJECT_NAME}} · {{COMPONENT_DESC}}</div>
+    </div>
+    <div class="header-badge">
+      Run: <span class="run-id">{{RUN_ID}}</span> · {{RUN_DATE}}
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ── HERO ──────────────────────────────────────────────── -->
+  <!-- Data: COMPONENT_NAME, COMPONENT_STACK, TOTAL_FINDINGS,
+             COUNT_CRITICAL, HEALTH_SCORE, HEALTH_GRADE,
+             GRADE_COLOR, GRADE_BG, SCORE_DASHOFFSET        -->
+  <div class="hero">
+    <div>
+      <h1 class="hero-title">{{COMPONENT_NAME_PREFIX}}-<span>{{COMPONENT_NAME_SUFFIX}}</span> Security Assessment</h1>
+      <p class="hero-sub">AI-Primary Deep Code Analysis · Engine: {{ENGINE}} · Full Stack Review</p>
+      <div class="hero-meta">
+        <span class="hero-meta-item"><span class="dot"></span>{{COMPONENT_STACK}}</span>
+        <span class="hero-meta-item"><span class="dot" style="background:var(--accent-purple)"></span>{{TOTAL_FINDINGS}} Findings Discovered</span>
+        <!-- {{#if COUNT_CRITICAL > 0}} -->
+        <span class="hero-meta-item"><span class="dot" style="background:var(--critical)"></span>{{COUNT_CRITICAL}} Critical Issue(s)</span>
+        <!-- {{/if}} -->
+      </div>
+    </div>
+    <!-- Score Ring SVG – circumference ≈ 364.4 for r=58 -->
+    <div class="score-ring">
+      <svg width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="70" cy="70" r="58" fill="none" stroke="{{GRADE_COLOR}}26" stroke-width="10"/>
+        <circle cx="70" cy="70" r="58" fill="none" stroke="{{GRADE_COLOR}}" stroke-width="10"
+          stroke-dasharray="364.4" stroke-dashoffset="{{SCORE_DASHOFFSET}}" stroke-linecap="round"/>
+      </svg>
+      <div class="score-ring-text">
+        <div class="score-value" style="color:var(--grade-color, {{GRADE_COLOR}})">{{HEALTH_SCORE}}</div>
+        <div class="score-label">Health Score</div>
+        <div class="score-grade" style="background:var(--grade-bg, {{GRADE_BG}});color:var(--grade-color, {{GRADE_COLOR}})">Grade {{HEALTH_GRADE}}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GATE BANNER ───────────────────────────────────────── -->
+  <!-- Data: GATE_STATUS_TEXT, GATE_ICON, GATE_DESC, GATE_TITLE_COLOR -->
+  <div class="gate-banner">
+    <div class="gate-icon">{{GATE_ICON}}</div>
+    <div>
+      <div class="gate-title" style="color:var(--gate-title-color, {{GATE_TITLE_COLOR}})">Gate Status: {{GATE_STATUS_TEXT}}</div>
+      <div class="gate-desc">{{GATE_DESC}}</div>
+    </div>
+    <div class="gate-status-badge"
+         style="background:var(--gate-badge-bg, {{GATE_BADGE_BG}});color:var(--gate-badge-color, {{GATE_BADGE_COLOR}});border-color:var(--gate-badge-border, {{GATE_BADGE_BORDER}})">
+      {{GATE_STATUS_EMOJI}} {{GATE_STATUS_TEXT}}
+    </div>
+  </div>
+
+  <!-- ── STATS ─────────────────────────────────────────────── -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-number">{{TOTAL_FINDINGS}}</div><div class="stat-label">Total Findings</div></div>
+    <div class="stat-card stat-critical"><div class="stat-number">{{COUNT_CRITICAL}}</div><div class="stat-label">Critical</div></div>
+    <div class="stat-card stat-high">   <div class="stat-number">{{COUNT_HIGH}}</div>   <div class="stat-label">High</div></div>
+    <div class="stat-card stat-medium"> <div class="stat-number">{{COUNT_MEDIUM}}</div> <div class="stat-label">Medium</div></div>
+    <div class="stat-card stat-low">    <div class="stat-number">{{COUNT_LOW}}</div>    <div class="stat-label">Low</div></div>
+  </div>
+
+  <!-- ── STAGE NAVIGATION ──────────────────────────────────── -->
+  <!-- INSTRUCTION: Adjust count badges from stage_outputs for this component -->
+  <div class="stage-nav">
+    <div class="stage-nav-title">🔍 Filter Findings by Layer 2 Module</div>
+    <div class="stage-pills">
+      <div class="stage-pill active" id="pill-all" onclick="filterStage('all')">
+        <span>🌐</span> All Findings
+        <span class="stage-pill-count" style="color:var(--text-primary)">{{TOTAL_FINDINGS}}</span>
+      </div>
+      <div class="stage-pill" id="pill-2.1"  onclick="filterStage('2.1')">  <span>📋</span> 2.1 Standards   <span class="stage-pill-count">{{STAGE_2_1_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.2"  onclick="filterStage('2.2')">  <span>🏛️</span> 2.2 Domains     <span class="stage-pill-count">{{STAGE_2_2_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.3"  onclick="filterStage('2.3')">  <span>⚙️</span> 2.3 Rule Library <span class="stage-pill-count">{{STAGE_2_3_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.4"  onclick="filterStage('2.4')">  <span>✅</span> 2.4 Checklists  <span class="stage-pill-count">{{STAGE_2_4_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.6"  onclick="filterStage('2.6')">  <span>⚔️</span> 2.6 Threat Models <span class="stage-pill-count">{{STAGE_2_6_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.10" onclick="filterStage('2.10')"> <span>🔧</span> 2.10 Remediation <span class="stage-pill-count">{{STAGE_2_10_COUNT}}</span> </div>
+    </div>
+  </div>
+
+  <!-- ── FINDINGS ───────────────────────────────────────────── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(239,68,68,0.15)">🐛</div>
+      <div>
+        <div class="section-title">Security Findings</div>
+        <div class="section-sub">Click vào finding để xem chi tiết và code patch</div>
+      </div>
+    </div>
+
+    <div class="findings-filter-info" id="filter-info">
+      <span id="filter-text"></span>
+      <button class="clear-filter" onclick="filterStage('all')">✕ Clear Filter</button>
+    </div>
+
+    <div id="findings-list">
+      {{FINDINGS_CARDS_LIST}}
+    </div><!-- /findings-list -->
+  </div>
+
+  <!-- ── SECURITY STRENGTHS ─────────────────────────────────── -->
+  {{SECURITY_STRENGTHS_BLOCK}}
+
+  <!-- ── SLA ROADMAP ACCORDION ─────────────────────────────── -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(59,130,246,0.15)">🗺️</div>
+      <div>
+        <div class="section-title">SLA Remediation Roadmap</div>
+        <div class="section-sub">Lộ trình sửa lỗi theo mức độ ưu tiên</div>
+      </div>
+    </div>
+
+    {{SLA_ROADMAP_BLOCK}}
+  </div>
+
+</main>
+
+<footer class="footer">
+  Generated by <span>ASRP AI Security Review Platform</span>
+  · Engine: {{ENGINE}} · Run: {{RUN_ID}} · {{RUN_DATE}}
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  INTERACTIVE JAVASCRIPT – do not modify logic             -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<script>
+  const stageLabels = {
+    'all': 'All Findings',
+    '2.1': 'Stage 2.1 – Security Standards',
+    '2.2': 'Stage 2.2 – Security Domains',
+    '2.3': 'Stage 2.3 – Rule Library',
+    '2.4': 'Stage 2.4 – Review Checklists',
+    '2.6': 'Stage 2.6 – Threat Models',
+    '2.10': 'Stage 2.10 – Remediation Guides'
+  };
+
+  function filterStage(stage) {
+    document.querySelectorAll('.stage-pill').forEach(p => p.classList.remove('active'));
+    const pill = document.getElementById('pill-' + stage);
+    if (pill) pill.classList.add('active');
+
+    const cards = document.querySelectorAll('#findings-list .finding-card');
+    let visible = 0;
+    cards.forEach(card => {
+      if (stage === 'all') {
+        const stages = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
+        if (stages.includes('all')) { card.classList.remove('hidden'); visible++; }
+        else { card.classList.add('hidden'); }
+      } else {
+        const stages = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
+        if (stages.includes(stage)) { card.classList.remove('hidden'); visible++; }
+        else { card.classList.add('hidden'); }
+      }
+    });
+
+    const info = document.getElementById('filter-info');
+    if (stage === 'all') {
+      info.classList.remove('show');
+    } else {
+      info.classList.add('show');
+      document.getElementById('filter-text').textContent =
+        `Filtering by ${stageLabels[stage]} — ${visible} finding(s) found`;
+    }
+  }
+
+  function toggleFinding(id) {
+    const card = document.getElementById(id);
+    if (card) {
+      card.classList.toggle('expanded');
+      card.classList.toggle('open');
+    }
+  }
+  function toggleF(id) {
+    toggleFinding(id);
+  }
+
+  function toggleSLA(header) {
+    header.parentElement.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
