@@ -111,6 +111,13 @@
   - `2.10 Remediation Guides`: Tagged if actionable remediation guidance, `remediation_ref`, or code diff patch is present.
 - **Dynamic Filter Counts:** Filter pills in HTML reports MUST reflect the exact count of findings satisfying each module's comprehensive mapping condition.
 
+## ASRP Layer 3 Full Stage Issue Synthesis Invariant
+
+- **100% Stage Issue Coverage:** `findings.json` MUST synthesize and consolidate 100% of all non-PASS items (FAIL, WARNING, TRIGGERED, CONFIRMED, REQUIRES_FIX) generated across all 6 Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_10`).
+- **Zero Omission Rule:** No stage check failure from Layer 2 may be omitted, ignored, or left unmapped during Layer 3 Findings normalization and Executive/Component report generation.
+- **Traceability Guarantee:** Every stage issue ID (`STD-*`, `DOM-*`, `RULE-*`, `CHK-*`, `THREAT-*`, `REM-*`) MUST be explicitly traceable back to its parent Finding in `findings.json` and rendered in the report filters.
+
+
 
 
 
