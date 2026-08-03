@@ -95,6 +95,7 @@ class ReportGenerator:
             "2.3": "stage_2_3_rules.json",
             "2.4": "stage_2_4_checklists.json",
             "2.6": "stage_2_6_threats.json",
+            "2.7": "stage_2_7_guidelines.json",
             "2.10": "stage_2_10_remediations.json"
         }
         for key, fname in stage_files.items():
@@ -104,8 +105,8 @@ class ReportGenerator:
 
     def _count_stage_issues(self, stage_id, stages_data, component_id=None):
         """Count non-PASS items in a stage output JSON file for a specific component (or all components)."""
-        stage_file_data = stages_data.get(stage_id, {})
-        results = stage_file_data.get("results", [])
+        stage_file_data = stages_data.get(stage_id) or {}
+        results = stage_file_data.get("results", []) if isinstance(stage_file_data, dict) else []
         count = 0
         for r in results:
             status = str(r.get("status", "")).upper()
@@ -116,7 +117,7 @@ class ReportGenerator:
         return count
 
     def _get_finding_stages(self, finding, stages_data=None):
-        """Dynamically determine which Layer 2 Stage Modules a finding genuinely maps to based on comprehensive criteria."""
+        """Dynamically determine which Layer 2 Stage Modules a finding genuinely maps to based on strict specific criteria."""
         stages = []
         
         std = finding.get("standard_mapping", {})
@@ -124,34 +125,38 @@ class ReportGenerator:
         rule_id = finding.get("rule_id", "") or ""
         chk_ref = finding.get("review_checklist_ref", "") or ""
         threat_ref = finding.get("threat_model_ref", "") or ""
+        guideline_ref = finding.get("guideline_ref", "") or ""
         rem_ref = finding.get("remediation_ref", "") or ""
-        rem = finding.get("remediation", {})
         
-        # 2.1 Security Standards (CWE / OWASP / ASVS mapping exists)
-        if std.get("cwe") or std.get("owasp_top10_2021") or std.get("asvs_v4") or chk_ref.startswith("STD-"):
+        # 2.1 Security Standards: Explicit standard mapping or STD- checklist ref
+        if std.get("cwe") or std.get("owasp_top10_2021") or std.get("asvs_v4") or (chk_ref and chk_ref.startswith("STD-")):
             stages.append("2.1")
             
-        # 2.2 Security Domains (Domain classification exists)
-        if dom or chk_ref.startswith("DOM-"):
+        # 2.2 Security Domains: Explicit DOM- checklist ref or 2.2.x security domain classification
+        if (chk_ref and chk_ref.startswith("DOM-")) or (dom and ("2.2" in dom or dom != "")):
             stages.append("2.2")
             
-        # 2.3 Rule Library (Triggered by rule)
-        if rule_id:
+        # 2.3 Rule Library: Triggered by an executable rule ID
+        if rule_id and (rule_id.startswith("ASRP-") or rule_id.startswith("RULE-")):
             stages.append("2.3")
             
-        # 2.4 Review Checklists (Associated with checklist item)
-        if chk_ref:
+        # 2.4 Review Checklists: Associated with an auditor checklist item (CHK-*)
+        if chk_ref and chk_ref.startswith("CHK-"):
             stages.append("2.4")
             
-        # 2.6 Threat Models (Associated with threat model or High/Critical impact)
-        if threat_ref or finding.get("severity") in ["CRITICAL", "HIGH"]:
+        # 2.6 Threat Models: ONLY IF explicitly linked to a STRIDE threat model scenario (threat_model_ref or THREAT-*)
+        if threat_ref and (threat_ref.startswith("THREAT-") or threat_ref.startswith("ASRP-TM-")):
             stages.append("2.6")
             
-        # 2.10 Remediation Guides (Actionable remediation / patch exists)
-        if rem_ref or rem.get("summary") or rem.get("code_patch"):
+        # 2.7 Secure Coding Guidelines: ONLY IF explicitly linked to a Secure Coding Guideline (guideline_ref or SCG-*)
+        if guideline_ref or rule_id.startswith("SCG-") or (chk_ref and chk_ref.startswith("SCG-")):
+            stages.append("2.7")
+
+        # 2.10 Remediation Guides: ONLY IF explicitly linked to an Actionable Remediation Patch (remediation_ref or REM-*)
+        if rem_ref and (rem_ref.startswith("REM-") or rem_ref.startswith("ASRP-REM-")):
             stages.append("2.10")
             
-        return ",".join(stages) if stages else "2.1,2.2"
+        return ",".join(stages) if stages else "2.1"
 
     def _render_stage_output_cards(self, stages_data, component_id=None):
         """Render HTML cards for all non-PASS items across Layer 2 Stage Output JSON files."""
@@ -375,6 +380,52 @@ class ReportGenerator:
           <p style="font-size:13px;color:var(--text-secondary);margin:8px 0;">{desc}</p>
           <div class="fix-box">
             <label>✅ Architectural Threat Mitigation</label>
+            <p>{rem}</p>
+          </div>
+        </div>
+      </div>'''
+            cards.append(card)
+
+        # 2.7 Secure Coding Guidelines
+        s27 = stages_data.get("2.7", {}).get("results", [])
+        for item in s27:
+            if item.get("status") in ["PASS", "COMPLIANT", "NOT_APPLICABLE"]: continue
+            cid = item.get("component_id", "all")
+            if component_id and cid != component_id: continue
+            
+            item_id = item.get("item_id", "SCG-000")
+            clean_id = str(item_id).replace('.', '_').replace('/', '_').replace(':', '_').replace('-', '_')
+            title = item.get("guideline_title", item_id)
+            sev = item.get("severity", "HIGH").upper()
+            sev_class = sev.lower()
+            ev = item.get("evidence", {})
+            if isinstance(ev, dict):
+                fpath = ev.get("file_path", "N/A")
+                line = ev.get("line", 1)
+                snippet = ev.get("snippet", "")
+            else:
+                fpath, line, snippet = "N/A", 1, ""
+            rem = item.get("remediation", "")
+            
+            snippet_html = f'<div class="code-block">{snippet}</div>' if snippet else ''
+            
+            card = f'''
+      <div class="finding-card" id="card-{clean_id}" data-stages="2.7" data-comp="{cid}">
+        <div class="finding-header" onclick="toggleF(\'card-{clean_id}\')">
+          <span class="finding-sev sev-{sev_class}">{sev}</span>
+          <span class="finding-name">[{cid}] [{item_id}] {title}</span>
+          <span class="comp-tag" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">{cid}</span>
+          <span class="stage-tag">2.7 Secure Coding Guidelines</span>
+          <span class="find-toggle">▼</span>
+        </div>
+        <div class="finding-body">
+          <div class="fb-grid">
+            <div class="fb-field"><label>Guideline Rule</label><p>{title}</p></div>
+            <div class="fb-field"><label>File Location</label><p class="path">{fpath}:{line}</p></div>
+          </div>
+          {snippet_html}
+          <div class="fix-box" style="margin-top:8px;">
+            <label>✅ Secure Coding Remediation</label>
             <p>{rem}</p>
           </div>
         </div>
@@ -859,6 +910,7 @@ class ReportGenerator:
         html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_stage_issues("2.3", stages_data)))
         html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_stage_issues("2.4", stages_data)))
         html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_stage_issues("2.6", stages_data)))
+        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_stage_issues("2.7", stages_data)))
         html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_stage_issues("2.10", stages_data)))
 
         html = html.replace("{{SCORE_GRID_CARDS}}", grid_html)
@@ -1098,6 +1150,7 @@ class ReportGenerator:
         html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_stage_issues("2.3", stages_data, component_id)))
         html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_stage_issues("2.4", stages_data, component_id)))
         html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_stage_issues("2.6", stages_data, component_id)))
+        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_stage_issues("2.7", stages_data, component_id)))
         html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_stage_issues("2.10", stages_data, component_id)))
 
         html = html.replace("{{FINDINGS_CARDS_LIST}}", comp_findings_html)
