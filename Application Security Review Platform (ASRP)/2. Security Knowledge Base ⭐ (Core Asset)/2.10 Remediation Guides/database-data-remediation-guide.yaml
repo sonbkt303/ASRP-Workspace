@@ -1,0 +1,35 @@
+guide_id: ASRP-REM-DB-001
+name: Database, Storage & Cryptography Remediation Guide
+version: 2.0.0
+applicable_stack: [mongodb, mongoose, prisma, redis, postgresql]
+
+remediations:
+  - rem_id: REM-DB-001
+    rule_id: SCG-DB-001
+    guideline_ref: SCG-DB-001
+    target_vulnerability: NoSQL Injection via Unsanitized Object Operators
+    severity: CRITICAL
+    cwe: [CWE-943]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.4
+    priority_sla: 24h
+    summary: Ép kiểu dữ liệu chuỗi `String(input)` trước khi truyền vào MongoDB query.
+    code_diff: |
+      - const user = await UserModel.findOne({ username: req.body.username });
+      + const username = String(req.body.username || '');
+      + const user = await UserModel.findOne({ username });
+
+  - rem_id: REM-DB-002
+    rule_id: SCG-DB-004
+    guideline_ref: SCG-DB-004
+    target_vulnerability: Unencrypted Patient PII Data at Rest in Database
+    severity: CRITICAL
+    cwe: [CWE-311, CWE-312]
+    owasp_top10: [A02:2021-Cryptographic Failures]
+    asvs_control: V8.2.1
+    priority_sla: 24h
+    summary: Mã hóa cấp trường AES-256-GCM cho số Căn cước công dân và Tiền sử bệnh lý.
+    code_diff: |
+      - this.patientRepository.save({ idCardNumber: dto.idCardNumber });
+      + const encryptedIdCard = this.cryptoService.encryptAES256GCM(dto.idCardNumber);
+      + this.patientRepository.save({ idCardNumber: encryptedIdCard });

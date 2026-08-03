@@ -1,0 +1,87 @@
+guide_id: ASRP-REM-API-001
+name: API, GraphQL & Authentication Remediation Guide
+version: 2.0.0
+applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt]
+
+remediations:
+  - rem_id: REM-API-001
+    rule_id: ASRP-AI-NEW-001
+    guideline_ref: SCG-NEST-002
+    target_vulnerability: GraphQL Subscription Authentication Bypass
+    severity: CRITICAL
+    cwe: [CWE-306]
+    owasp_top10: [A01:2021-Broken Access Control]
+    asvs_control: V13.2.6
+    priority_sla: 24h
+    summary: Bổ sung xác thực connectionParams token trong auth guard cho WebSocket subscriptions.
+    code_diff: |
+      - if (info?.operation?.operation === 'subscription') {
+      -   return true;
+      - }
+      + if (info?.operation?.operation === 'subscription') {
+      +   const token = ctx.connectionParams?.authorization || ctx.headers?.authorization;
+      +   return this.validateToken(token);
+      + }
+
+  - rem_id: REM-API-002
+    rule_id: ASRP-SECRET-001
+    guideline_ref: SCG-NEST-003
+    target_vulnerability: Sensitive Tokens Logged in Auth Service
+    severity: HIGH
+    cwe: [CWE-532]
+    owasp_top10: [A09:2021-Security Logging and Monitoring Failures]
+    asvs_control: V7.1.1
+    priority_sla: 7d
+    summary: Loại bỏ credential values khỏi log, chỉ log masked session ID.
+    code_diff: |
+      - this.logger.log(`111 sessionId : ${sessionId} / token : ${token}`);
+      - this.logger.log('와.. 토큰 받았다..', access_token, refresh_token, id_token);
+      + this.logger.log(`Auth success for session: ${sessionId.substring(0, 8)}...`);
+
+  - rem_id: REM-API-003
+    rule_id: ASRP-MISCFG-002
+    guideline_ref: SCG-NEST-008
+    target_vulnerability: Permissive Wildcard CORS Header on Version Endpoint
+    severity: HIGH
+    cwe: [CWE-942]
+    owasp_top10: [A05:2021-Security Misconfiguration]
+    asvs_control: V14.4.1
+    priority_sla: 7d
+    summary: Xóa @Header decorator wildcard, phụ thuộc hoàn toàn vào CORS middleware whitelist.
+    code_diff: |
+      - @Header('Access-Control-Allow-Origin', '*')
+      - @Get('/version.json')
+      + @Get('/version.json')
+
+  - rem_id: REM-API-004
+    rule_id: ASRP-AI-001
+    guideline_ref: SCG-NEST-004
+    target_vulnerability: Swagger UI Exposed Without Environment Guard
+    severity: MEDIUM
+    cwe: [CWE-200]
+    owasp_top10: [A05:2021-Security Misconfiguration]
+    asvs_control: V14.5.3
+    priority_sla: 30d
+    summary: Kiểm tra môi trường NODE_ENV trước khi setup SwaggerModule.
+    code_diff: |
+      - SwaggerModule.setup('api-docs', app, document);
+      + if (process.env.NODE_ENV !== 'production') {
+      +   SwaggerModule.setup('api-docs', app, document);
+      + }
+
+  - rem_id: REM-API-005
+    rule_id: ASRP-AI-NEW-003
+    guideline_ref: SCG-NEST-006
+    target_vulnerability: Hardcoded Weak Default Manager Password
+    severity: MEDIUM
+    cwe: [CWE-798, CWE-521]
+    owasp_top10: [A07:2021-Identification and Authentication Failures]
+    asvs_control: V2.1.1
+    priority_sla: 30d
+    summary: Loại bỏ fallback value hardcoded, throw error nếu thiếu biến môi trường.
+    code_diff: |
+      - export const DEFAULT_MANAGER_PW = process.env.DEFAULT_PW || '1234abcd';
+      + if (!process.env.DEFAULT_PW) {
+      +   throw new Error('FATAL: DEFAULT_PW environment variable is required');
+      + }
+      + export const DEFAULT_MANAGER_PW = process.env.DEFAULT_PW;

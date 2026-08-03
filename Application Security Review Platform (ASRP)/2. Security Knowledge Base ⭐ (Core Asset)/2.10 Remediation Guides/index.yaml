@@ -1,0 +1,35 @@
+catalog_id: ASRP-CATALOG-2.10
+name: Layer 2.10 Remediation Guides Catalog
+version: 2.0.0
+last_updated: 2026-08-03
+
+summary:
+  total_remediation_guides: 4
+  description: >
+    Tập hợp các thư viện hướng dẫn khắc phục và mã patch sửa lỗi Before/After (- và +) chuẩn hóa.
+    Dùng cho AI Agent (Step 2/Step 3) trích xuất Code Patch và hiển thị trên tab 2.10 Remediation của HTML Report.
+
+remediation_guides:
+  - id: ASRP-REM-001
+    name: Vulnerability Remediation Handbook & Cheat Sheets
+    path: 2.10 Remediation Guides/vulnerability-remediation-guide.yaml
+    applicable_stack: [general, top25-cwe]
+    status: active
+
+  - id: ASRP-REM-API-001
+    name: API, GraphQL & Authentication Remediation Guide
+    path: 2.10 Remediation Guides/api-auth-remediation-guide.yaml
+    applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt]
+    status: active
+
+  - id: ASRP-REM-FRONTEND-001
+    name: React & Next.js Frontend Security Remediation Guide
+    path: 2.10 Remediation Guides/frontend-security-remediation-guide.yaml
+    applicable_stack: [react, nextjs, typescript, pnpm]
+    status: active
+
+  - id: ASRP-REM-DB-001
+    name: Database, Storage & Cryptography Remediation Guide
+    path: 2.10 Remediation Guides/database-data-remediation-guide.yaml
+    applicable_stack: [mongodb, mongoose, prisma, redis, postgresql]
+    status: active
