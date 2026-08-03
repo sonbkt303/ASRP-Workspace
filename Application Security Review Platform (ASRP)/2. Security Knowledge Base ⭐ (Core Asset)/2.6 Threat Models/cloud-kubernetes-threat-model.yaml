@@ -1,0 +1,63 @@
+threat_model_id: ASRP-TM-CLOUD-001
+name: Cloud-Native Container & Kubernetes Infrastructure Threat Model
+version: 2.0.0
+target_architecture: [docker, kubernetes, alpine, nginx, cloud-native]
+framework: STRIDE
+
+summary:
+  total_threat_scenarios: 4
+  high_risk_scenarios: 2
+  compliance_matrix: [CIS Kubernetes Benchmark, CIS Docker Benchmark, OWASP ASVS v4.0]
+
+threat_scenarios:
+  - threat_id: THREAT-S-003
+    stride_category: Spoofing
+    title: Unauthenticated Kubernetes Kubelet / Service Account Token Abuse
+    description: Kẻ tấn công đọc file ServiceAccount Token trong container để gọi API Kubelet và leo thang quyền kiểm soát Cluster.
+    impact_level: CRITICAL
+    affected_components: [k8s-pod, service-account]
+    mitigation_controls:
+      - control_id: CTRL-S-003
+        description: Cấu hình `automountServiceAccountToken: false` cho các Pods không cần tương tác với Kubernetes API.
+        layer_2_refs:
+          standards: [CWE-306, CIS-K8S-5.1.6]
+          guidelines: [SCG-DOC-001]
+
+  - threat_id: THREAT-T-003
+    stride_category: Tampering
+    title: Malicious Image Tampering via Unverified Base Images
+    description: Kẻ tấn công thay đổi Base Image hoặc chèn backdoor malware trong các image không được ký số.
+    impact_level: HIGH
+    affected_components: [Dockerfile, container-registry]
+    mitigation_controls:
+      - control_id: CTRL-T-003
+        description: Sử dụng Cosign / Docker Content Trust để ký số Image và chỉ chấp nhận Base Image từ Registry nội bộ.
+        layer_2_refs:
+          standards: [CWE-353, CIS-DOCKER-4.5]
+          guidelines: [SCG-DOC-004]
+
+  - threat_id: THREAT-I-003
+    stride_category: Information Disclosure
+    title: Environment Secrets Leakage via Dockerfile ENV / ARG Instructions
+    description: Mật khẩu DB hoặc API Key bị lưu trong Docker Image layer do khai báo trong chỉ thị `ENV` hoặc `ARG`.
+    impact_level: CRITICAL
+    affected_components: [Dockerfile]
+    mitigation_controls:
+      - control_id: CTRL-I-003
+        description: Sử dụng Kubernetes Secrets / HashiCorp Vault mount tại runtime, tuyệt đối không dùng ENV/ARG cho secrets.
+        layer_2_refs:
+          standards: [CWE-538, CIS-DOCKER-4.6]
+          guidelines: [SCG-DOC-003]
+
+  - threat_id: THREAT-E-003
+    stride_category: Elevation of Privilege
+    title: Container Escape via Root User Execution and Privileged Mode
+    description: Container chạy dưới quyền `root` hoặc bật `--privileged` cho phép kẻ tấn công thực hiện Container Escape chiếm Host OS.
+    impact_level: CRITICAL
+    affected_components: [Dockerfile, k8s-deployment]
+    mitigation_controls:
+      - control_id: CTRL-E-003
+        description: Ép buộc `USER node` non-root, bật `readOnlyRootFilesystem: true` và `allowPrivilegeEscalation: false`.
+        layer_2_refs:
+          standards: [CWE-250, CIS-K8S-5.2.6]
+          guidelines: [SCG-DOC-001, SCG-DOC-005]

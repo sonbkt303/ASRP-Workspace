@@ -1,0 +1,76 @@
+threat_model_id: ASRP-TM-PAYMENT-001
+name: Payment Gateway, E-Commerce & Fintech Platform Threat Model (PCI-DSS)
+version: 2.0.0
+target_architecture: [payment-gateway, e-commerce, wallet, billing, pci-dss]
+framework: STRIDE
+
+summary:
+  total_threat_scenarios: 5
+  high_risk_scenarios: 4
+  compliance_matrix: [PCI-DSS v4.0, OWASP ASVS v4.0]
+
+threat_scenarios:
+  - threat_id: THREAT-S-004
+    stride_category: Spoofing
+    title: Fake Payment Webhook Callback Signature Spoofing
+    description: Kẻ tấn công giả mạo IP/Headers của Payment Gateway (VNPAY, Momo, Stripe) gửi Webhook giả lập giao dịch thành công.
+    impact_level: CRITICAL
+    affected_components: [payment-webhook.controller.ts, billing.service.ts]
+    mitigation_controls:
+      - control_id: CTRL-S-004
+        description: Yêu cầu xác thực chữ ký HMAC-SHA256 trên Webhook payload bằng Secret Key bí mật và kiểm tra IP Whitelist của Payment Provider.
+        layer_2_refs:
+          standards: [CWE-347, ASVS-V13.2.1]
+          guidelines: [SCG-NODE-004, SCG-NEST-001]
+
+  - threat_id: THREAT-T-004
+    stride_category: Tampering
+    title: Client-Side Price & Quantity Parameter Tampering
+    description: Kẻ tấn công sửa đổi giá trị `amount` hoặc `price` trong Request Body ở bước checkout để thanh toán giá trị 0đ hoặc số âm.
+    impact_level: CRITICAL
+    affected_components: [checkout.controller.ts, order.service.ts]
+    mitigation_controls:
+      - control_id: CTRL-T-004
+        description: Lấy giá sản phẩm trực tiếp từ Cơ sở dữ liệu phía Backend, không tin tưởng giá trị `amount` gửi từ Client.
+        layer_2_refs:
+          standards: [CWE-20, ASVS-V5.1.1]
+          guidelines: [SCG-NEST-001, SCG-PY-002]
+
+  - threat_id: THREAT-R-004
+    stride_category: Repudiation
+    title: Repudiation of High-Value Financial Transactions
+    description: Người dùng thực hiện chuyển tiền / hoàn tiền nhưng chối bỏ trách nhiệm do hệ thống không lưu nhật ký giao dịch tài chính bất biến.
+    impact_level: HIGH
+    affected_components: [financial-audit-log, transaction.repository.ts]
+    mitigation_controls:
+      - control_id: CTRL-R-004
+        description: Lưu trữ thông tin giao dịch vào CSDL có thuộc tính Append-Only Audit Log với mã hash SHA-256 nối chuỗi các giao dịch trước đó.
+        layer_2_refs:
+          standards: [CWE-778, ASVS-V7.1.1]
+          guidelines: [SCG-NEST-003, SCG-DB-004]
+
+  - threat_id: THREAT-I-004
+    stride_category: Information Disclosure
+    title: Primary Account Number (PAN) & CVV Credit Card Leakage
+    description: Lưu trữ thông tin thẻ tín dụng (PAN/CVV) chưa mã hóa trong CSDL hoặc in ra ứng dụng log vi phạm tiêu chuẩn PCI-DSS.
+    impact_level: CRITICAL
+    affected_components: [payment.service.ts, logger]
+    mitigation_controls:
+      - control_id: CTRL-I-004
+        description: Tuyệt đối không lưu mã CVV/CVC. Mã hóa PAN thẻ bằng thuật toán AES-256-GCM hoặc áp dụng Tokenization qua Stripe/VNPAY SDK.
+        layer_2_refs:
+          standards: [CWE-311, PCI-DSS-3.4]
+          guidelines: [SCG-DB-004, SCG-NEST-003]
+
+  - threat_id: THREAT-D-004
+    stride_category: Denial of Service
+    title: Race Condition Double Spending in E-Wallet Balance Deduction
+    description: Kẻ tấn công gửi đồng thời nhiều HTTP Requests cùng 1 millisecond để rút tiền/tiêu điểm vượt quá số dư ví (Double Spending).
+    impact_level: CRITICAL
+    affected_components: [wallet.service.ts, redis-lock]
+    mitigation_controls:
+      - control_id: CTRL-D-004
+        description: Sử dụng Redis Redlock hoặc Database Pessimistic Locking (`SELECT FOR UPDATE`) khi trừ số dư ví điện tử.
+        layer_2_refs:
+          standards: [CWE-362, ASVS-V14.1.4]
+          guidelines: [SCG-GO-003, SCG-NODE-005]

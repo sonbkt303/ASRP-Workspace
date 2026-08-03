@@ -1,0 +1,89 @@
+threat_model_id: ASRP-TM-HEALTHCARE-001
+name: Healthcare & Dental Clinic EHR Platform Threat Model (HIPAA / PII)
+version: 2.0.0
+target_architecture: [healthcare-ehr, patient-records, dental-clinic, billing]
+framework: STRIDE
+
+summary:
+  total_threat_scenarios: 6
+  high_risk_scenarios: 4
+  compliance_matrix: [HIPAA Security Rule, GDPR Article 32, OWASP ASVS v4.0]
+
+threat_scenarios:
+  - threat_id: THREAT-S-001
+    stride_category: Spoofing
+    title: Impersonation of Dentist / Medical Staff Identity via Weak Session
+    description: Kẻ tấn công đánh cắp hoặc giả mạo Session Token của Bác sĩ / Nhân viên y tế để truy cập trái phép vào hồ sơ bệnh án.
+    impact_level: CRITICAL
+    affected_components: [dent-api-nestjs, dent-login, auth.guard.ts]
+    mitigation_controls:
+      - control_id: CTRL-S-001
+        description: Sử dụng JWT có ký số RSA256, thời hạn ngắn (15m), lưu trong SameSite HttpOnly Cookie và bắt buộc MFA đối với tài khoản Admin/Bác sĩ.
+        layer_2_refs:
+          standards: [CWE-306, ASVS-V2.1.1]
+          guidelines: [SCG-NEST-002, SCG-REACT-005]
+
+  - threat_id: THREAT-T-001
+    stride_category: Tampering
+    title: Unauthorized Modification of Patient Medical Records or Billing History
+    description: Kẻ tấn công hoặc người dùng có đặc quyền thấp sửa đổi kết quả khám bệnh, đơn thuốc hoặc lịch sử thanh toán của bệnh nhân.
+    impact_level: CRITICAL
+    affected_components: [patient-record-service, billing-module, database]
+    mitigation_controls:
+      - control_id: CTRL-T-001
+        description: Thực thi RBAC/ABAC chặt chẽ, tạo checksum kiểm tra tính toàn vẹn (HMAC) cho hồ sơ bệnh án và lưu vết thay đổi.
+        layer_2_refs:
+          standards: [CWE-863, ASVS-V4.1.1]
+          guidelines: [SCG-NEST-009, SCG-DB-004]
+
+  - threat_id: THREAT-R-001
+    stride_category: Repudiation
+    title: Repudiation of Prescription Changes or Data Erasure by Staff
+    description: Nhân viên y tế xóa hoặc sửa dữ liệu bệnh nhân nhưng chối bỏ trách nhiệm do hệ thống thiếu Nhật ký vết (Audit Trail).
+    impact_level: HIGH
+    affected_components: [audit-logger, session.service.ts]
+    mitigation_controls:
+      - control_id: CTRL-R-001
+        description: Ghi nhật ký audit không thể sửa đổi (Immutable Audit Log) bao gồm Timestamp, User ID, Client IP và Action Detail đối với tất cả các thao tác CRUD bệnh án.
+        layer_2_refs:
+          standards: [CWE-778, ASVS-V7.1.1]
+          guidelines: [SCG-NEST-003, SCG-NODE-007]
+
+  - threat_id: THREAT-I-001
+    stride_category: Information Disclosure
+    title: Leakage of Patient Sensitive PII & Medical History via Logs or Unencrypted DB
+    description: Thông tin Căn cước công dân, Tiền sử bệnh lý bị rò rỉ qua log ứng dụng, Swagger UI công khai hoặc DB không mã hóa.
+    impact_level: CRITICAL
+    affected_components: [auth.service.ts, main.ts, mongodb]
+    mitigation_controls:
+      - control_id: CTRL-I-001
+        description: Tắt Swagger trên production, sanitize log loại bỏ token/PII, mã hóa cấp trường AES-256-GCM trong DB và masking dữ liệu trên frontend.
+        layer_2_refs:
+          standards: [CWE-532, CWE-312, ASVS-V8.2.1]
+          guidelines: [SCG-NEST-003, SCG-NEST-004, SCG-DB-004, SCG-REACT-006]
+
+  - threat_id: THREAT-D-001
+    stride_category: Denial of Service
+    title: Exhaustion of Clinic Booking API & Database Pool via Rate Abuse
+    description: Kẻ tấn công gửi hàng loạt request tạo lịch hẹn giả lập làm kiệt quệ Database Connection Pool và nghẽn hệ thống đăng ký khám.
+    impact_level: HIGH
+    affected_components: [dent-api-nestjs, app.module.ts, redis-cache]
+    mitigation_controls:
+      - control_id: CTRL-D-001
+        description: Áp dụng @nestjs/throttler Rate Limiting theo IP/User ID và cấu hình Database Connection Pool max bounds.
+        layer_2_refs:
+          standards: [CWE-770, ASVS-V13.2.3]
+          guidelines: [SCG-NEST-005, SCG-DB-005]
+
+  - threat_id: THREAT-E-001
+    stride_category: Elevation of Privilege
+    title: BOLA / IDOR Cross-Clinic Tenant Data Access
+    description: Bác sĩ thuộc Phòng khám A sửa tham số `clinicId` trong API query để xem/sửa hồ sơ bệnh nhân của Phòng khám B.
+    impact_level: CRITICAL
+    affected_components: [graphql-resolvers, patient.controller.ts]
+    mitigation_controls:
+      - control_id: CTRL-E-001
+        description: Ép buộc filter `clinicId` lấy trực tiếp từ JWT Authenticated Context, không tin tưởng `clinicId` gửi từ client params.
+        layer_2_refs:
+          standards: [CWE-639, ASVS-V4.1.2]
+          guidelines: [SCG-NEST-009]

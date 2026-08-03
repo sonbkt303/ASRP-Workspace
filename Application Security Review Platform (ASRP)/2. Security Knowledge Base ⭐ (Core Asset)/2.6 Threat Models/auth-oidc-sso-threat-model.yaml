@@ -1,0 +1,76 @@
+threat_model_id: ASRP-TM-AUTH-001
+name: Identity Provider, OAuth2 & OpenID Connect (SSO) Threat Model
+version: 2.0.0
+target_architecture: [identity-provider, oauth2, oidc, sso, keycloak, auth0]
+framework: STRIDE
+
+summary:
+  total_threat_scenarios: 5
+  high_risk_scenarios: 3
+  compliance_matrix: [OAuth 2.1 Security Best Current Practice, OWASP ASVS v4.0]
+
+threat_scenarios:
+  - threat_id: THREAT-S-005
+    stride_category: Spoofing
+    title: Authorization Code Interception & Replay in OAuth2 Flow
+    description: Kẻ tấn công chặn mã `authorization_code` trên đường truyền và đổi lấy Access Token trước ứng dụng hợp lệ.
+    impact_level: CRITICAL
+    affected_components: [oidc-server, auth.controller.ts]
+    mitigation_controls:
+      - control_id: CTRL-S-005
+        description: Bắt buộc áp dụng PKCE (Proof Key for Code Exchange) với `code_challenge` và `code_challenge_method=S256` cho tất cả OAuth2 Clients.
+        layer_2_refs:
+          standards: [CWE-287, ASVS-V3.8.1]
+          guidelines: [SCG-NEST-002, SCG-REACT-005]
+
+  - threat_id: THREAT-T-005
+    stride_category: Tampering
+    title: JWT Header Key ID (kid) Substitution & None Algorithm Attack
+    description: Kẻ tấn công sửa đổi thuật toán JWT thành `none` hoặc chèn tham số `kid` chỉ tới public key do kẻ tấn công kiểm soát để bypass verification.
+    impact_level: CRITICAL
+    affected_components: [jwt.strategy.ts, auth.guard.ts]
+    mitigation_controls:
+      - control_id: CTRL-T-005
+        description: Cấu hình thư viện JWT chỉ chấp nhận thuật toán chỉ định (RS256/ES256), vô hiệu hóa `none` alg và kiểm tra `kid` hợp lệ từ JWKS endpoint.
+        layer_2_refs:
+          standards: [CWE-347, ASVS-V3.5.2]
+          guidelines: [SCG-NEST-002, SCG-JAVA-001]
+
+  - threat_id: THREAT-I-005
+    stride_category: Information Disclosure
+    title: Password Reset Token Leakage via HTTP Referer Header
+    description: Mật khẩu token reset dạng `https://app.com/reset-password?token=XYZ` bị rò rỉ sang bên thứ 3 qua HTTP Referer header khi trang chứa external links.
+    impact_level: HIGH
+    affected_components: [password-reset.controller.ts, frontend-reset-page]
+    mitigation_controls:
+      - control_id: CTRL-I-005
+        description: Thêm header `Referrer-Policy: no-referrer` trên trang reset password và gửi token qua POST body thay vì URL Query Parameter.
+        layer_2_refs:
+          standards: [CWE-200, ASVS-V2.5.4]
+          guidelines: [SCG-REACT-003, SCG-REACT-008]
+
+  - threat_id: THREAT-D-005
+    stride_category: Denial of Service
+    title: Password Hashing Resource Exhaustion (Argon2 / BCrypt DoS)
+    description: Kẻ tấn công gửi liên tục các request login với chuỗi password khổng lồ (vài MB) làm nghẽn CPU server ở bước hash password.
+    impact_level: HIGH
+    affected_components: [auth.service.ts]
+    mitigation_controls:
+      - control_id: CTRL-D-005
+        description: Giới hạn độ dài tối đa của mật khẩu đầu vào (max 72 chars cho BCrypt, max 128 chars cho Argon2) trước khi thực hiện Hashing.
+        layer_2_refs:
+          standards: [CWE-770, ASVS-V2.1.8]
+          guidelines: [SCG-PY-005, SCG-NEST-001]
+
+  - threat_id: THREAT-E-005
+    stride_category: Elevation of Privilege
+    title: Account Takeover via Unvalidated Open Redirect in OAuth Callback
+    description: Kẻ tấn công truyền `redirect_uri=https://attacker.com` vào OAuth authorization request để điều hướng token của victim sang server độc hại.
+    impact_level: CRITICAL
+    affected_components: [oauth.service.ts]
+    mitigation_controls:
+      - control_id: CTRL-E-005
+        description: Đăng ký danh sách exact `redirect_uri` whitelist trong Identity Provider và từ chối mọi URI không nằm trong danh sách.
+        layer_2_refs:
+          standards: [CWE-601, ASVS-V3.8.3]
+          guidelines: [SCG-NEST-008, SCG-NODE-003]

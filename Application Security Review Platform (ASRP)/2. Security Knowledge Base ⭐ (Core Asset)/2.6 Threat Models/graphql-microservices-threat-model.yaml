@@ -1,0 +1,76 @@
+threat_model_id: ASRP-TM-GRAPHQL-001
+name: GraphQL Gateway & Microservices Architecture Threat Model
+version: 2.0.0
+target_architecture: [graphql, api-gateway, microservices, websockets]
+framework: STRIDE
+
+summary:
+  total_threat_scenarios: 5
+  high_risk_scenarios: 3
+  compliance_matrix: [OWASP API Security Top 10 2023, OWASP ASVS v4.0]
+
+threat_scenarios:
+  - threat_id: THREAT-S-002
+    stride_category: Spoofing
+    title: Unauthenticated WebSocket GraphQL Subscription Hijacking
+    description: Kẻ tấn công mở kết nối WebSocket tới GraphQL Subscriptions không có authentication để nhận real-time events của hệ thống.
+    impact_level: CRITICAL
+    affected_components: [auth.guard.ts, graphql-subscription-gateway]
+    mitigation_controls:
+      - control_id: CTRL-S-002
+        description: Yêu cầu JWT token trong `ctx.connectionParams.authorization` trong handler `onConnect`.
+        layer_2_refs:
+          standards: [CWE-306, ASVS-V13.2.6]
+          guidelines: [SCG-NEST-002]
+
+  - threat_id: THREAT-T-002
+    stride_category: Tampering
+    title: GraphQL Introspection & Schema Modification Abuse
+    description: Kẻ tấn công lợi dụng GraphQL Introspection để đọc toàn bộ Schema, phát hiện các Query/Mutation ẩn và thử nghiệm tham số.
+    impact_level: MEDIUM
+    affected_components: [graphql.module.ts, main.ts]
+    mitigation_controls:
+      - control_id: CTRL-T-002
+        description: Tắt Introspection trên production (`introspection: false`) và áp dụng Query Depth Limits.
+        layer_2_refs:
+          standards: [CWE-200]
+          guidelines: [SCG-NEST-004]
+
+  - threat_id: THREAT-I-002
+    stride_category: Information Disclosure
+    title: Wildcard CORS Data Leakage on API Version & Status Endpoints
+    description: Ghi đè CORS whitelist bằng `@Header('Access-Control-Allow-Origin', '*')` làm rò rỉ thông tin version và commit hash.
+    impact_level: HIGH
+    affected_components: [app.controller.ts, main.ts]
+    mitigation_controls:
+      - control_id: CTRL-I-002
+        description: Xóa các decorator @Header wildcard, phụ thuộc hoàn toàn vào CORS middleware whitelist.
+        layer_2_refs:
+          standards: [CWE-942, ASVS-V14.4.1]
+          guidelines: [SCG-NEST-008]
+
+  - threat_id: THREAT-D-002
+    stride_category: Denial of Service
+    title: GraphQL Batching & Circular Deep Query Denial of Service
+    description: Kẻ tấn công gửi các truy vấn lồng nhau vô tận (Circular Batch Queries) làm sập CPU GraphQL Engine.
+    impact_level: HIGH
+    affected_components: [graphql.module.ts]
+    mitigation_controls:
+      - control_id: CTRL-D-002
+        description: Giới hạn Query Depth Limit <= 5 và Query Complexity Limit <= 1000 bằng `graphql-depth-limit`.
+        layer_2_refs:
+          standards: [CWE-770, ASVS-V13.2.3]
+          guidelines: [SCG-NEST-005]
+
+  - threat_id: THREAT-E-002
+    stride_category: Elevation of Privilege
+    title: Broken Field-Level Authorization in GraphQL Resolvers
+    description: Kẻ tấn công gọi các trường dữ liệu nhạy cảm trong Query (như `user { ssn, passwordHash }`) mà không bị chặn bởi Field Guard.
+    impact_level: HIGH
+    affected_components: [user.resolver.ts]
+    mitigation_controls:
+      - control_id: CTRL-E-002
+        description: Áp dụng Field-Level Authorization Guards hoặc DTO Response Type Exclusions (`@HideField()`).
+        layer_2_refs:
+          standards: [CWE-200, ASVS-V4.1.1]
+          guidelines: [SCG-NEST-001, SCG-NEST-009]
