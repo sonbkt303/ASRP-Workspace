@@ -1,17 +1,109 @@
 guideline_id: ASRP-SCG-NESTJS-001
-name: NestJS & TypeScript Secure Coding Guidelines
-version: 1.0
-applicable_stack: [nestjs, typescript, express, fastify]
+name: NestJS & TypeScript Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [nestjs, typescript, express, fastify, graphql, typeorm, mongoose, prisma]
+
+summary:
+  total_guidelines: 10
+  target_framework: NestJS v9+ / v10+
+  security_domains: [authentication, authorization, session_management, input_validation, secrets_management, logging_monitoring, api_security]
 
 guidelines:
-  - id: SCG-NEST-01
-    title: Enforce Class Validator & ValidationPipe globally
-    rule: Always configure app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })) to strip unexpected payload fields.
+  - id: SCG-NEST-001
+    title: Enforce Global ValidationPipe with Strict Field Truncation
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-20, CWE-138]
+    asvs: [V5.1.1, V5.1.2]
+    severity: HIGH
+    rule: >
+      Luôn luôn cấu hình `app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }))`
+      tại main.ts. Việc này đảm bảo loại bỏ 100% các trường payload không nằm trong DTO (Mass Assignment Protection) và tự động validate kiểu dữ liệu.
 
-  - id: SCG-NEST-02
-    title: GraphQL Resolver Authorization & Tenant Isolation
-    rule: Ensure GraphQL Query and Mutation resolvers enforce Guards (@UseGuards(JwtAuthGuard, RolesGuard)) and explicitly filter queries by current user's hospital/tenant ID.
+  - id: SCG-NEST-002
+    title: GraphQL Subscription & Connection-Level Authentication Guard
+    domain: 2.2.2 Session Management / 2.2.3 Access Control
+    cwe: [CWE-306, CWE-862]
+    asvs: [V13.2.6, V1.4.1]
+    severity: CRITICAL
+    rule: >
+      Tất cả các GraphQL Subscriptions (WebSockets) BẮT BUỘC phải kiểm tra JWT Token trong `connectionParams.authorization`.
+      Tuyệt đối không bypass Guard bằng kiểm tra `info.operation.operation === 'subscription'` mà không xác thực identity connection.
 
-  - id: SCG-NEST-03
-    title: Secrets Management via ConfigService
-    rule: Never hardcode fallback strings in ConfigService.getOrThrow() for sensitive secrets. Force environment variable injection or KMS/Vault fetching.
+  - id: SCG-NEST-003
+    title: Zero-Secrets Exposure in Application Logging
+    domain: 2.2.7 Logging & Monitoring
+    cwe: [CWE-532, CWE-200]
+    asvs: [V7.1.1, V7.1.2]
+    severity: HIGH
+    rule: >
+      Không ghi log chứa các giá trị nhạy cảm (Access Token, Refresh Token, Password, Secret Key, Patient PII).
+      Sử dụng Logger Interceptor hoặc Sanitize Masking Utility trước khi gọi `this.logger.log()` hoặc `logger.debug()`.
+
+  - id: SCG-NEST-004
+    title: Mandatory Environment Guard for Swagger UI
+    domain: 2.2.8 API Security / 2.2.5 Configuration Security
+    cwe: [CWE-200]
+    asvs: [V14.5.3]
+    severity: MEDIUM
+    rule: >
+      Khởi tạo `SwaggerModule.setup('api-docs', app, document)` BẮT BUỘC phải bọc trong điều kiện kiểm tra môi trường:
+      `if (process.env.NODE_ENV !== 'production')`. Tuyệt đối không phơi bày Swagger UI và /swagger-json công khai trên production.
+
+  - id: SCG-NEST-005
+    title: Global Rate Limiting via @nestjs/throttler
+    domain: 2.2.8 API Security
+    cwe: [CWE-770, CWE-400]
+    asvs: [V4.0.1, V13.2.3]
+    severity: MEDIUM
+    rule: >
+      Bắt buộc tích hợp `ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }])` và áp dụng `ThrottlerGuard` globally hoặc tại các Controllers nhạy cảm (Auth, Password Reset, Public Forms).
+
+  - id: SCG-NEST-006
+    title: Strict Environment Variable Fetching Without Hardcoded Secrets
+    domain: 2.2.6 Secrets Management
+    cwe: [CWE-798, CWE-521]
+    asvs: [V2.1.1]
+    severity: HIGH
+    rule: >
+      Sử dụng `configService.getOrThrow<string>('JWT_SECRET')` hoặc throw Exception ngay khi khởi động ứng dụng nếu biến môi trường bị thiếu.
+      Tuyệt đối không để giá trị fallback mặc định dạng chuỗi cứng (như `process.env.DEFAULT_PW || '1234abcd'`).
+
+  - id: SCG-NEST-007
+    title: Sliding Session Expiration Persistence in Redis
+    domain: 2.2.2 Session Management
+    cwe: [CWE-613]
+    asvs: [V3.3.1]
+    severity: LOW
+    rule: >
+      Khi thực hiện Session Sliding Expiration trong NestJS Session Service, sau khi cập nhật `lastAccessedAt`, BẮT BUỘC phải gọi
+      `redisClient.expire(sessionKey, DEFAULT_TTL)` để duy trì thời gian sống thực sự trong Redis store.
+
+  - id: SCG-NEST-008
+    title: Secure CORS Whitelist & Explicit Middleware Configuration
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-942]
+    asvs: [V14.4.1]
+    severity: HIGH
+    rule: >
+      Cấu hình CORS whitelist chính xác trong `app.enableCors({ origin: ['https://clinic.domain.com'] })`.
+      Không sử dụng `@Header('Access-Control-Allow-Origin', '*')` trên các Controller endpoints vì sẽ ghi đè và làm vô hiệu hóa CORS middleware.
+
+  - id: SCG-NEST-009
+    title: Strict Tenant & Resource Ownership Isolation
+    domain: 2.2.3 Access Control (IDOR / BOLA)
+    cwe: [CWE-639, CWE-863]
+    asvs: [V4.1.1, V4.1.2]
+    severity: CRITICAL
+    rule: >
+      Tất cả các truy vấn DB (TypeORM, Prisma, Mongoose) BẮT BUỘC phải thêm điều kiện `where: { id: targetId, clinicId: user.clinicId }`
+      trích xuất từ JWT Authenticated User Payload để ngăn ngừa lỗ hổng IDOR/BOLA giữa các phòng khám/khách hàng.
+
+  - id: SCG-NEST-010
+    title: Safe Async Process & Unhandled Exception Handling
+    domain: 2.2.9 Error Handling & Logging
+    cwe: [CWE-209, CWE-703]
+    asvs: [V7.4.1]
+    severity: MEDIUM
+    rule: >
+      Đăng ký `AllExceptionsFilter` toàn cục để sanitize stack traces trước khi phản hồi về Client.
+      Đảm bảo mọi Unhandled Rejections trong worker threads đều được catch và ghi log an toàn mà không làm sập ứng dụng.

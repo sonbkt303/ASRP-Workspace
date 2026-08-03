@@ -1,0 +1,60 @@
+guideline_id: ASRP-SCG-GO-001
+name: Go (Golang) Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [golang, gin, fiber, gorm, sqlx, grpc]
+
+summary:
+  total_guidelines: 5
+  target_technology: Go 1.20+ / Gin / GORM
+  security_domains: [input_validation, cryptography, concurrency_event_loop, infrastructure_security]
+
+guidelines:
+  - id: SCG-GO-001
+    title: Parameterized Database Queries in Go database/sql and GORM
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-89]
+    asvs: [V5.3.4]
+    severity: CRITICAL
+    rule: >
+      Luôn luôn truyền tham số trong GORM `db.Where("name = ?", userInput).Find(&users)` hoặc `db.QueryContext(ctx, "SELECT ... WHERE id = $1", userId)`.
+      Tuyệt đối không sử dụng `fmt.Sprintf("SELECT ... WHERE name = '%s'", userInput)` nối chuỗi vào SQL query.
+
+  - id: SCG-GO-002
+    title: Safe Command Execution without exec.Command Shell Context
+    domain: 2.2.4 Input Validation / Command Injection
+    cwe: [CWE-78]
+    asvs: [V5.3.8]
+    severity: CRITICAL
+    rule: >
+      Sử dụng `exec.CommandContext(ctx, "binaryName", arg1, arg2)` với mảng tham số phân tách rõ ràng.
+      Không gọi `exec.Command("sh", "-c", formattedString)` để tránh lỗ hổng Command Injection qua ký tự shell `; | &`.
+
+  - id: SCG-GO-003
+    title: Goroutine Memory Leak & Race Condition Hardening
+    domain: 2.2.12 Business Logic & Concurrency
+    cwe: [CWE-362, CWE-400]
+    asvs: [V14.1.4]
+    severity: HIGH
+    rule: >
+      Tất cả các Goroutine chạy ngầm BẮT BUỘC phải truyền `context.WithTimeout` hoặc `context.WithCancel` và lắng nghe `<-ctx.Done()`.
+      Sử dụng `sync.Mutex` hoặc `atomic` package khi truy cập biến dùng chung giữa các Goroutine để tránh Race Condition.
+
+  - id: SCG-GO-004
+    title: TLS 1.3 Configuration Enforce in Go HTTP Server
+    domain: 2.2.5 Cryptography
+    cwe: [CWE-326, CWE-327]
+    asvs: [V9.1.1]
+    severity: HIGH
+    rule: >
+      Cấu hình `tls.Config{ MinVersion: tls.VersionTLS12, PreferServerCipherSuites: true }` cho HTTP Server.
+      Vô hiệu hóa các cipher suites yếu như RC4, 3DES và SSLv3/TLS 1.0.
+
+  - id: SCG-GO-005
+    title: Gin Engine Panic Recovery & Custom Error Formatting
+    domain: 2.2.9 Logging & Error Handling
+    cwe: [CWE-209]
+    asvs: [V7.4.1]
+    severity: MEDIUM
+    rule: >
+      Đăng ký middleware `r.Use(gin.Recovery())` để tự động bắt các lỗi `panic()` trong Go Goroutines.
+      Không trả về nội dung `err.Error()` thô của hệ thống cho Client để tránh tiết lộ cấu trúc DB và file path.

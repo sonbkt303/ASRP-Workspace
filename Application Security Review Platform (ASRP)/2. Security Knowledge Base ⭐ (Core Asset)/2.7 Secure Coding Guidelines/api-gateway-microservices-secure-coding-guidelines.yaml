@@ -1,0 +1,60 @@
+guideline_id: ASRP-SCG-MICROSERVICES-001
+name: API Gateway, Microservices & Message Broker Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [grpc, rabbitmq, kafka, kong, envoy, NGINX, jwt, mtls]
+
+summary:
+  total_guidelines: 5
+  target_architecture: Microservices, Event-Driven & API Gateways
+  security_domains: [authentication, authorization, api_security, infrastructure_security, secrets_management]
+
+guidelines:
+  - id: SCG-MS-001
+    title: Service-to-Service Mutual TLS (mTLS) Authentication
+    domain: 2.2.1 Authentication / 2.2.5 Cryptography
+    cwe: [CWE-306, CWE-319]
+    asvs: [V9.1.2, V9.2.1]
+    severity: CRITICAL
+    rule: >
+      Tất cả các giao tiếp nội bộ giữa các microservices (Rest API hoặc gRPC) BẮT BUỘC phải bật mTLS (Mutual TLS) thông qua Istio/Linkerd Service Mesh hoặc NGINX/Envoy sidecars.
+      Không gửi HTTP không mã hóa giữa các container trong nội bộ mạng VPC.
+
+  - id: SCG-MS-002
+    title: Message Broker Authentication & Payload Encryption (RabbitMQ / Kafka)
+    domain: 2.2.12 Business Logic & Event-Driven Security
+    cwe: [CWE-306, CWE-311]
+    asvs: [V13.2.1]
+    severity: HIGH
+    rule: >
+      Kết nối tới RabbitMQ/Kafka BẮT BUỘC phải yêu cầu Mật khẩu/SASL Authentication và TLS encryption.
+      Các message chứa dữ liệu cá nhân bệnh nhân (PII) trên queue BẮT BUỘC phải mã hóa payload trước khi xuất bản (`publish`).
+
+  - id: SCG-MS-003
+    title: JWT Claims Context Propagation Across Microservices
+    domain: 2.2.3 Access Control / Session Management
+    cwe: [CWE-285, CWE-639]
+    asvs: [V4.1.1]
+    severity: HIGH
+    rule: >
+      API Gateway sau khi verify JWT từ Client BẮT BUỘC phải trích xuất User Identity, Roles, Clinic ID và truyền tiếp qua Internal HTTP/gRPC Headers (`X-User-Id`, `X-Tenant-Id`, `X-User-Roles`).
+      Microservices phía sau phải đọc thông tin từ Header này để thực thi authorization.
+
+  - id: SCG-MS-004
+    title: Distributed Rate Limiting & Circuit Breaker Pattern
+    domain: 2.2.8 API Security / Resource Exhaustion
+    cwe: [CWE-770]
+    asvs: [V13.2.3]
+    severity: HIGH
+    rule: >
+      API Gateway BẮT BUỘC áp dụng Rate Limiting phân tán (dựa trên Redis/Kong) theo Client IP & Authenticated User ID.
+      Tích hợp Circuit Breaker (Hystrix / Resilience4j / Opossum) để cắt kết nối tới downstream microservice nếu gặp tấn công DoS/Cascading Failure.
+
+  - id: SCG-MS-005
+    title: gRPC Metadata Token Verification & Proto Input Validation
+    domain: 2.2.8 API Security / Input Validation
+    cwe: [CWE-20]
+    asvs: [V13.1.1]
+    severity: HIGH
+    rule: >
+      gRPC Services BẮT BUỘC phải cấu hình gRPC Interceptors để kiểm tra Authorization Metadata (`grpc-metadata-authorization`).
+      Dữ liệu Protobuf nhận vào phải được kiểm tra qua `protoc-gen-validate` (PGV) trước khi xử lý logic nghiệp vụ.

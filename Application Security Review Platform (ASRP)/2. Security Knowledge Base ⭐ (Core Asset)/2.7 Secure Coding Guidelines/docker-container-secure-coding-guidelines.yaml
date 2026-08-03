@@ -1,0 +1,60 @@
+guideline_id: ASRP-SCG-DOCKER-001
+name: Docker & Container Infrastructure Hardening Guidelines
+version: 2.0.0
+applicable_stack: [docker, kubernetes, alpine, nginx, node, python]
+
+summary:
+  total_guidelines: 5
+  target_technology: Docker Engine & Container Security
+  security_domains: [configuration_security, secrets_management, infrastructure_security]
+
+guidelines:
+  - id: SCG-DOC-001
+    title: Mandatory Non-Root Container Execution
+    domain: 2.2.13 Infrastructure Security
+    cwe: [CWE-250]
+    asvs: [V14.1.1]
+    severity: HIGH
+    rule: >
+      Tuyệt đối không chạy ứng dụng dưới quyền `root` trong container.
+      Bắt buộc định nghĩa `USER node` (cho Node.js) hoặc `USER appuser` trong Dockerfile trước lệnh `CMD` hoặc `ENTRYPOINT`.
+
+  - id: SCG-DOC-002
+    title: Multi-Stage Docker Builds for Artifact Reduction
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-1188]
+    asvs: [V14.1.2]
+    severity: MEDIUM
+    rule: >
+      Sử dụng Multi-Stage Build để tách biệt giai đoạn build (chứa compilers, devDependencies, tools) và giai đoạn runtime.
+      Chỉ copy các build artifacts đã biên dịch sang container runtime tối giản (Alpine / Distroless).
+
+  - id: SCG-DOC-003
+    title: Zero Secrets in Dockerfile ENV / ARG Instructions
+    domain: 2.2.6 Secrets Management
+    cwe: [CWE-538, CWE-798]
+    asvs: [V2.1.1]
+    severity: CRITICAL
+    rule: >
+      Không bao giờ khai báo API Keys, Passwords, hay Private Keys trong các chỉ thị `ENV` hoặc `ARG` của Dockerfile vì chúng lưu lại trong image history (`docker history`).
+      Sử dụng Docker Secrets, Kubernetes Secrets hoặc Mount Volumes tại runtime.
+
+  - id: SCG-DOC-004
+    title: Minimal Base Images and Security Patch Updates
+    domain: 2.2.7 Dependency Management
+    cwe: [CWE-1104]
+    asvs: [V14.1.3]
+    severity: MEDIUM
+    rule: >
+      Ưu tiên sử dụng các Base Image tối giản, được xác thực chính thức (như `node:18-alpine` hoặc `python:3.10-slim`).
+      Chạy `apk update && apk upgrade` hoặc `apt-get update` trong giai đoạn build để vá lỗ hổng OS packages.
+
+  - id: SCG-DOC-005
+    title: Read-Only Root Filesystem Execution
+    domain: 2.2.13 Infrastructure Security
+    cwe: [CWE-732]
+    asvs: [V14.1.4]
+    severity: MEDIUM
+    rule: >
+      Cấu hình container chạy với hệ thống tệp gốc chỉ đọc (`--read-only` hoặc `readOnlyRootFilesystem: true` trong Kubernetes SecurityContext).
+      Các thư mục cần ghi tạm (như `/tmp`, `/app/uploads`) phải được mount dưới dạng `tmpfs` có giới hạn dung lượng.

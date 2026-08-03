@@ -1,0 +1,69 @@
+guideline_id: ASRP-SCG-PYTHON-001
+name: Python & Django / FastAPI Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [python, django, fastapi, flask, sqlalchemy, celery, pydantic]
+
+summary:
+  total_guidelines: 6
+  target_framework: Python 3.10+ / Django 4+ / FastAPI
+  security_domains: [input_validation, authentication, authorization, cryptography, secrets_management]
+
+guidelines:
+  - id: SCG-PY-001
+    title: Parameterized Queries and ORM Usage
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-89]
+    asvs: [V5.3.4, V5.3.5]
+    severity: CRITICAL
+    rule: >
+      Luôn luôn sử dụng Django ORM (`Filter()`) hoặc SQLAlchemy ORM thay vì viết câu lệnh SQL thô (`cursor.execute(f"SELECT ... {input}")`).
+      Nếu bắt buộc phải dùng raw SQL, BẮT BUỘC sử dụng tham số hóa `cursor.execute("SELECT ... %s", [input])`.
+
+  - id: SCG-PY-002
+    title: Mandatory Pydantic Schema Validation in FastAPI
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-20]
+    asvs: [V5.1.1]
+    severity: HIGH
+    rule: >
+      Tất cả các endpoints trong FastAPI BẮT BUỘC phải định nghĩa Pydantic `BaseModel` làm Request Body để validate dữ liệu đầu vào.
+      Sử dụng `Field(gt=0, max_length=255)` để giới hạn độ dài và khoảng giá trị của biến.
+
+  - id: SCG-PY-003
+    title: Safe Deserialization Without Safe Pickle
+    domain: 2.2.4 Input Validation / Remote Code Execution
+    cwe: [CWE-502]
+    asvs: [V5.5.1]
+    severity: CRITICAL
+    rule: >
+      Tuyệt đối không deserialize dữ liệu untrusted bằng `pickle.loads()`.
+      Thay vào đó, luôn sử dụng format trao đổi dữ liệu an toàn như `json.loads()` hoặc `yaml.safe_load()`.
+
+  - id: SCG-PY-004
+    title: Django DEBUG Mode Guard in Production
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-215, CWE-200]
+    asvs: [V14.3.2]
+    severity: HIGH
+    rule: >
+      Bắt buộc đặt `DEBUG = False` trong `settings.py` khi triển khai production.
+      `DEBUG = True` phơi bày traceback chi tiết, biến môi trường và câu lệnh SQL khi có lỗi hệ thống.
+
+  - id: SCG-PY-005
+    title: Strong Password Hashing with Argon2 or PBKDF2
+    domain: 2.2.1 Authentication / Cryptography
+    cwe: [CWE-916, CWE-328]
+    asvs: [V2.4.1]
+    severity: HIGH
+    rule: >
+      Cấu hình `PASSWORD_HASHERS` trong Django ưu tiên `django.contrib.auth.hashers.Argon2PasswordHasher` hoặc `PBKDF2PasswordHasher` với số vòng lặp tối thiểu 600,000 rounds.
+
+  - id: SCG-PY-006
+    title: Secure Celery Task Message Serialization
+    domain: 2.2.9 Infrastructure & Async Security
+    cwe: [CWE-502]
+    asvs: [V5.5.1]
+    severity: MEDIUM
+    rule: >
+      Cấu hình Celery worker `task_serializer = 'json'`, `accept_content = ['json']`, `result_serializer = 'json'`.
+      Không chấp nhận pickle serializer trong hệ thống hàng đợi công việc.

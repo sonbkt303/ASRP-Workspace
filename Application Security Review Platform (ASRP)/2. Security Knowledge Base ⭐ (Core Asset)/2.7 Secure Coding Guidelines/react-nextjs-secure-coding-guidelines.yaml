@@ -1,0 +1,90 @@
+guideline_id: ASRP-SCG-REACT-NEXTJS-001
+name: React & Next.js Frontend Monorepo Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [react, nextjs, typescript, pnpm, tailwind, redux, zustand]
+
+summary:
+  total_guidelines: 8
+  target_framework: React v18+ / Next.js v13+ / v14+
+  security_domains: [configuration_security, input_validation, session_management, secrets_management, dependency_management]
+
+guidelines:
+  - id: SCG-REACT-001
+    title: Mandatory React StrictMode Enablement
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-1188]
+    asvs: [V14.2.1]
+    severity: HIGH
+    rule: >
+      Tất cả các tệp `next.config.js` trong Frontend Monorepo BẮT BUỘC phải bật `reactStrictMode: true`.
+      Strict Mode giúp phát hiện sớm các side-effects bất thường, lifecycle deprecations và ngăn ngừa nguy cơ rò rỉ bộ nhớ/state.
+
+  - id: SCG-REACT-002
+    title: Zero-Suppression of TypeScript Build Errors
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-703]
+    asvs: [V14.2.2]
+    severity: MEDIUM
+    rule: >
+      Tuyệt đối không cấu hình `typescript: { ignoreBuildErrors: true }` trong `next.config.js`.
+      Tất cả các lỗi type safety phải được giải quyết dứt điểm trước khi đóng gói production build để đảm bảo tính toàn vẹn dữ liệu.
+
+  - id: SCG-REACT-003
+    title: Mandatory HTTP Security Headers in Next.config.js
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-16, CWE-693]
+    asvs: [V14.4.3]
+    severity: HIGH
+    rule: >
+      Hàm `headers()` trong `next.config.js` BẮT BUỘC phải khai báo đầy đủ các HTTP Security Headers:
+      Content-Security-Policy (CSP), X-Frame-Options (DENY/SAMEORIGIN), X-Content-Type-Options (nosniff), HSTS, Referrer-Policy.
+
+  - id: SCG-REACT-004
+    title: Safe HTML Rendering Without dangerouslySetInnerHTML
+    domain: 2.2.4 Input Validation / Cross-Site Scripting (XSS)
+    cwe: [CWE-79]
+    asvs: [V5.3.1, V5.3.3]
+    severity: CRITICAL
+    rule: >
+      Tránh sử dụng `dangerouslySetInnerHTML`. Nếu bắt buộc phải render HTML từ nguồn động (như mô tả hồ sơ bệnh nhân),
+      BẮT BUỘC phải làm sạch HTML trước bằng thư viện `DOMPurify.sanitize(dirtyHtml)` với cấu hình whitelist thẻ an toàn.
+
+  - id: SCG-REACT-005
+    title: Secure Token Storage & SameSite HttpOnly Cookies
+    domain: 2.2.2 Session Management / 2.2.6 Secrets Management
+    cwe: [CWE-922, CWE-614]
+    asvs: [V3.4.1, V3.4.3]
+    severity: HIGH
+    rule: >
+      Không lưu trữ Access Token / Refresh Token trực tiếp trong LocalStorage hoặc SessionStorage vì dễ bị đánh cắp bởi XSS.
+      Ưu tiên lưu trữ Token trong `SameSite=Strict; Secure; HttpOnly` Cookies được quản lý bởi API Gateway hoặc Next.js Middleware.
+
+  - id: SCG-REACT-006
+    title: Masking Sensitive Patient PII Data in Frontend State
+    domain: 2.2.6 Secrets Management
+    cwe: [CWE-312, CWE-359]
+    asvs: [V8.1.1]
+    severity: MEDIUM
+    rule: >
+      Tất cả thông tin nhạy cảm của bệnh nhân (Số Căn cước công dân, Thẻ BHYT, Số điện thoại, Địa chỉ) khi hiển thị trên màn hình
+      danh sách BẮT BUỘC phải được che bớt (Masking dạng `090****123` hoặc `001******123`).
+
+  - id: SCG-REACT-007
+    title: Non-Inclusion of Debug Files and yarn-error.log in Repository
+    domain: 2.2.9 Dependency & Supply Chain
+    cwe: [CWE-200]
+    asvs: [V14.1.1]
+    severity: LOW
+    rule: >
+      Thêm `yarn-error.log`, `npm-debug.log`, `.env.local` vào `.gitignore`.
+      Tuyệt đối không commit các file log cài đặt hoặc file cấu hình chứa biến môi trường cục bộ lên Git repository.
+
+  - id: SCG-REACT-008
+    title: Secure External Links with rel="noopener noreferrer"
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-1022]
+    asvs: [V14.4.7]
+    severity: LOW
+    rule: >
+      Tất cả các liên kết mở tab mới `<a href="..." target="_blank">` BẮT BUỘC phải kèm theo thuộc tính `rel="noopener noreferrer"`
+      để phòng tránh tấn công Reverse Tabnabbing.

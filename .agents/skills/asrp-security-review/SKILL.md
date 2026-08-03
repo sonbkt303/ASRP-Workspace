@@ -73,10 +73,13 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
 1. Load Layer 1 Security Matrix (`standards`, `security_domains`, `rule_set_ids`, `checklists`).
 2. Load Layer 2 knowledge base artifacts from:
    - `2.1 Security Standards` (OWASP ASVS v4.0, OWASP Top 10 2021, NIST SSDF, CWE Top 25, CIS Benchmarks)
-   - `2.2 Security Domains` (11 core security domains)
-   - `2.3 Rule Library/index.yaml` (currently 19 core executable rules)
+   - `2.2 Security Domains` (13 core security domains)
+   - `2.3 Rule Library/index.yaml` (executable rules catalog)
    - `2.4 Review Checklists` (Domain & architecture review checklists)
+   - `2.6 Threat Models` (STRIDE threat modeling scenarios)
+   - `2.7 Secure Coding Guidelines/index.yaml` (Stack-aware guidelines: Node.js, NestJS, React/Next.js, Python, Database/ORM, Docker)
    - `2.9 Attack Patterns` (CAPEC attack scenarios)
+   - `2.10 Remediation Guides` (Actionable code diff patches)
 ### 2. Multi-Dimensional AI Code Audit & Modular Stage JSON Generation (AI-Primary Engine)
 AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/` and generate individual stage output files in `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:
 

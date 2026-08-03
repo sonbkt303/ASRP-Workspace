@@ -1,0 +1,80 @@
+guideline_id: ASRP-SCG-NODEJS-001
+name: Node.js Core & Express.js Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [nodejs, express, fastify, koa, javascript, typescript]
+
+summary:
+  total_guidelines: 7
+  target_runtime: Node.js v18+ LTS / v20+ LTS
+  security_domains: [input_validation, configuration_security, cryptography, concurrency_event_loop, file_system_security]
+
+guidelines:
+  - id: SCG-NODE-001
+    title: Prevention of Prototype Pollution Vulnerabilities
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-1321]
+    asvs: [V5.1.1, V5.5.1]
+    severity: CRITICAL
+    rule: >
+      Tránh gán thuộc tính động dạng `obj[key] = val` từ input người dùng mà không kiểm tra `key !== '__proto__'` và `key !== 'constructor'`.
+      Sử dụng `Object.create(null)` cho hash maps hoặc dùng `Map` thay vì plain JavaScript objects. Tránh các phiên bản `lodash.merge` lỗi thời.
+
+  - id: SCG-NODE-002
+    title: Safe Child Process Execution Without Shell Injection
+    domain: 2.2.4 Input Validation / Command Injection
+    cwe: [CWE-78]
+    asvs: [V5.3.8]
+    severity: CRITICAL
+    rule: >
+      Tuyệt đối không dùng `child_process.exec(cmdString)` khi `cmdString` chứa đầu vào của người dùng.
+      Luôn luôn sử dụng `child_process.execFile(file, argsArray)` hoặc `child_process.spawn(cmd, argsArray, { shell: false })` để ngăn ngừa Command Injection.
+
+  - id: SCG-NODE-003
+    title: Path Traversal Prevention in Node.js File System Operations
+    domain: 2.2.11 File Upload & Storage Security
+    cwe: [CWE-22, CWE-73]
+    asvs: [V12.3.1]
+    severity: HIGH
+    rule: >
+      Khi đọc/ghi tệp từ `fs.readFile()` hoặc `fs.writeFile()`, BẮT BUỘC phải chuẩn hóa đường dẫn bằng `path.resolve(baseDir, userInput)`
+      và kiểm tra `resolvedPath.startsWith(baseDir)` để chặn các đòn tấn công leo vết đường dẫn (`../`).
+
+  - id: SCG-NODE-004
+    title: Constant-Time Comparison for HMAC and Token Verification
+    domain: 2.2.5 Cryptography
+    cwe: [CWE-208]
+    asvs: [V6.2.1]
+    severity: HIGH
+    rule: >
+      Không so sánh chuỗi HMAC Signature, Password Hash hoặc Secret Token bằng toán tử `===` hoặc `==` vì dễ bị tấn công đo thời gian (Timing Attack).
+      Bắt buộc sử dụng `crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b))` với hai Buffer có độ dài bằng nhau.
+
+  - id: SCG-NODE-005
+    title: Non-Blocking Event Loop Execution & ReDoS Prevention
+    domain: 2.2.12 Business Logic & Concurrency
+    cwe: [CWE-1333, CWE-400]
+    asvs: [V5.2.2]
+    severity: MEDIUM
+    rule: >
+      Tránh chạy các hàm đồng bộ nặng (`fs.readFileSync`, `JSON.parse` buffer khổng lồ) hoặc Biểu thức chính quy (Regex) có độ phức tạp lũy thừa (ReDoS) trên main Event Loop.
+      Sử dụng `worker_threads` hoặc thư viện `safe-regex` để kiểm tra regex patterns.
+
+  - id: SCG-NODE-006
+    title: Express Body Parser Payload Limit Hardening
+    domain: 2.2.8 API Security / Denial of Service
+    cwe: [CWE-770]
+    asvs: [V13.2.3]
+    severity: MEDIUM
+    rule: >
+      Luôn luôn giới hạn dung lượng Request Body trong Express/Fastify middleware:
+      `app.use(express.json({ limit: '100kb' }))` và `app.use(express.urlencoded({ limit: '100kb', extended: true }))` để tránh đòn tấn công Payload Bomb DoS.
+
+  - id: SCG-NODE-007
+    title: Safe Global Exception Process Exit Standards
+    domain: 2.2.9 Logging & Monitoring
+    cwe: [CWE-703, CWE-248]
+    asvs: [V7.4.1]
+    severity: MEDIUM
+    rule: >
+      Đăng ký người lắng nghe `process.on('uncaughtException')` và `process.on('unhandledRejection')`.
+      Ghi log lỗi sanized và thực hiện `process.exit(1)` an toàn (graceful shutdown) để PM2/Kubernetes tự khôi phục instance mới.

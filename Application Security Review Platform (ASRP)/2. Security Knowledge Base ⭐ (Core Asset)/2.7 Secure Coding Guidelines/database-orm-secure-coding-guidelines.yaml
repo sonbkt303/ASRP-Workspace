@@ -1,0 +1,61 @@
+guideline_id: ASRP-SCG-DB-001
+name: Database, Storage & ORM Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [mongodb, mongoose, prisma, typeorm, redis, postgresql, mysql]
+
+summary:
+  total_guidelines: 5
+  target_technology: Database Systems, Caching & ORMs
+  security_domains: [input_validation, cryptography, secrets_management, configuration_security]
+
+guidelines:
+  - id: SCG-DB-001
+    title: NoSQL Injection Prevention in MongoDB and Mongoose
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-943, CWE-89]
+    asvs: [V5.3.4, V5.3.5]
+    severity: CRITICAL
+    rule: >
+      Tuyệt đối không truyền trực tiếp đối tượng từ Request Params/Body (như `req.body`) vào các câu truy vấn Mongoose `find(req.body)` hoặc `findOne({ username: req.body.username })`.
+      Đòn tấn công NoSQL Injection có thể chèn toán tử `$gt: ""` hoặc `$where` để bypass authentication. Bắt buộc sanitize hoặc validate bằng DTO.
+
+  - id: SCG-DB-002
+    title: Parameterized Raw SQL in Prisma and TypeORM
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-89]
+    asvs: [V5.3.4]
+    severity: CRITICAL
+    rule: >
+      Khi bắt buộc dùng Raw Query trong Prisma (`prisma.$queryRaw`) hoặc TypeORM (`repository.query()`),
+      BẮT BUỘC sử dụng chuỗi mẫu Prisma Tagged Template `prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}``
+      hoặc truyền tham số mảng trong TypeORM `query('SELECT * FROM users WHERE id = $1', [userId])`. Tuyệt đối không nối chuỗi.
+
+  - id: SCG-DB-003
+    title: Redis Authentication and TLS Encryption in Transit
+    domain: 2.2.1 Authentication / Cryptography
+    cwe: [CWE-306, CWE-319]
+    asvs: [V9.1.1, V9.1.2]
+    severity: HIGH
+    rule: >
+      kết nối Redis Client BẮT BUỘC phải bật tính năng AUTH password (`REDIS_PASSWORD`) và sử dụng kết nối mã hóa TLS (`rediss://`) khi truyền thông tin qua mạng.
+      Không để Redis server mở cổng công khai không có mật khẩu.
+
+  - id: SCG-DB-004
+    title: Field-Level Data Encryption at Rest for Sensitive Patient PII
+    domain: 2.2.5 Cryptography
+    cwe: [CWE-311, CWE-312]
+    asvs: [V8.2.1, V8.2.2]
+    severity: HIGH
+    rule: >
+      Các trường dữ liệu nhạy cảm của bệnh nhân (Số Căn cước công dân, Tiền sử bệnh lý, Thẻ bảo hiểm) lưu trữ trong cơ sở dữ liệu
+      BẮT BUỘC phải được mã hóa cấp độ trường (Field-Level Encryption) bằng thuật toán mã hóa đối xứng mạnh AES-256-GCM trước khi lưu vào DB.
+
+  - id: SCG-DB-005
+    title: Database Connection Pooling & Timeout Hardening
+    domain: 2.2.12 Business Logic & Resource Management
+    cwe: [CWE-400, CWE-770]
+    asvs: [V14.1.4]
+    severity: MEDIUM
+    rule: >
+      Cấu hình Connection Pool cho PostgreSQL/MongoDB có giới hạn `max: 20`, `idleTimeoutMillis: 30000`, `connectTimeoutMS: 10000`.
+      Đảm bảo giải phóng kết nối (`release()`) hoặc dùng ORM connection manager để tránh cạn kiệt tài nguyên (Connection Exhaustion DoS).

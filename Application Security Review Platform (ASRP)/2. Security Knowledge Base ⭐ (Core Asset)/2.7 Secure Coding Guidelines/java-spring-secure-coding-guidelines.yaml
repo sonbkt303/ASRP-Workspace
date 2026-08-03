@@ -1,0 +1,60 @@
+guideline_id: ASRP-SCG-JAVA-001
+name: Java & Spring Boot Enterprise Secure Coding Guidelines
+version: 2.0.0
+applicable_stack: [java, spring-boot, spring-security, hibernate, jpa, maven, gradle]
+
+summary:
+  total_guidelines: 5
+  target_framework: Java 17+ / Spring Boot 3+
+  security_domains: [authentication, authorization, input_validation, cryptography, secrets_management]
+
+guidelines:
+  - id: SCG-JAVA-001
+    title: Mandatory Spring Security Filter Chain Enforce
+    domain: 2.2.1 Authentication / 2.2.3 Access Control
+    cwe: [CWE-306, CWE-862]
+    asvs: [V2.1.1, V4.1.1]
+    severity: CRITICAL
+    rule: >
+      Bắt buộc cấu hình `SecurityFilterChain` bean với `authorizeHttpRequests(auth -> auth.requestMatchers("/api/public/**").permitAll().anyRequest().authenticated())`.
+      Tuyệt đối không để `web.ignoring()` bỏ qua các đường dẫn API có xử lý nghiệp vụ nhạy cảm.
+
+  - id: SCG-JAVA-002
+    title: Parameterized JPA & Hibernate Named Queries
+    domain: 2.2.4 Input Validation
+    cwe: [CWE-89]
+    asvs: [V5.3.4]
+    severity: CRITICAL
+    rule: >
+      Luôn luôn sử dụng `EntityManager.createQuery("SELECT u FROM User u WHERE u.username = :uname", User.class).setParameter("uname", input)`
+      hoặc Spring Data JPA Repositories. Tuyệt đối không nối chuỗi String trong JPQL (`"SELECT ... WHERE uname = '" + input + "'"`).
+
+  - id: SCG-JAVA-003
+    title: Safe Jackson Deserialization and Polymorphic Type Handling
+    domain: 2.2.4 Input Validation / RCE
+    cwe: [CWE-502]
+    asvs: [V5.5.1]
+    severity: CRITICAL
+    rule: >
+      Cấu hình ObjectMapper không sử dụng `enableDefaultTyping()`.
+      Sử dụng `@JsonTypeInfo(use = Id.NAME)` với danh sách Subtypes chỉ định rõ ràng qua `@JsonSubTypes` để ngăn ngừa lỗ hổng Deserialization Remote Code Execution.
+
+  - id: SCG-JAVA-004
+    title: Safe Logging Without Log4j / JNDI Injection
+    domain: 2.2.7 Logging & Monitoring
+    cwe: [CWE-117, CWE-917]
+    asvs: [V7.1.1]
+    severity: HIGH
+    rule: >
+      Sử dụng SLF4J Abstraction `logger.info("User logged in: {}", sanitize(username))` với cập nhật logback/log4j2 bản mới nhất.
+      Loại bỏ khả năng nội suy chuỗi người dùng chứa JNDI lookup strings `${jndi:ldap://...}`.
+
+  - id: SCG-JAVA-005
+    title: CSRF Protection for Session-Based Web Applications
+    domain: 2.2.5 Configuration Security
+    cwe: [CWE-352]
+    asvs: [V4.2.2]
+    severity: HIGH
+    rule: >
+      Đối với các ứng dụng Web sử dụng Cookie Session, BẮT BUỘC giữ nguyên CSRF Protection trong Spring Security (`http.csrf(Customizer.withDefaults())`).
+      Chỉ disable CSRF khi API chạy Stateless hoàn toàn qua Authorization Header JWT.
