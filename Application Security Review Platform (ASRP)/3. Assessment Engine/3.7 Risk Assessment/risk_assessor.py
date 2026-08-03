@@ -97,24 +97,29 @@ class RiskAssessor:
         return {
             "business_criticality": biz.get("criticality", "business-critical"),
             "data_classification": sec.get("data_classification", "pii"),
-            "risk_tier": sec.get("risk_tier", "high")
+            "risk_tier": c.get("risk_tier", sec.get("risk_tier", "high"))
         }
 
     def calculate_risk_score(self, findings_payload, context):
         """Calculate Security Health Score (0-100) based on findings and risk tier."""
         findings = findings_payload.get("findings", [])
-        severity_counts = findings_payload.get("severity_summary", {
-            "CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0
-        })
+        severity_counts = findings_payload.get("severity_summary")
+        if not severity_counts or not any(severity_counts.values()):
+            severity_counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
+            for f in findings:
+                sev = str(f.get("severity", "")).upper()
+                if sev in severity_counts:
+                    severity_counts[sev] += 1
 
         # Risk Multiplier based on project risk tier
         risk_tier = context.get("risk_tier", "high").lower()
         multipliers = {
+            "critical": 1.3,
             "high": 1.2,
             "medium": 1.0,
             "low": 0.8
         }
-        multiplier = multipliers.get(risk_tier, 1.0)
+        multiplier = multipliers.get(risk_tier, 1.2)
 
         # Base score 100
         base_score = 100.0
