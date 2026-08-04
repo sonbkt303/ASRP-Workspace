@@ -1,14 +1,47 @@
 practice_id: ASRP-BP-DEVSECOPS-001
-name: Cloud-Native DevSecOps Best Practices
-version: 1.0
+name: Cloud-Native DevSecOps & CI/CD Security Best Practices
+version: 2.0.0
+applicable_stack: [devops, ci-cd, github-actions, gitlab-ci, docker, kubernetes]
 
-practices:
-  - id: BP-01
-    name: Shift-Left AI & SAST Security Scanning
-    description: Automate security reviews at PR creation time using AI contextual code audit and SAST scanners.
-  - id: BP-02
-    name: Immutable Infrastructure & Non-Root Containers
-    description: Package microservices into minimal alpine/distroless container images running under unprivileged service accounts.
-  - id: BP-03
-    name: Zero-Trust Network Architecture
-    description: Enforce mTLS between internal microservices and block all unauthenticated east-west traffic.
+best_practices:
+  - bp_id: BP-DEV-001
+    name: Shift-Left Automated Security Testing in CI/CD Pipelines
+    category: DevSecOps Automation
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Tự động hóa kiểm tra an toàn thông tin (SAST, SCA, Secret Scanning, Linter) ngay khi tạo Pull Request.
+    implementation_guidelines: |
+      1. Tích hợp các công cụ quét tự động (Semgrep, Gitleaks, Trivy, Dependency-Check) vào CI/CD workflow.
+      2. Chặn tự động (Fail Build / Block PR Merge) khi phát hiện lỗ hổng mức độ CRITICAL hoặc HIGH.
+      3. Tự động gửi thông báo báo cáo an toàn thông tin tới nhóm phát triển trên Slack/Teams/Dashboard.
+    compliance_mappings:
+      nist_ssdf: PO.1.1
+      owasp_asvs: V14.2.1
+
+  - bp_id: BP-DEV-002
+    name: Immutable Infrastructure & Secretless Pipeline Execution
+    category: CI/CD Security
+    domain_ref: 2.2.1 Authentication
+    importance: CRITICAL
+    summary: Loại bỏ hoàn toàn static secrets hardcoded trong CI/CD bằng giải pháp Ephemeral Tokens và HashiCorp Vault.
+    implementation_guidelines: |
+      1. Sử dụng OpenID Connect (OIDC) để cấp phát temporary access tokens ngắn hạn cho CI/CD runners.
+      2. Mã hóa toàn bộ môi trường xây dựng và chạy container trên hạ tầng Immutable Infrastructure.
+      3. Định kỳ tự động rebuild base images để cập nhật các bản vá OS kernel và security patches mới nhất.
+    compliance_mappings:
+      nist_ssdf: PW.4.1
+      owasp_asvs: V14.1.1
+
+  - bp_id: BP-DEV-003
+    name: Automated Dependency Supply Chain Vulnerability Remediation
+    category: Supply Chain Security
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Sử dụng bot tự động quét và nâng cấp các thư viện bên thứ 3 có chứa lỗ hổng bảo mật công khai (CVEs).
+    implementation_guidelines: |
+      1. Kích hoạt Dependabot / RenovateBot tự động tạo PR cập nhật thư viện ngay khi có Security Advisory.
+      2. Sử dụng `pnpm-lock.yaml` / `package-lock.json` để khóa chính xác phiên bản dependency được kiểm thử.
+      3. Thực thi kiểm thử tự động (Unit/Integration Test) trước khi auto-merge bản vá thư viện phụ thuộc.
+    compliance_mappings:
+      nist_ssdf: PW.4.2
+      owasp_asvs: V14.1.2

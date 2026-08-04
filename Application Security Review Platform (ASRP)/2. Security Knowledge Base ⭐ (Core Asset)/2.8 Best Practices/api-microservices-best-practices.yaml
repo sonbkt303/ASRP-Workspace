@@ -1,0 +1,46 @@
+practice_id: ASRP-BP-API-001
+name: API & Microservices Security Best Practices
+version: 2.0.0
+applicable_stack: [web-api, nestjs, express, graphql, nodejs, python, java, go]
+
+best_practices:
+  - bp_id: BP-API-001
+    name: Centralized API Gateway Rate Limiting & Throttling
+    category: API Security
+    domain_ref: 2.2.3 Input Validation
+    importance: HIGH
+    summary: Triển khai kiểm soát lưu lượng Rate Limiting tập trung tại API Gateway ngăn chặn Brute-force và DoS.
+    implementation_guidelines: |
+      1. Cấu hình Rate Limit cấp IP và cấp User Account (ví dụ: max 100 requests/phút cho user thường, 10 requests/phút cho auth endpoints).
+      2. Trả về HTTP 429 Too Many Requests kèm Header `Retry-After`.
+      3. Sử dụng Redis Cluster làm bộ nhớ lưu trạng thái Rate Limit dùng chung giữa các API Gateway nodes.
+    compliance_mappings:
+      owasp_top10: A04:2021-Insecure Design
+      owasp_asvs: V11.1.4
+
+  - bp_id: BP-API-002
+    name: Financial Transaction Idempotency Keys Enforcement
+    category: Business Logic Integrity
+    domain_ref: 2.2.2 Authorization
+    importance: HIGH
+    summary: Bắt buộc truyền HTTP Header X-Idempotency-Key cho toàn bộ API thanh toán/thay đổi trạng thái giao dịch.
+    implementation_guidelines: |
+      1. Client tự sinh UUIDv4 làm `X-Idempotency-Key` gửi kèm trong POST/PUT request.
+      2. Backend lưu kết quả xử lý của key vào Redis/DB trong thời gian 24h.
+      3. Nếu nhận request trùng key, backend trả ngay kết quả đã lưu mà không thực hiện lại giao dịch tài chính.
+    compliance_mappings:
+      owasp_asvs: V11.1.2
+      nist_ssdf: PW.1.3
+
+  - bp_id: BP-API-003
+    name: Microservice Resiliency & Fault Isolation Patterns
+    category: Availability & Fault Tolerance
+    domain_ref: 2.2.9 Configuration Security
+    importance: MEDIUM
+    summary: Triển khai Circuit Breaker và Exponential Backoff Retry tránh hiện tượng sụp đổ dây chuyền (Cascading Failure).
+    implementation_guidelines: |
+      1. Sử dụng thư viện Circuit Breaker (như Opossum, Resilience4j) khi gọi các downstream third-party APIs.
+      2. Ngắt kết nối ngay khi tỷ lệ lỗi vượt quá 50% trong 10s để hệ thống downstream có thời gian phục hồi.
+      3. Cấu hình Exponential Backoff với Jitter cho các thao tác Retry tự động.
+    compliance_mappings:
+      owasp_asvs: V14.2.4

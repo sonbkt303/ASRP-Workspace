@@ -1,0 +1,47 @@
+practice_id: ASRP-BP-ZEROTRUST-001
+name: Zero-Trust Architecture & Network Security Best Practices
+version: 2.0.0
+applicable_stack: [istio, envoy, kubernetes, microservices, oauth2, oidc, tls]
+
+best_practices:
+  - bp_id: BP-ZT-001
+    name: Microservice Mutual TLS (mTLS) In-Transit Encryption
+    category: Network Encryption
+    domain_ref: 2.2.4 Cryptography
+    importance: HIGH
+    summary: Kích hoạt mTLS cấp Service Mesh mã hóa và xác thực 2 chiều toàn bộ lưu lượng East-West giữa các dịch vụ.
+    implementation_guidelines: |
+      1. Triển khai Service Mesh (Istio / Linkerd) với cấu hình `STRICT` mTLS mode.
+      2. Tự động gia hạn TLS X.509 Certificates ngắn hạn (ví dụ: 24h lifetime) do Service Mesh CA cấp phát.
+      3. Chặn toàn bộ kết nối unencrypted HTTP giữa các Pod trong internal cluster.
+    compliance_mappings:
+      owasp_asvs: V9.1.1
+      nist_ssdf: PW.7.2
+
+  - bp_id: BP-ZT-002
+    name: Identity-Aware Proxy (IAP) & Continuous Authorization
+    category: Zero-Trust Access Control
+    domain_ref: 2.2.2 Authorization
+    importance: CRITICAL
+    summary: Ép buộc mọi request truy cập ứng dụng nội bộ phải thông qua Identity-Aware Proxy kiểm tra danh tính và thiết bị.
+    implementation_guidelines: |
+      1. Đặt API Gateway / Reverse Proxy làm điểm kiểm soát duy nhất (Policy Enforcement Point - PEP).
+      2. Đánh giá ngữ cảnh request bao gồm: User Claims, Device Security Health, IP Geolocation và Authentication Time.
+      3. Kích hoạt Continuous Adaptive Trust Evaluation để thu hồi token ngay khi vị trí hoặc thiết bị nghi vấn.
+    compliance_mappings:
+      owasp_asvs: V1.1.2
+      nist_ssdf: PW.1.2
+
+  - bp_id: BP-ZT-003
+    name: Micro-Segmentation & Traffic Least Privilege Isolation
+    category: Network Isolation
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Phân vùng mạng chi tiết cấp Microservice, ngăn chặn Attacker di chuyển ngang (Lateral Movement) khi 1 pod bị chiếm quyền.
+    implementation_guidelines: |
+      1. Khai báo K8s NetworkPolicy hoặc Calico Policy chỉ cho phép các Pod thuộc danh sách Whitelist kết nối tới nhau.
+      2. Ngăn chặn triệt để Pod thuộc Frontend kết nối thẳng vào Database Cluster (chỉ cho phép qua Backend API Service).
+      3. Giới hạn Egress Traffic ra Internet chỉ tới những FQDN external endpoints được phê duyệt.
+    compliance_mappings:
+      cis_benchmark: CIS Kubernetes Benchmark 5.3
+      owasp_asvs: V14.4.1

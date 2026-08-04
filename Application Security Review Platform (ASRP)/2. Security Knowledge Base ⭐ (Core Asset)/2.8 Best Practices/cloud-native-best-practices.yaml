@@ -1,0 +1,47 @@
+practice_id: ASRP-BP-CLOUD-001
+name: Cloud-Native & Container Infrastructure Best Practices
+version: 2.0.0
+applicable_stack: [docker, kubernetes, aws, gcp, azure, devops, helm]
+
+best_practices:
+  - bp_id: BP-CLOUD-001
+    name: Non-Root & Minimal Container Image Hardening
+    category: Container Security
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Chạy container dưới tài khoản unprivileged non-root user và sử dụng base image tối giản (Alpine/Distroless).
+    implementation_guidelines: |
+      1. Khai báo explicit `USER node` hoặc `USER 10001` trong Dockerfile.
+      2. Sử dụng multi-stage build để loại bỏ build dependencies (g++ , python, npm cache) khỏi production image.
+      3. Bật thuộc tính `readOnlyRootFilesystem: true` trong container securityContext.
+    compliance_mappings:
+      cis_benchmark: CIS Docker Benchmark 4.1
+      nist_ssdf: PW.4.1
+
+  - bp_id: BP-CLOUD-002
+    name: Kubernetes Pod Security Standards Restricted Profile
+    category: Orchestration Hardening
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Áp dụng Pod Security Admission với Restricted profile ngăn chặn đặc quyền privileged và automount token.
+    implementation_guidelines: |
+      1. Đặt label namespace: `pod-security.kubernetes.io/enforce: restricted`.
+      2. Tắt tính năng tự động mount token ServiceAccount (`automountServiceAccountToken: false`) ngoại trừ các Pod thực sự cần gọi K8s API.
+      3. Cấu hình NetworkPolicy mặc định chặn toàn bộ kết nối ingress/egress không được khai báo (Default Deny All).
+    compliance_mappings:
+      cis_benchmark: CIS Kubernetes Benchmark 5.2
+      owasp_asvs: V14.2.3
+
+  - bp_id: BP-CLOUD-003
+    name: IAM Service Account Identity Federation (Workload Identity)
+    category: Identity & Access Management
+    domain_ref: 2.2.1 Authentication
+    importance: CRITICAL
+    summary: Sử dụng OIDC Workload Identity Federation thay cho việc lưu trữ AWS Static Access Keys trong container/CI-CD.
+    implementation_guidelines: |
+      1. Gán IAM Role trực tiếp cho K8s ServiceAccount (AWS IRSA / GCP Workload Identity / Azure Workload ID).
+      2. Tuyệt đối không mount file credentials hoặc đặt `AWS_SECRET_ACCESS_KEY` trong environment variables.
+      3. Giới hạn quyền IAM Role theo nguyên tắc Least Privilege dựa trên từng microservice.
+    compliance_mappings:
+      owasp_asvs: V2.1.1
+      nist_ssdf: PW.1.1

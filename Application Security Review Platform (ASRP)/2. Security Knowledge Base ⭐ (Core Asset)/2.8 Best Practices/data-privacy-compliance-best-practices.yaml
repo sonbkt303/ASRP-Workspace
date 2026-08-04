@@ -1,0 +1,48 @@
+practice_id: ASRP-BP-DATA-001
+name: Data Privacy, Encryption & Compliance Best Practices
+version: 2.0.0
+applicable_stack: [mongodb, postgresql, redis, aws, gcp, nodejs, python, java]
+
+best_practices:
+  - bp_id: BP-DATA-001
+    name: Field-Level Sensitive Data Encryption at Rest (PII/ePHI)
+    category: Data Protection
+    domain_ref: 2.2.4 Cryptography
+    importance: CRITICAL
+    summary: Thực hiện mã hóa cấp trường (Field-Level Encryption) bằng thuật toán AES-256-GCM cho dữ liệu nhạy cảm PII/ePHI.
+    implementation_guidelines: |
+      1. Mã hóa các trường dữ liệu nhạy cảm (Số CCCD, Tiền sử bệnh lý, Thẻ ngân hàng) trước khi lưu vào Database.
+      2. Lưu trữ Master Encryption Key trên Cloud KMS (AWS KMS / HashiCorp Vault) và xoay khóa (Key Rotation) định kỳ 90 ngày.
+      3. Tuyệt đối không lưu Master Key trong file `.env` hoặc mã nguồn ứng dụng.
+    compliance_mappings:
+      hipaa: 45 CFR § 164.312(a)(2)(iv)
+      gdpr: Article 32 (Security of Processing)
+      owasp_asvs: V8.2.1
+
+  - bp_id: BP-DATA-002
+    name: Non-Production Data Pseudonymization & Anonymization
+    category: Data Privacy
+    domain_ref: 2.2.4 Cryptography
+    importance: HIGH
+    summary: Tự động che/tạo dữ liệu giả (Anonymization) khi đồng bộ dữ liệu từ Production xuống Staging/Dev.
+    implementation_guidelines: |
+      1. Sử dụng công cụ Data Masking tự động ghi đè thông tin tên, email, số điện thoại bằng dữ liệu ngẫu nhiên.
+      2. Chặn hoàn toàn việc dump trực tiếp cơ sở dữ liệu Production về máy tính cá nhân của Developer.
+      3. Đảm bảo dữ liệu trong môi trường thử nghiệm không thể đảo ngược (Irreversible Pseudonymization) về danh tính gốc.
+    compliance_mappings:
+      gdpr: Article 25 (Data Protection by Design)
+      owasp_asvs: V8.1.1
+
+  - bp_id: BP-DATA-003
+    name: Immutable Security Audit Logging & Access Lineage
+    category: Compliance & Auditability
+    domain_ref: 2.2.9 Configuration Security
+    importance: HIGH
+    summary: Ghi log kiểm toán không thể chỉnh sửa (Immutable Log) cho mọi thao tác đọc/ghi dữ liệu nhạy cảm.
+    implementation_guidelines: |
+      1. Đẩy log truy cập PII/ePHI tới S3 Bucket bật chế độ Object Lock (WORM - Write Once Read Many).
+      2. Log phải chứa các trường cố định: Timestamp, User ID, Client IP, Target Resource ID, Action Type và Success/Failure Status.
+      3. Thiết lập cảnh báo tự động khi số lượng thao tác đọc dữ liệu nhạy cảm tăng bất thường trong thời gian ngắn.
+    compliance_mappings:
+      hipaa: 45 CFR § 164.312(b)
+      owasp_asvs: V7.1.2
