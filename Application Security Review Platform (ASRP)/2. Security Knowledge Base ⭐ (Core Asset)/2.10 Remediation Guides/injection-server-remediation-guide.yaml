@@ -1,0 +1,70 @@
+guide_id: ASRP-REM-INJ-001
+name: Injection & Server-Side Execution Remediation Guide
+version: 2.0.0
+applicable_stack: [sql, nosql, python, nodejs, nestjs, java, go, express, django, fastapi]
+
+remediations:
+  - rem_id: REM-INJ-001
+    rule_id: ASRP-INJ-001
+    guideline_ref: SCG-NEST-001
+    target_vulnerability: Blind SQL Injection via Dynamic Query String Concatenation
+    severity: CRITICAL
+    cwe: [CWE-89]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.1
+    priority_sla: 24h
+    summary: Chuyển đổi truy vấn ghép chuỗi SQL thô sang Parameterized Queries / ORM Prepared Statements.
+    code_diff: |
+      - const query = `SELECT * FROM users WHERE username = '${req.query.username}' AND role = '${req.query.role}'`;
+      - const result = await db.query(query);
+      + const query = `SELECT * FROM users WHERE username = $1 AND role = $2`;
+      + const result = await db.query(query, [req.query.username, req.query.role]);
+
+  - rem_id: REM-INJ-002
+    rule_id: ASRP-INJ-002
+    guideline_ref: SCG-NEST-006
+    target_vulnerability: OS Command Injection via Unsanitized Child Process Execution
+    severity: CRITICAL
+    cwe: [CWE-78]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.8
+    priority_sla: 24h
+    summary: Thay thế shell execution wrapper (exec) bằng execFile không khởi tạo sub-shell HĐH.
+    code_diff: |
+      - exec(`convert ${req.body.filename} -resize 100x100 output.png`, (err, stdout) => { ... });
+      + execFile('convert', [req.body.filename, '-resize', '100x100', 'output.png'], (err, stdout) => { ... });
+
+  - rem_id: REM-INJ-003
+    rule_id: ASRP-SSRF-001
+    guideline_ref: SCG-NEST-007
+    target_vulnerability: SSRF Cloud Instance Metadata Service (IMDSv2) Exfiltration
+    severity: CRITICAL
+    cwe: [CWE-918]
+    owasp_top10: [A10:2021-Server-Side Request Forgery]
+    asvs_control: V12.6.1
+    priority_sla: 24h
+    summary: Thêm DNS Resolution Validation và IP Whitelist/Blacklist Middleware ngăn chặn kết nối IP Private/Loopback.
+    code_diff: |
+      - const response = await axios.get(req.body.webhookUrl);
+      + const parsedUrl = new URL(req.body.webhookUrl);
+      + const resolvedIp = await dns.promises.lookup(parsedUrl.hostname);
+      + if (isPrivateOrLoopbackIp(resolvedIp.address)) {
+      +   throw new ForbiddenException('Access to internal IP ranges is blocked');
+      + }
+      + const response = await axios.get(req.body.webhookUrl);
+
+  - rem_id: REM-INJ-004
+    rule_id: ASRP-DESER-001
+    guideline_ref: SCG-PYTHON-001
+    target_vulnerability: Remote Code Execution via Insecure Object Deserialization / SSTI
+    severity: CRITICAL
+    cwe: [CWE-502, CWE-1336]
+    owasp_top10: [A08:2021-Software and Data Integrity Failures]
+    asvs_control: V5.5.1
+    priority_sla: 24h
+    summary: Thay thế unsafe deserializer (pickle/eval) bằng safe JSON parser và bật context autoescaping cho Template Engine.
+    code_diff: |
+      - user_data = pickle.loads(request.body)
+      - template = jinja_env.from_string(user_template_str)
+      + user_data = json.loads(request.body.decode('utf-8'))
+      + template = jinja_env.from_string(html.escape(user_template_str))

@@ -1,7 +1,7 @@
 guide_id: ASRP-REM-DB-001
 name: Database, Storage & Cryptography Remediation Guide
 version: 2.0.0
-applicable_stack: [mongodb, mongoose, prisma, redis, postgresql]
+applicable_stack: [mongodb, mongoose, prisma, redis, postgresql, mysql]
 
 remediations:
   - rem_id: REM-DB-001
@@ -13,7 +13,7 @@ remediations:
     owasp_top10: [A03:2021-Injection]
     asvs_control: V5.3.4
     priority_sla: 24h
-    summary: Ép kiểu dữ liệu chuỗi `String(input)` trước khi truyền vào MongoDB query.
+    summary: Ép kiểu dữ liệu chuỗi String(input) trước khi truyền vào MongoDB query.
     code_diff: |
       - const user = await UserModel.findOne({ username: req.body.username });
       + const username = String(req.body.username || '');
@@ -33,3 +33,34 @@ remediations:
       - this.patientRepository.save({ idCardNumber: dto.idCardNumber });
       + const encryptedIdCard = this.cryptoService.encryptAES256GCM(dto.idCardNumber);
       + this.patientRepository.save({ idCardNumber: encryptedIdCard });
+
+  - rem_id: REM-DB-003
+    rule_id: SCG-DB-002
+    guideline_ref: SCG-DB-002
+    target_vulnerability: SQL Injection via Unparameterized Raw Query Binding
+    severity: CRITICAL
+    cwe: [CWE-89]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.1
+    priority_sla: 24h
+    summary: Sử dụng tham số vị trí ($1, $2) hoặc ORM Prisma/TypeORM query builder thay cho ghép chuỗi SQL.
+    code_diff: |
+      - const users = await prisma.$queryRawUnsafe(`SELECT * FROM users WHERE email = '${email}'`);
+      + const users = await prisma.$queryRaw`SELECT * FROM users WHERE email = ${email}`;
+
+  - rem_id: REM-DB-004
+    rule_id: SCG-DB-003
+    guideline_ref: SCG-DB-003
+    target_vulnerability: Database Transaction Race Condition & Unlocked Rows
+    severity: HIGH
+    cwe: [CWE-362]
+    owasp_top10: [A04:2021-Insecure Design]
+    asvs_control: V11.1.2
+    priority_sla: 7d
+    summary: Khóa hàng ghi (Pessimistic Locking) trong giao dịch SQL để tránh đè dữ liệu concurrent.
+    code_diff: |
+      - const item = await queryRunner.manager.findOne(Inventory, { where: { id } });
+      + const item = await queryRunner.manager.findOne(Inventory, {
+      +   where: { id },
+      +   lock: { mode: 'pessimistic_write' },
+      + });

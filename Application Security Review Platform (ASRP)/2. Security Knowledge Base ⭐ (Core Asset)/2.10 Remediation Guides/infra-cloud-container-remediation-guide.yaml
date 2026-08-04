@@ -1,0 +1,54 @@
+guide_id: ASRP-REM-INFRA-001
+name: Infrastructure, Cloud & Container Security Remediation Guide
+version: 2.0.0
+applicable_stack: [docker, kubernetes, aws, devops, github-actions, ci-cd, helm]
+
+remediations:
+  - rem_id: REM-INFRA-001
+    rule_id: SCG-DOCKER-001
+    guideline_ref: SCG-DOCKER-001
+    target_vulnerability: Container Breakout via Mounted Docker UNIX Socket
+    severity: CRITICAL
+    cwe: [CWE-250]
+    owasp_top10: [A05:2021-Security Misconfiguration]
+    asvs_control: V14.2.1
+    priority_sla: 24h
+    summary: Loại bỏ hoàn toàn volume mount /var/run/docker.sock khỏi container ứng dụng.
+    code_diff: |
+      - volumes:
+      -   - /var/run/docker.sock:/var/run/docker.sock
+      + # Removed Docker socket mount to prevent host container breakout
+
+  - rem_id: REM-INFRA-002
+    rule_id: SCG-DOCKER-002
+    guideline_ref: SCG-DOCKER-002
+    target_vulnerability: Kubernetes RBAC Privilege Escalation via Automounted ServiceAccount Token
+    severity: CRITICAL
+    cwe: [CWE-269]
+    owasp_top10: [A01:2021-Broken Access Control]
+    asvs_control: V14.2.3
+    priority_sla: 24h
+    summary: Thiết lập automountServiceAccountToken false và áp dụng tối thiểu đặc quyền Least Privilege cho RBAC Roles.
+    code_diff: |
+      spec:
+        template:
+          spec:
+      +     automountServiceAccountToken: false
+            containers:
+              - name: api-service
+
+  - rem_id: REM-INFRA-003
+    rule_id: SCG-REACT-004
+    guideline_ref: SCG-REACT-004
+    target_vulnerability: CI/CD Pipeline Poisoning via Compromised Third-Party GitHub Action / NPM Dependency
+    severity: HIGH
+    cwe: [CWE-1357]
+    owasp_top10: [A06:2021-Vulnerable and Outdated Components]
+    asvs_control: V14.1.2
+    priority_sla: 7d
+    summary: Pin cố định SHA-256 Commit Hash cho toàn bộ GitHub Actions thay vì dùng mutable version tags (v1/latest).
+    code_diff: |
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      + uses: actions/checkout@ac593901f574464454d42532ab3a0d4137888d4f # v3.3.0 pin SHA
+      + uses: actions/setup-node@64ed167e83424dd2273b5e4d6d67dd750ee551e7 # v3.6.0 pin SHA

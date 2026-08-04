@@ -1,7 +1,7 @@
 guide_id: ASRP-REM-API-001
 name: API, GraphQL & Authentication Remediation Guide
 version: 2.0.0
-applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt]
+applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt, python, fastapi]
 
 remediations:
   - rem_id: REM-API-001
@@ -85,3 +85,53 @@ remediations:
       +   throw new Error('FATAL: DEFAULT_PW environment variable is required');
       + }
       + export const DEFAULT_MANAGER_PW = process.env.DEFAULT_PW;
+
+  - rem_id: REM-API-006
+    rule_id: ASRP-AUTH-001
+    guideline_ref: SCG-NEST-002
+    target_vulnerability: OAuth2 Authorization Code Interception (Missing PKCE)
+    severity: CRITICAL
+    cwe: [CWE-287]
+    owasp_top10: [A07:2021-Identification and Authentication Failures]
+    asvs_control: V3.1.2
+    priority_sla: 24h
+    summary: Bắt buộc mã hóa code_challenge với phương thức S256 (PKCE) trong luồng trao đổi OAuth2 code.
+    code_diff: |
+      - const tokenUrl = `${authServer}/token?code=${code}&client_id=${clientId}`;
+      + if (!codeVerifier || !codeChallengeMethod) {
+      +   throw new BadRequestException('PKCE code_verifier with S256 challenge is required');
+      + }
+      + const tokenUrl = `${authServer}/token?code=${code}&client_id=${clientId}&code_verifier=${codeVerifier}`;
+
+  - rem_id: REM-API-007
+    rule_id: ASRP-AUTH-002
+    guideline_ref: SCG-NEST-002
+    target_vulnerability: SSO OAuth2 Callback State Parameter Abuse & CSRF
+    severity: HIGH
+    cwe: [CWE-352]
+    owasp_top10: [A01:2021-Broken Access Control]
+    asvs_control: V3.1.4
+    priority_sla: 7d
+    summary: Tạo và đối soát ngẫu nhiên tham số state trong Session/HTTPOnly Cookie khi thực hiện SSO Callback.
+    code_diff: |
+      - async handleOAuthCallback(code: string) { ... }
+      + async handleOAuthCallback(code: string, state: string, sessionState: string) {
+      +   if (!state || state !== sessionState) {
+      +     throw new UnauthorizedException('Invalid or missing OAuth state parameter (CSRF detected)');
+      +   }
+      + }
+
+  - rem_id: REM-API-008
+    rule_id: ASRP-API-002
+    guideline_ref: SCG-NEST-005
+    target_vulnerability: REST API Mass Data Scraping via Pagination Limit Bypass
+    severity: HIGH
+    cwe: [CWE-770]
+    owasp_top10: [A04:2021-Insecure Design]
+    asvs_control: V11.1.4
+    priority_sla: 7d
+    summary: Giới hạn cứng giá trị limit tối đa (Max Limit 100) cho tất cả các REST API pagination requests.
+    code_diff: |
+      - const limit = Number(req.query.limit) || 10;
+      + const parsedLimit = Number(req.query.limit) || 10;
+      + const limit = Math.min(Math.max(1, parsedLimit), 100); // Enforce max limit of 100

@@ -1,7 +1,7 @@
 guide_id: ASRP-REM-FRONTEND-001
 name: React & Next.js Frontend Security Remediation Guide
 version: 2.0.0
-applicable_stack: [react, nextjs, typescript, pnpm]
+applicable_stack: [react, nextjs, typescript, pnpm, frontend]
 
 remediations:
   - rem_id: REM-FRONTEND-001
@@ -50,8 +50,46 @@ remediations:
       +     headers: [
       +       { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
       +       { key: 'X-Content-Type-Options', value: 'nosniff' },
-      +       { key: 'Referrer-Policy', value: 'no-referrer-when-downgrade' },
+      +       { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
       +       { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }
       +     ]
       +   }];
       + }
+
+  - rem_id: REM-FRONTEND-004
+    rule_id: ASRP-XSS-001
+    guideline_ref: SCG-REACT-001
+    target_vulnerability: DOM-Based Cross-Site Scripting via Unsanitized Next.js Props
+    severity: HIGH
+    cwe: [CWE-79]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.3
+    priority_sla: 7d
+    summary: Sử dụng thư viện DOMPurify để làm sạch HTML payload trước khi chèn vào dangerouslySetInnerHTML.
+    code_diff: |
+      - <div dangerouslySetInnerHTML={{ __html: userContent }} />
+      + import DOMPurify from 'isomorphic-dompurify';
+      + const sanitizedContent = DOMPurify.sanitize(userContent);
+      + <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+
+  - rem_id: REM-FRONTEND-005
+    rule_id: ASRP-PROTO-001
+    guideline_ref: SCG-REACT-004
+    target_vulnerability: Client-Side Prototype Pollution via Object Merge
+    severity: HIGH
+    cwe: [CWE-1321]
+    owasp_top10: [A03:2021-Injection]
+    asvs_control: V5.3.4
+    priority_sla: 7d
+    summary: Loại bỏ các thuộc tính nguy hiểm (__proto__, constructor, prototype) trước khi thực hiện deep merge object.
+    code_diff: |
+      - const target = Object.assign({}, source);
+      + const sanitizeKeys = (obj) => {
+      +   const clean = Array.isArray(obj) ? [] : {};
+      +   for (let key in obj) {
+      +     if (['__proto__', 'constructor', 'prototype'].includes(key)) continue;
+      +     clean[key] = typeof obj[key] === 'object' ? sanitizeKeys(obj[key]) : obj[key];
+      +   }
+      +   return clean;
+      + };
+      + const target = sanitizeKeys(source);

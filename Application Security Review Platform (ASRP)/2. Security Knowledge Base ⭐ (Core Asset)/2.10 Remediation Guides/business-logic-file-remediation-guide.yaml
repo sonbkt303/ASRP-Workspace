@@ -1,0 +1,85 @@
+guide_id: ASRP-REM-BIZ-001
+name: Business Logic, File Upload & Access Control Remediation Guide
+version: 2.0.0
+applicable_stack: [web-api, nestjs, express, nodejs, python, java, react, nextjs]
+
+remediations:
+  - rem_id: REM-BIZ-001
+    rule_id: SCG-NEST-006
+    guideline_ref: SCG-NEST-006
+    target_vulnerability: Unrestricted File Upload & Web Shell Remote Code Execution
+    severity: CRITICAL
+    cwe: [CWE-434]
+    owasp_top10: [A04:2021-Insecure Design]
+    asvs_control: V12.1.1
+    priority_sla: 24h
+    summary: Kiểm tra Magic Bytes tệp tin bằng file-type, đổi tên file bằng UUIDv4 ngẫu nhiên và lưu tại thư mục non-executable ngoài Web Root.
+    code_diff: |
+      - const filename = file.originalname;
+      - const uploadPath = `./public/uploads/${filename}`;
+      - await fs.promises.writeFile(uploadPath, file.buffer);
+      + const detectedType = await fileTypeFromBuffer(file.buffer);
+      + if (!allowedMimeTypes.includes(detectedType?.mime)) {
+      +   throw new BadRequestException('Invalid file format magic bytes');
+      + }
+      + const safeFilename = `${crypto.randomUUID()}.${detectedType.ext}`;
+      + const uploadPath = `/var/storage/secure_uploads/${safeFilename}`;
+      + await fs.promises.writeFile(uploadPath, file.buffer);
+
+  - rem_id: REM-BIZ-002
+    rule_id: SCG-NEST-001
+    guideline_ref: SCG-NEST-001
+    target_vulnerability: DTO Mass Assignment & Parameter Tampering Privilege Escalation
+    severity: HIGH
+    cwe: [CWE-915]
+    owasp_top10: [A01:2021-Broken Access Control]
+    asvs_control: V5.1.4
+    priority_sla: 7d
+    summary: Bật chế độ whitelist và forbidNonWhitelisted trong ValidationPipe toàn cục NestJS để từ chối các trường không thuộc DTO.
+    code_diff: |
+      - app.useGlobalPipes(new ValidationPipe());
+      + app.useGlobalPipes(new ValidationPipe({
+      +   whitelist: true,
+      +   forbidNonWhitelisted: true,
+      +   transform: true,
+      + }));
+
+  - rem_id: REM-BIZ-003
+    rule_id: SCG-NEST-001
+    guideline_ref: SCG-NEST-001
+    target_vulnerability: Concurrent Financial Transaction Double-Spend via Race Condition
+    severity: HIGH
+    cwe: [CWE-362]
+    owasp_top10: [A04:2021-Insecure Design]
+    asvs_control: V11.1.2
+    priority_sla: 7d
+    summary: Áp dụng Pessimistic Row Lock (SELECT FOR UPDATE) hoặc Redis Distributed Lock trong Transaction Manager.
+    code_diff: |
+      - const account = await accountRepo.findOne({ where: { id: accountId } });
+      - if (account.balance >= amount) {
+      -   await accountRepo.update(accountId, { balance: account.balance - amount });
+      - }
+      + await entityManager.transaction(async (transactionalEntityManager) => {
+      +   const account = await transactionalEntityManager.findOne(Account, {
+      +     where: { id: accountId },
+      +     lock: { mode: 'pessimistic_write' },
+      +   });
+      +   if (account.balance < amount) throw new BadRequestException('Insufficient balance');
+      +   account.balance -= amount;
+      +   await transactionalEntityManager.save(account);
+      + });
+
+  - rem_id: REM-BIZ-004
+    rule_id: SCG-NEST-005
+    guideline_ref: SCG-NEST-005
+    target_vulnerability: Rate Limit Bypass via Proxy Header Spoofing (X-Forwarded-For)
+    severity: MEDIUM
+    cwe: [CWE-307]
+    owasp_top10: [A05:2021-Security Misconfiguration]
+    asvs_control: V11.1.4
+    priority_sla: 30d
+    summary: Cấu hình Express app.set('trust proxy', 1) chỉ tin tưởng IP từ duy nhất 1 Reverse Proxy Hop (Nginx/Cloudflare).
+    code_diff: |
+      - const app = await NestFactory.create(AppModule);
+      + const app = await NestFactory.create<NestExpressApplication>(AppModule);
+      + app.set('trust proxy', 1); // Trust single reverse proxy hop

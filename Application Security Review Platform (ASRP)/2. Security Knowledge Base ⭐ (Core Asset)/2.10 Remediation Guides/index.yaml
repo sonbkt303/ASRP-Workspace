@@ -1,10 +1,10 @@
 catalog_id: ASRP-CATALOG-2.10
 name: Layer 2.10 Remediation Guides Catalog
 version: 2.0.0
-last_updated: 2026-08-03
+last_updated: 2026-08-04
 
 summary:
-  total_remediation_guides: 4
+  total_remediation_guides: 7
   description: >
     Tập hợp các thư viện hướng dẫn khắc phục và mã patch sửa lỗi Before/After (- và +) chuẩn hóa.
     Dùng cho AI Agent (Step 2/Step 3) trích xuất Code Patch và hiển thị trên tab 2.10 Remediation của HTML Report.
@@ -19,17 +19,35 @@ remediation_guides:
   - id: ASRP-REM-API-001
     name: API, GraphQL & Authentication Remediation Guide
     path: 2.10 Remediation Guides/api-auth-remediation-guide.yaml
-    applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt]
+    applicable_stack: [nestjs, express, nodejs, graphql, oauth2, jwt, python, fastapi]
     status: active
 
   - id: ASRP-REM-FRONTEND-001
     name: React & Next.js Frontend Security Remediation Guide
     path: 2.10 Remediation Guides/frontend-security-remediation-guide.yaml
-    applicable_stack: [react, nextjs, typescript, pnpm]
+    applicable_stack: [react, nextjs, typescript, pnpm, frontend]
     status: active
 
   - id: ASRP-REM-DB-001
     name: Database, Storage & Cryptography Remediation Guide
     path: 2.10 Remediation Guides/database-data-remediation-guide.yaml
-    applicable_stack: [mongodb, mongoose, prisma, redis, postgresql]
+    applicable_stack: [mongodb, mongoose, prisma, redis, postgresql, mysql]
+    status: active
+
+  - id: ASRP-REM-INJ-001
+    name: Injection & Server-Side Execution Remediation Guide
+    path: 2.10 Remediation Guides/injection-server-remediation-guide.yaml
+    applicable_stack: [sql, nosql, python, nodejs, nestjs, java, go, express, django, fastapi]
+    status: active
+
+  - id: ASRP-REM-INFRA-001
+    name: Infrastructure, Cloud & Container Security Remediation Guide
+    path: 2.10 Remediation Guides/infra-cloud-container-remediation-guide.yaml
+    applicable_stack: [docker, kubernetes, aws, devops, github-actions, ci-cd, helm]
+    status: active
+
+  - id: ASRP-REM-BIZ-001
+    name: Business Logic, File Upload & Access Control Remediation Guide
+    path: 2.10 Remediation Guides/business-logic-file-remediation-guide.yaml
+    applicable_stack: [web-api, nestjs, express, nodejs, python, java, react, nextjs]
     status: active
