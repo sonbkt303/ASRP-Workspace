@@ -1,16 +1,57 @@
 pattern_id: ASRP-AP-CAPEC-001
 name: Real-World Adversary Attack Scenarios & Patterns
-version: 1.0
+version: 2.0.0
+applicable_stack: [general, top25-cwe, web-api, cloud]
 
-scenarios:
-  - id: SCEN-01
-    name: BOLA Exploitation on Healthcare Patient API
-    target_vulnerability: CWE-639 (BOLA / IDOR)
-    attack_vector: Adversary authenticates as regular patient (ID: 101) and modifies GraphQL query argument to request getPatient(patientId: 999), dumping ePHI data due to missing ownership authorization check.
-    mitigation: Enforce hospital tenant & session user ID authorization in GraphQL Resolver.
+attack_patterns:
+  - attack_id: ATK-CAPEC-639
+    capec_id: CAPEC-639
+    mitre_technique: T1068 (Exploitation for Privilege Escalation)
+    name: BOLA / IDOR Exploitation on Healthcare Patient API
+    severity: CRITICAL
+    target_vulnerability: CWE-639 (Authorization Bypass Through User-Controlled Key)
+    attack_vector: |
+      Bước 1: Attacker đăng nhập thành công với tài khoản bệnh nhân bình thường (ID: 101).
+      Bước 2: Attacker bắt request GraphQL/REST và sửa tham số ID trong query `getPatient(patientId: 999)`.
+      Bước 3: Do API Controller chỉ xác thực Authentication Token mà thiếu kiểm tra Ownership Authorization (Tenant/User context), hệ thống trả về toàn bộ hồ sơ ePHI của bệnh nhân ID 999.
+    prerequisites: Endpoint chấp nhận ID do người dùng truyền lên mà không so sánh với Claims trong JWT / Session.
+    mitigation_refs: [SCG-NEST-002, THREAT-S-001, REM-001]
 
-  - id: SCEN-02
-    name: AWS Access Key Leak via Git Commit History
-    target_vulnerability: CWE-798 (Hardcoded Credentials)
-    attack_vector: Developer commits AWS_SECRET_ACCESS_KEY into codebase. Automated bot scripts scrape repository within 5 minutes and launch unauthorized EC2 crypto-mining instances.
-    mitigation: Revoke key immediately on AWS IAM console, use git-filter-repo, and migrate to IAM Roles.
+  - attack_id: ATK-CAPEC-798
+    capec_id: CAPEC-798
+    mitre_technique: T1552.001 (Unsecured Credentials: Code Repositories)
+    name: AWS Cloud Access Key Leak via Git Commit History
+    severity: CRITICAL
+    target_vulnerability: CWE-798 (Use of Hard-coded Credentials)
+    attack_vector: |
+      Bước 1: Lập trình viên vô tình hardcode `AWS_SECRET_ACCESS_KEY` vào file cấu hình và commit lên Git.
+      Bước 2: Bot quét tự động của Attacker phát hiện secret key công khai trong commit log trong vòng 5 phút.
+      Bước 3: Attacker dùng AWS CLI gọi API để nâng quyền IAM và khởi chạy hàng loạt EC2 instance đào tiền mã hóa.
+    prerequisites: Tệp cấu hình chứa plaintext secret được push lên repository không được mã hóa.
+    mitigation_refs: [SCG-NEST-003, THREAT-I-001, REM-002]
+
+  - attack_id: ATK-CAPEC-103
+    capec_id: CAPEC-103
+    mitre_technique: T1539 (Steal Web Session Cookie)
+    name: Session Hijacking via Stolen OAuth2 Refresh Tokens
+    severity: HIGH
+    target_vulnerability: CWE-613 (Insufficient Session Expiration)
+    attack_vector: |
+      Bước 1: Attacker lợi dụng lỗ hổng XSS hoặc local storage access trên máy nạn nhân để lấy chuỗi `refresh_token`.
+      Bước 2: Attacker gửi Refresh Token tới OAuth2 `/oauth/token` endpoint từ IP lạ.
+      Bước 3: Do Authorization Server không triển khai Refresh Token Rotation (RTR) và Binding IP/Device fingerprint, Server cấp Access Token mới cho Attacker duy trì phiên đăng nhập vô thời hạn.
+    prerequisites: Authorization Server cho phép tái sử dụng Refresh Token cũ nhiều lần từ bất kỳ Client nào.
+    mitigation_refs: [SCG-NEST-002, THREAT-S-005, REM-001]
+
+  - attack_id: ATK-CAPEC-228
+    capec_id: CAPEC-228
+    mitre_technique: T1190 (Exploit Public-Facing Application)
+    name: XML External Entity (XXE) Injection & Arbitrary File Read
+    severity: HIGH
+    target_vulnerability: CWE-611 (Improper Restriction of XML External Entity Reference)
+    attack_vector: |
+      Bước 1: Attacker tìm thấy endpoint xử lý dữ liệu XML (ví dụ: SOAP request, XML Document Import).
+      Bước 2: Attacker chèn doctype entity độc hại `<!ENTITY xxe SYSTEM "file:///etc/passwd">` vào XML body payload.
+      Bước 3: Parser XML trên Server tự động giải mã entity và chèn nội dung file nhạy cảm `/etc/passwd` vào HTTP response trả về cho Attacker.
+    prerequisites: XML Parser tích hợp (libxml2, DOMParser) chưa bật tính năng disable External DTD/Entity expansion.
+    mitigation_refs: [SCG-JAVA-001, THREAT-I-002, REM-007]

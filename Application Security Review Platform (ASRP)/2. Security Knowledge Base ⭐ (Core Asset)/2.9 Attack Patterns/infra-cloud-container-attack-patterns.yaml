@@ -1,0 +1,44 @@
+pattern_id: ASRP-AP-INFRA-001
+name: Infrastructure, Cloud & Container Security Attack Patterns
+version: 2.0.0
+applicable_stack: [docker, kubernetes, aws, devops, github-actions, ci-cd, helm]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-541
+    capec_id: CAPEC-541
+    mitre_technique: T1611 (Escape to Host)
+    name: Container Breakout via Mounted Docker UNIX Socket
+    severity: CRITICAL
+    target_vulnerability: CWE-250 (Execution with Unnecessary Privileges)
+    attack_vector: |
+      Bước 1: Attacker chiếm được quyền truy cập vào 1 container bằng cách khai thác lỗ hổng Web Application.
+      Bước 2: Attacker kiểm tra cây thư mục và phát hiện file socket `/var/run/docker.sock` được mount từ Host OS vào Container.
+      Bước 3: Attacker cài đặt docker CLI hoặc gửi HTTP REST call trực tiếp tới socket để launch một container mới với quyền `privileged: true` và mount root filesystem `/` của Host Machine, mở shell lấy full root Host.
+    prerequisites: Tệp `docker-compose.yaml` hoặc K8s pod spec mount socket `/var/run/docker.sock` vào container ứng dụng.
+    mitigation_refs: [SCG-DOCKER-001, THREAT-E-002, REM-004]
+
+  - attack_id: ATK-CAPEC-637
+    capec_id: CAPEC-637
+    mitre_technique: T1609 (Container Administration Command)
+    name: Kubernetes RBAC Privilege Escalation via Automounted ServiceAccount Token
+    severity: CRITICAL
+    target_vulnerability: CWE-269 (Improper Privilege Management)
+    attack_vector: |
+      Bước 1: Attacker truy cập vào pod và đọc JWT token ServiceAccount tại `/var/run/secrets/kubernetes.io/serviceaccount/token`.
+      Bước 2: Attacker sử dụng `kubectl` gửi request tới K8s API Server với token thu thập được.
+      Bước 3: Do ClusterRoleBinding gán cho ServiceAccount có quyền `cluster-admin` hoặc `pods/exec create`, Attacker chiếm toàn bộ quyền quản trị Kubernetes Cluster.
+    prerequisites: Pod không bật `automountServiceAccountToken: false` và được gán RBAC Role với đặc quyền quá rộng.
+    mitigation_refs: [SCG-DOCKER-002, THREAT-E-002, REM-004]
+
+  - attack_id: ATK-CAPEC-439
+    capec_id: CAPEC-439
+    mitre_technique: T1195.002 (Supply Chain Compromise: Compromised Software Dependencies)
+    name: CI/CD Pipeline Poisoning via Compromised Third-Party GitHub Action / NPM Dependency
+    severity: HIGH
+    target_vulnerability: CWE-1357 (Reliance on Insufficiently Verified Component Source)
+    attack_vector: |
+      Bước 1: Attacker chiếm quyền điều khiển 1 GitHub Action công khai hoặc push package chứa mã độc typosquatting lên NPM.
+      Bước 2: CI/CD Workflow của dự án tự động chạy `npm install` hoặc dùng Action tag `:latest` mà không pin commit hash (SHA-256).
+      Bước 3: Mã độc trong pipeline tự động đánh cắp biến môi trường secret (`GITHUB_TOKEN`, `NPM_AUTH_TOKEN`, `AWS_SECRET_ACCESS_KEY`) và gửi về C2 server của Attacker.
+    prerequisites: Workflow CI/CD dùng mutable tag (`v1`, `latest`) thay vì immutable SHA commit pin.
+    mitigation_refs: [SCG-REACT-004, THREAT-I-001, REM-004]

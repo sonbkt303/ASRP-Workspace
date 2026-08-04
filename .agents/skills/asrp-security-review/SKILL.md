@@ -78,7 +78,7 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
    - `2.4 Review Checklists` (Domain & architecture review checklists)
    - `2.6 Threat Models` (STRIDE threat modeling scenarios)
    - `2.7 Secure Coding Guidelines/index.yaml` (Stack-aware guidelines: Node.js, NestJS, React/Next.js, Python, Database/ORM, Docker)
-   - `2.9 Attack Patterns` (CAPEC attack scenarios)
+   - `2.9 Attack Patterns/index.yaml` (CAPEC attack scenarios catalog: API/GraphQL, Auth/OIDC, Frontend Client)
    - `2.10 Remediation Guides/index.yaml` (Actionable code diff patches catalog: API/Auth, Frontend, Database, Containers)
 ### 2. Multi-Dimensional AI Code Audit & Modular Stage JSON Generation (AI-Primary Engine)
 AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/` and generate individual stage output files in `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:

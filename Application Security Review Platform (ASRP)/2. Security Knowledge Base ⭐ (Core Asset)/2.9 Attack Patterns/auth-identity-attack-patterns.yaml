@@ -1,0 +1,57 @@
+pattern_id: ASRP-AP-AUTH-001
+name: OAuth2, OpenID Connect & Authentication Attack Patterns
+version: 2.0.0
+applicable_stack: [oauth2, oidc, jwt, keycloak, auth0, sso, nestjs, python]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-625
+    capec_id: CAPEC-625
+    mitre_technique: T1539 (Steal Web Session Cookie)
+    name: OAuth2 Authorization Code Interception & Token Exchange Attack
+    severity: CRITICAL
+    target_vulnerability: CWE-287 (Improper Authentication)
+    attack_vector: |
+      Bước 1: Attacker lừa người dùng click vào Authorization URL độc hại.
+      Bước 2: Attacker đánh chặn chuỗi `authorization_code` từ callback redirect URL.
+      Bước 3: Attacker gửi `authorization_code` đến Token Endpoint để đổi lấy Access Token mà không cần `code_verifier` (do hệ thống thiếu bắt buộc PKCE).
+    prerequisites: Identity Provider không bắt buộc PKCE (Proof Key for Code Exchange) với phương thức SHA256 (S256).
+    mitigation_refs: [SCG-NEST-002, THREAT-S-005, REM-001]
+
+  - attack_id: ATK-CAPEC-209
+    capec_id: CAPEC-209
+    mitre_technique: T1556 (Modify Authentication Process)
+    name: JWT Key ID (kid) Parameter Injection & Algorithm Confusion
+    severity: CRITICAL
+    target_vulnerability: CWE-347 (Improper Verification of Cryptographic Signature)
+    attack_vector: |
+      Bước 1: Attacker thay đổi thuật toán trong JWT Header thành `none` hoặc gán tham số `kid` trỏ tới đường dẫn file độc hại trên máy chủ (ví dụ `/dev/null` hoặc URL công khai của Attacker).
+      Bước 2: Attacker gửi JWT token tự ký số giả mạo quyền Admin qua Authorization Header.
+      Bước 3: Auth Guard chấp nhận token do thiếu Whitelist thuật toán ký số cố định và thiếu validate thuộc tính `kid`.
+    prerequisites: Thư viện xác thực JWT chấp nhận thuật toán `alg: none` hoặc chấp nhận `kid` tùy biến từ client.
+    mitigation_refs: [SCG-JAVA-001, SCG-NEST-002, THREAT-T-005, REM-001]
+
+  - attack_id: ATK-CAPEC-625-SSO
+    capec_id: CAPEC-625
+    mitre_technique: T1556.006 (Alternative Authentication Material: OAuth Tokens)
+    name: SSO OAuth2 Callback State Parameter Abuse & Account Takeover
+    severity: HIGH
+    target_vulnerability: CWE-352 (Cross-Site Request Forgery - CSRF)
+    attack_vector: |
+      Bước 1: Attacker bắt đầu luồng đăng nhập OAuth2 với tài khoản của chính mình và bắt giữ `code` trả về từ Google/Keycloak.
+      Bước 2: Attacker dụ nạn nhân click vào link callback chứa `code` của Attacker nhưng không có tham số `state` bảo vệ CSRF.
+      Bước 3: Nạn nhân truy cập link, backend liên kết tài khoản SSO của Attacker với profile của nạn nhân, cho phép Attacker đăng nhập vào tài khoản nạn nhân sau đó.
+    prerequisites: SSO Authorization Request không tạo tham số `state` ngẫu nhiên lưu trong Session/Cookie HTTPOnly.
+    mitigation_refs: [SCG-NEST-002, THREAT-S-005, REM-001]
+
+  - attack_id: ATK-CAPEC-532-RESET
+    capec_id: CAPEC-532
+    mitre_technique: T1552 (Unsecured Credentials)
+    name: Password Reset Token Leak via HTTP Referer Header
+    severity: HIGH
+    target_vulnerability: CWE-200 (Exposure of Sensitive Information to an Unauthorized Actor)
+    attack_vector: |
+      Bước 1: Nạn nhân nhận email chứa liên kết đặt lại mật khẩu: `https://app.com/reset-password?token=SECRET_TOKEN`.
+      Bước 2: Trang reset password tải tài nguyên hình ảnh hoặc script ngoài từ Domain thứ 3 (`https://analytics.evil.com`).
+      Bước 3: Trình duyệt tự động gửi HTTP Referer Header chứa nguyên vẹn URL và `SECRET_TOKEN` sang server của `evil.com`, cho phép Attacker chiếm quyền token đổi mật khẩu.
+    prerequisites: Trang web không cấu hình HTTP Header `Referrer-Policy: strict-origin-when-cross-origin`.
+    mitigation_refs: [SCG-REACT-004, THREAT-I-001, REM-003]

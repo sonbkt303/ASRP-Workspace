@@ -1,0 +1,57 @@
+pattern_id: ASRP-AP-BIZ-001
+name: Business Logic, File Upload & Access Control Attack Patterns
+version: 2.0.0
+applicable_stack: [web-api, nestjs, express, nodejs, python, java, react, nextjs]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-650
+    capec_id: CAPEC-650
+    mitre_technique: T1204 (User Execution / Malicious File Upload)
+    name: Unrestricted File Upload & Web Shell Remote Code Execution
+    severity: CRITICAL
+    target_vulnerability: CWE-434 (Unrestricted Upload of File with Dangerous Type)
+    attack_vector: |
+      Bước 1: Attacker truy cập trang upload ảnh đại diện/hồ sơ bệnh án.
+      Bước 2: Attacker chọn file script độc hại `shell.php` hoặc `shell.js` nhưng đổi Content-Type Header thành `image/png` hoặc dùng kỹ thuật double extension `shell.php.png`.
+      Bước 3: Backend lưu file trực tiếp vào thư mục web root `/public/uploads/` mà không đổi tên ngẫu nhiên và không validate Magic Bytes. Attacker truy cập trực tiếp URL file để kích hoạt Web Shell.
+    prerequisites: Thư mục chứa file upload cho phép thực thi script (Execute permission) và không validate Magic Bytes tệp tin.
+    mitigation_refs: [SCG-NEST-006, THREAT-E-001, REM-006]
+
+  - attack_id: ATK-CAPEC-153
+    capec_id: CAPEC-153
+    mitre_technique: T1068 (Exploitation for Privilege Escalation)
+    name: DTO Mass Assignment & Parameter Tampering Privilege Escalation
+    severity: HIGH
+    target_vulnerability: CWE-915 (Improper Dynamically Evaluated Class Attributes)
+    attack_vector: |
+      Bước 1: Attacker gọi API cập nhật thông tin cá nhân `PUT /api/v1/users/profile`.
+      Bước 2: Attacker chèn thêm thuộc tính bảo vệ vào JSON body payload: `{"name": "John", "roles": ["ADMIN"], "isVerified": true}`.
+      Bước 3: Controller backend gán trực tiếp toàn bộ `req.body` vào database model mà không thông qua DTO Whitelist (`ValidationPipe({ whitelist: true })`), giúp Attacker tự nâng quyền Admin.
+    prerequisites: Controller nhận raw object từ client mà không validate qua DTO Class-Validator với whitelist mode.
+    mitigation_refs: [SCG-NEST-001, THREAT-S-001, REM-001]
+
+  - attack_id: ATK-CAPEC-672
+    capec_id: CAPEC-672
+    mitre_technique: T1068 (Exploitation for Privilege Escalation / Race Condition)
+    name: Concurrent Financial Transaction Double-Spend via Race Condition
+    severity: HIGH
+    target_vulnerability: CWE-362 (Concurrent Execution using Shared Resource with Improper Synchronization)
+    attack_vector: |
+      Bước 1: Attacker có số dư tài khoản 100 USD.
+      Bước 2: Attacker gửi đồng thời 10 HTTP requests rút tiền 100 USD trong cùng 1 millisecond.
+      Bước 3: Do backend đọc số dư DB trước khi ghi nhận thay đổi mà không áp dụng Database Pessimistic Lock hoặc Atomic Transaction, cả 10 thread đều xác nhận đủ số dư, cho phép Attacker rút 1000 USD từ 100 USD ban đầu.
+    prerequisites: Giao dịch tài chính/kho hàng không sử dụng Database Row Locking (`SELECT FOR UPDATE`) hoặc distributed lock Redis.
+    mitigation_refs: [SCG-NEST-001, THREAT-T-001, REM-008]
+
+  - attack_id: ATK-CAPEC-112
+    capec_id: CAPEC-112
+    mitre_technique: T1110 (Brute Force / Rate Limit Bypass)
+    name: Rate Limit Bypass via Proxy Header Spoofing (X-Forwarded-For)
+    severity: MEDIUM
+    target_vulnerability: CWE-307 (Improper Restriction of Excessive Authentication Attempts)
+    attack_vector: |
+      Bước 1: Attacker thực hiện Brute Force dò mật khẩu tại endpoint `/api/v1/auth/login`.
+      Bước 2: Khi bị Rate Limiter chặn IP (HTTP 429 Too Many Requests), Attacker tự động thay đổi HTTP Header `X-Forwarded-For: 1.2.3.4`, `X-Forwarded-For: 1.2.3.5` sau mỗi request.
+      Bước 3: Middleware Rate Limiting tin tưởng ngây thơ IP từ `X-Forwarded-For` header do client gửi lên, cho phép Attacker thực hiện Brute Force vô hạn.
+    prerequisites: Rate Limiter không tin tưởng IP từ Reverse Proxy duy nhất hoặc không validate chuỗi proxy hop.
+    mitigation_refs: [SCG-NEST-005, THREAT-D-001, REM-008]

@@ -1,0 +1,70 @@
+pattern_id: ASRP-AP-API-001
+name: API, GraphQL & Web Services Attack Patterns
+version: 2.0.0
+applicable_stack: [web-api, graphql, oauth2, nestjs, express, nodejs, python, fastapi]
+
+attack_patterns:
+  - attack_id: ATK-CAPEC-115
+    capec_id: CAPEC-115
+    mitre_technique: T1499.003 (Endpoint DoS: Application Complexity)
+    name: GraphQL Deep Circular Query Denial of Service Attack
+    severity: HIGH
+    target_vulnerability: CWE-770 (Allocation of Resources Without Limits or Throttling)
+    attack_vector: |
+      Bước 1: Attacker gửi Introspection query hoặc phân tích GraphQL Schema công khai để dựng đồ thị liên kết đối tượng.
+      Bước 2: Craft GraphQL query lồng nhau 10 cấp (patients -> documents -> files -> employees -> patients).
+      Bước 3: Gửi đồng thời 50 HTTP requests lồng nhau làm sập CPU Node.js Event Loop và gây cạn kiệt MongoDB Connection Pool.
+    prerequisites: Public GraphQL Endpoint không kích hoạt Query Depth Limit Guard hoặc Query Complexity Calculator.
+    mitigation_refs: [SCG-NEST-005, THREAT-D-002, REM-008]
+
+  - attack_id: ATK-CAPEC-586
+    capec_id: CAPEC-586
+    mitre_technique: T1068 (Exploitation for Privilege Escalation)
+    name: Object State Tampering via Unprotected GraphQL Subscriptions
+    severity: CRITICAL
+    target_vulnerability: CWE-306 (Missing Authentication for Critical Function)
+    attack_vector: |
+      Bước 1: Attacker mở kết nối WebSocket (WS/WSS) tới endpoint `/graphql`.
+      Bước 2: Gửi GraphQL Subscription request cho `PATIENT_UPDATED` hoặc `DOCUMENT_UPDATED` event.
+      Bước 3: Do Auth Guard bypass trên WebSocket handshake / subscription operation, Attacker nhận real-time dữ liệu y tế nhạy cảm của toàn bộ hệ thống.
+    prerequisites: GraphQL Server Auth Guard trả về true cho tất cả subscription operations mà không kiểm tra WebSocket connectionParams / Auth Header.
+    mitigation_refs: [SCG-NEST-002, THREAT-S-001, REM-001]
+
+  - attack_id: ATK-CAPEC-136
+    capec_id: CAPEC-136
+    mitre_technique: T1552.001 (Unsecured Credentials: Log Files)
+    name: Credential & Token Harvesting via Application Log Aggregation
+    severity: HIGH
+    target_vulnerability: CWE-532 (Insertion of Sensitive Information into Log File)
+    attack_vector: |
+      Bước 1: Attacker chiếm được quyền truy cập hệ thống xem log (ELK, CloudWatch, Datadog) hoặc đọc log file thô.
+      Bước 2: Grep chuỗi `sessionId`, `authorization`, `access_token` từ ứng dụng.
+      Bước 3: Replay các Access Tokens/Session IDs thu thập được để mạo danh tài khoản Quản trị viên/Bác sĩ.
+    prerequisites: Logger của dịch vụ ghi thông tin JWT token hoặc Mật khẩu dạng plaintext vào stdout/log file.
+    mitigation_refs: [SCG-NEST-003, THREAT-I-001, REM-002]
+
+  - attack_id: ATK-CAPEC-639-REST
+    capec_id: CAPEC-639
+    mitre_technique: T1083 (File and Directory Discovery / Mass Data Exfiltration)
+    name: REST API Mass Data Scraping via Pagination Limit Bypass
+    severity: HIGH
+    target_vulnerability: CWE-770 (Allocation of Resources Without Limits or Throttling)
+    attack_vector: |
+      Bước 1: Attacker gọi API `GET /api/v1/users?page=1&limit=10`.
+      Bước 2: Thay đổi tham số `limit=999999` hoặc `limit=-1`.
+      Bước 3: Backend không validate giá trị max limit, thực thi SQL query `SELECT * FROM users LIMIT 999999` gây tràn bộ nhớ RAM (OOM Crash) hoặc trích xuất hàng loạt dữ liệu người dùng.
+    prerequisites: Controller chấp nhận tham số limit từ client mà không ép kiểu giá trị max limit cố định (ví dụ max limit 100).
+    mitigation_refs: [SCG-NEST-005, THREAT-D-001, REM-008]
+
+  - attack_id: ATK-CAPEC-115-ALIAS
+    capec_id: CAPEC-115
+    mitre_technique: T1499.003 (Endpoint DoS: Application Complexity)
+    name: GraphQL Query Alias & Batching Resource Exhaustion Attack
+    severity: HIGH
+    target_vulnerability: CWE-770 (Allocation of Resources Without Limits or Throttling)
+    attack_vector: |
+      Bước 1: Attacker tạo 100 GraphQL aliases trong cùng 1 request: `a1: user(id:1) { ... }, a2: user(id:2) { ... }, ..., a100: user(id:100) { ... }`.
+      Bước 2: Gửi request đơn tới server.
+      Bước 3: Server xử lý 100 truy vấn cơ sở dữ liệu song song cho 1 HTTP request đơn lẻ, gây sập database connection pool.
+    prerequisites: GraphQL engine không giới hạn số lượng Operation/Alias tối đa trong một request.
+    mitigation_refs: [SCG-NEST-005, THREAT-D-002, REM-008]
