@@ -1,0 +1,35 @@
+catalog_id: ASRP-CATALOG-2.5
+name: Layer 2.5 Review Playbooks Catalog (Standard Operating Procedures)
+version: 2.0.0
+last_updated: 2026-08-04
+
+summary:
+  total_playbook_sets: 4
+  description: >
+    Tập hợp các tài liệu Quy trình Vận hành Chuẩn (Standard Operating Procedures - SOP) cho từng đợt Security Review,
+    Monorepo Audit, Microservices Mesh Audit và Phản ứng sự cố khẩn cấp.
+
+playbook_sets:
+  - id: ASRP-PB-CORE-001
+    name: Application Security Review Core Execution SOP Playbook
+    path: 2.5 Playbooks/security-review-playbook.yaml
+    applicable_stack: [general, top25-cwe, asrp, security-audit]
+    status: active
+
+  - id: ASRP-PB-MONOREPO-001
+    name: Multi-Component Monorepo Security Review SOP Playbook
+    path: 2.5 Playbooks/monorepo-security-review-playbook.yaml
+    applicable_stack: [monorepo, nestjs, react, nextjs, typescript, pnpm, lerna]
+    status: active
+
+  - id: ASRP-PB-MESH-001
+    name: Kubernetes & Service Mesh Microservices Audit SOP Playbook
+    path: 2.5 Playbooks/microservices-mesh-review-playbook.yaml
+    applicable_stack: [kubernetes, istio, envoy, docker, helm, microservices, cloud]
+    status: active
+
+  - id: ASRP-PB-INCIDENT-001
+    name: Emergency Cloud & Security Incident Response SOP Playbook
+    path: 2.5 Playbooks/cloud-incident-response-playbook.yaml
+    applicable_stack: [aws, gcp, azure, docker, kubernetes, incident-response, devops]
+    status: active

@@ -1,0 +1,44 @@
+playbook_id: ASRP-PB-INCIDENT-001
+name: Emergency Cloud & Security Incident Response SOP Playbook
+version: 2.0.0
+applicable_stack: [aws, gcp, azure, docker, kubernetes, incident-response, devops]
+
+phases:
+  - phase_id: P1
+    name: Phase 1 - Containment & Secrets Revocation
+    objective: Cô lập ngay lập tức phạm vi ảnh hưởng và thu hồi toàn bộ Credentials bị thỏa hiệp.
+    steps:
+      - step_number: 1
+        action: Thu hồi ngay lập tức AWS Access Keys / OAuth Tokens bị rò rỉ thông qua Cloud Console / CLI.
+        tool_or_command: aws iam deactivate-access-key / revocation API
+        validation_criteria: Credentials bị lộ không thể tiếp tục thực thi API calls.
+      - step_number: 2
+        action: Áp dụng K8s NetworkPolicy cô lập (Isolate) Pod bị nghi ngờ nhiễm mã độc RCE khỏi Service Mesh.
+        tool_or_command: kubectl apply -f isolate-policy.yaml
+        validation_criteria: Pod bị cô lập hoàn toàn lưu lượng East-West và Egress Internet.
+
+  - phase_id: P2
+    name: Phase 2 - Digital Forensics & Root Cause Identification
+    objective: Thu thập bằng chứng vết và xác định nguyên nhân gốc rễ lỗ hổng bị khai thác.
+    steps:
+      - step_number: 1
+        action: Tạo Snapshot bộ nhớ RAM và Disk Volume của máy chủ EC2 / Pod bị tấn công để lưu vết điều tra số.
+        tool_or_command: aws ec2 create-snapshot
+        validation_criteria: Bằng chứng forensics được lưu trữ an toàn trên WORM S3 Bucket.
+      - step_number: 2
+        action: Truy vấn WORM Audit Logs (S3 Object Lock / CloudTrail) để trích xuất IP Attacker và chuỗi lệnh đã thực thi.
+        tool_or_command: Athena / ELK Query
+        validation_criteria: Xác định chính xác CVE / CAPEC Attack Pattern đã bị Hacker khai thác.
+
+  - phase_id: P3
+    name: Phase 3 - Emergency Code Patch & System Restoration
+    objective: Triển khai bản vá khẩn cấp và khôi phục hoạt động hệ thống an toàn.
+    steps:
+      - step_number: 1
+        action: Trích xuất mã Code Diff Patch tương ứng từ Layer 2.10 (Remediation Guides) để vá lỗ hổng mã nguồn.
+        tool_or_command: view_file on Layer 2.10 Remediation Guides
+        validation_criteria: Code Diff Patch được apply vào Hotfix branch và qua kiểm thử CI/CD.
+      - step_number: 2
+        action: Thực hiện Hotfix Deployment, rebuild container image với tag mới và tự động xoay toàn bộ Database Credentials.
+        tool_or_command: CI/CD Pipeline Release
+        validation_criteria: Hệ thống phục hồi hoạt động bình thường, quét lại bằng ASRP không còn lỗ hổng.

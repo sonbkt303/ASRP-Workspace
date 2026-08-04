@@ -1,0 +1,48 @@
+playbook_id: ASRP-PB-MONOREPO-001
+name: Multi-Component Monorepo Security Review SOP Playbook
+version: 2.0.0
+applicable_stack: [monorepo, nestjs, react, nextjs, typescript, pnpm, lerna]
+
+phases:
+  - phase_id: P1
+    name: Phase 1 - Component Discovery & Exclusion Filtering
+    objective: Nhận diện tất cả các sub-repositories/components trong Monorepo và áp dụng bộ lọc tài nguyên.
+    steps:
+      - step_number: 1
+        action: Quét đệ quy cây thư mục `clones/{project_id}/` để phát hiện danh sách các sub-projects (apps/, packages/, libs/).
+        tool_or_command: view_file / list_dir
+        validation_criteria: Tất cả các file package.json, nest-cli.json, pnpm-workspace.yaml đều được ghi nhận.
+      - step_number: 2
+        action: Áp dụng quy tắc loại trừ tài nguyên phụ trợ (Resource Exclusion Rule) loại bỏ node_modules, dist, build, coverage.
+        tool_or_command: asrp-security-review skill guardrail
+        validation_criteria: Trường `exclude_paths` trong components.yaml được populate đầy đủ các đường dẫn rác.
+
+  - phase_id: P2
+    name: Phase 2 - Safe Non-Destructive Layer 1 Profile Merging
+    objective: Cập nhật thông tin Hồ sơ Dự án cho từng Component mà không làm đè hoặc mất dữ liệu của các Component khác.
+    steps:
+      - step_number: 1
+        action: Đọc tệp `components.yaml` và `technologies.yaml` hiện tại trong `1. Projects Registry/{project_id}/`.
+        tool_or_command: view_file
+        validation_criteria: Lưu vết danh sách components hiện có.
+      - step_number: 2
+        action: Thực hiện Safe Merge bổ sung hoặc cập nhật thông tin techstack cho component được chỉ định (như `dent-api-nestjs`).
+        tool_or_command: replace_file_content / write_to_file
+        validation_criteria: Không làm ảnh hưởng tới thông tin của các components khác (như `dent-monorepo`).
+
+  - phase_id: P3
+    name: Phase 3 - Multi-Component Independent Scan & Executive Aggregation
+    objective: Thực hiện kiểm thử độc lập từng Component và tổng hợp báo cáo Executive Dashboard chung.
+    steps:
+      - step_number: 1
+        action: Thực thi AI Primary Contextual Audit và sinh các tệp `stage_outputs/*.json` độc lập cho từng Component.
+        tool_or_command: AI Assessment Engine (Step 2)
+        validation_criteria: Mọi stage output đều chứa thông tin `component_id` tương ứng.
+      - step_number: 2
+        action: Xuất báo cáo Security Review độc lập cho từng Component (`security_review_report_{component_id}.html`).
+        tool_or_command: python asrp.py report --project {project_id}
+        validation_criteria: File báo cáo component riêng biệt được khởi tạo.
+      - step_number: 3
+        action: Tổng hợp Master Executive Dashboard (`security_review_report.html`) hiển thị thẻ điểm Health Score so sánh song song các Components.
+        tool_or_command: Report Generator (Layer 5)
+        validation_criteria: Dashboard hiển thị danh sách tất cả các sub-projects trong Monorepo.

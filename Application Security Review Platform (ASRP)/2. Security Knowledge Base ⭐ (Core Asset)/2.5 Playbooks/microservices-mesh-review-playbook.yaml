@@ -1,0 +1,44 @@
+playbook_id: ASRP-PB-MESH-001
+name: Kubernetes & Service Mesh Microservices Audit SOP Playbook
+version: 2.0.0
+applicable_stack: [kubernetes, istio, envoy, docker, helm, microservices, cloud]
+
+phases:
+  - phase_id: P1
+    name: Phase 1 - Ingress Gateway & Perimeter Security Audit
+    objective: Kiểm tra điểm vào lưu lượng mạng công khai (Edge Proxy / Ingress Controller).
+    steps:
+      - step_number: 1
+        action: Rà soát cấu hình TLS/SSL Termination tại Ingress Gateway (Yêu cầu HSTS & TLS 1.3/1.2 min version).
+        tool_or_command: view_file on k8s/ingress.yaml or helm templates
+        validation_criteria: Không sử dụng TLS 1.0/1.1 hoặc ciphers yếu.
+      - step_number: 2
+        action: Kiểm tra Rate Limiting & Web Application Firewall (WAF) integration tại Ingress Controllers.
+        tool_or_command: AI Code Audit against Layer 2.8 & Layer 2.4 Checklists
+        validation_criteria: Ingress được cấu hình giới hạn số lượng HTTP requests/giây.
+
+  - phase_id: P2
+    name: Phase 2 - East-West Traffic & mTLS Service Mesh Inspection
+    objective: Thẩm định an toàn lưu lượng truyền thông giữa các microservices nội bộ.
+    steps:
+      - step_number: 1
+        action: Kiểm tra cấu hình Istio / Envoy PeerAuthentication (Yêu cầu mode: STRICT mTLS).
+        tool_or_command: view_file on k8s/istio-telemetry.yaml
+        validation_criteria: mTLS được bật bắt buộc cho 100% inter-pod communications.
+      - step_number: 2
+        action: Rà soát K8s NetworkPolicies (Yêu cầu Default Deny Ingress/Egress cho tất cả Namespaces).
+        tool_or_command: AI Audit against Layer 2.2.9 Configuration Security
+        validation_criteria: Không tồn tại Pods cho phép kết nối tự do không qua Whitelist.
+
+  - phase_id: P3
+    name: Phase 3 - Workload Security & RBAC Least Privilege Verification
+    objective: Đánh giá phân quyền ServiceAccounts và cấu hình Pod Security Standards.
+    steps:
+      - step_number: 1
+        action: Kiểm tra thuộc tính `automountServiceAccountToken: false` trên tất cả Deployment specs.
+        tool_or_command: grep_search / view_file
+        validation_criteria: Token ServiceAccount không bị tự động mount vào pods không cần thiết.
+      - step_number: 2
+        action: Kiểm tra Pod Security Admission Profile (Restricted Profile Compliance).
+        tool_or_command: view_file on namespace labels
+        validation_criteria: Containers chạy under unprivileged non-root user và readOnlyRootFilesystem.

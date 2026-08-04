@@ -1,27 +1,48 @@
-playbook_id: ASRP-PLY-001
-name: Application Security Review Execution Playbook
-version: 1.0
-description: Standard operational procedure for executing AI end-to-end security audits.
+playbook_id: ASRP-PB-CORE-001
+name: Application Security Review Core Execution SOP Playbook
+version: 2.0.0
+applicable_stack: [general, top25-cwe, asrp, security-audit]
 
 phases:
   - phase_id: P1
     name: Phase 1 - Source Acquisition & Layer 1 AI Profiling
-    actions:
-      - Acquire source code persistently at 3.1 Source Acquisition/clones/{project_id}/{component_id}/.
-      - Execute AI Auto-Profiling to generate 8 Layer 1 YAML profiles following 1.1 Template schemas.
-      - Verify manifest hash using python asrp.py validate --project {project_id}.
+    objective: Clone mã nguồn cố định và tự động sinh 100% tệp Hồ sơ Dự án Layer 1 theo chuẩn 1.1 Template.
+    steps:
+      - step_number: 1
+        action: Clone hoặc sao chép mã nguồn cố định tại `3. Assessment Engine/3.1 Source Acquisition/clones/{project_id}/{component_id}/`.
+        tool_or_command: source_acquisition.py / acquire script
+        validation_criteria: Thư mục clones tồn tại và được giữ nguyên/git pull ở lần chạy tiếp theo.
+      - step_number: 2
+        action: Thực hiện AI Auto-Profiling đọc đệ quy mã nguồn thực tế và sinh 8 file profile YAML Layer 1.
+        tool_or_command: asrp-security-review skill (Step 1)
+        validation_criteria: Đã tạo 8 tệp YAML trong `1. Projects Registry/{project_id}/` tuân thủ 100% template schema.
 
   - phase_id: P2
-    name: Phase 2 - Multi-Module Knowledge Base Audit & Scanning
-    actions:
-      - Load Layer 2.1 Standards, Layer 2.2 Domains, Layer 2.3 Executable Rules, and Layer 2.4 Checklists.
-      - Conduct AI Primary Contextual Code Audit for BOLA, Injection, Secrets, and Logic flaws.
-      - Execute auxiliary CLI scanner python asrp.py scan --project {project_id}.
-      - Deduplicate and normalize findings into findings.json.
+    name: Phase 2 - Multi-Module Knowledge Base Contextual Audit & Scanning
+    objective: Đánh giá mã nguồn dựa trên Ma trận Tri thức Layer 2 và xuất dữ liệu chuẩn findings.json.
+    steps:
+      - step_number: 1
+        action: Nạp tri thức đầy đủ từ các module Layer 2 (Standards 2.1, Domains 2.2, Rules 2.3, Checklists 2.4, Threat Models 2.6, Best Practices 2.8, Attack Patterns 2.9, Remediation 2.10).
+        tool_or_command: view_file on Layer 2 artifacts
+        validation_criteria: Đảm bảo không quét rỗng khi chưa nạp checklist và quy chuẩn đối soát.
+      - step_number: 2
+        action: Thực thi AI Primary Contextual Audit và sinh 6 tệp stage output JSON (`stage_outputs/*.json`) chuẩn Common Schema.
+        tool_or_command: AI Assessment Engine (Step 2)
+        validation_criteria: Tất cả các lỗi không-PASS được ghi nhận đầy đủ trong stage JSON outputs.
+      - step_number: 3
+        action: Lọc trùng (Deduplication), loại bỏ False Positives và hợp nhất 100% stage check failures vào `findings.json`.
+        tool_or_command: findings_normalizer.py
+        validation_criteria: Mỗi finding đều truy vết đầy đủ các thẻ tham chiếu Layer 2 (`rule_id`, `standard_mappings`, `remediation_ref`).
 
   - phase_id: P3
-    name: Phase 3 - Risk Assessment & Executive Reporting
-    actions:
-      - Calculate Security Health Score (0-100), Grade (A-F), and Gate Status.
-      - Build SLA Remediation Roadmap in risk_assessment.json.
-      - Generate executive HTML Dashboard (security_review_report.html) and Markdown report.
+    name: Phase 3 - Risk Assessment & Executive HTML/MD Reporting
+    objective: Tính điểm Health Score, lập lộ trình SLA và xuất Executive HTML Dashboard.
+    steps:
+      - step_number: 1
+        action: Tính toán Security Health Score (0-100), xếp hạng Grade (A-F) và trạng thái Security Gate (PASSED/FAILED).
+        tool_or_command: risk_assessor.py (Layer 3.7)
+        validation_criteria: Điểm Health Score phản ánh chính xác trọng số lỗ hổng CRITICAL, HIGH, MEDIUM.
+      - step_number: 2
+        action: Xuất báo cáo Executive HTML Dashboard (`security_review_report.html`) tích hợp bộ lọc tương tác Stage Navigation.
+        tool_or_command: report_generator.py (Layer 5)
+        validation_criteria: Báo cáo lấy mẫu chuẩn từ `1.1 Template/reports/` và lọc dynamic counts theo từng Module Layer 2.
