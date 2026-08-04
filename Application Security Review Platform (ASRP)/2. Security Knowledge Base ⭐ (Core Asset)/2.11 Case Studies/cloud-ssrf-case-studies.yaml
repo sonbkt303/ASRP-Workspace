@@ -1,0 +1,50 @@
+catalog_id: ASRP-CS-CLOUD-001
+name: Cloud Infrastructure & SSRF Incident Case Studies
+version: 2.0.0
+applicable_stack: [aws, gcp, azure, docker, kubernetes, waf, python, nodejs]
+
+case_studies:
+  - case_id: CS-CLOUD-001
+    title: Capital One Cloud Breach via WAF SSRF & AWS IMDSv1 Credential Theft
+    cve_id: N/A
+    incident_year: 2019
+    target_vulnerability: CWE-918 (Server-Side Request Forgery - SSRF)
+    capec_ref: CAPEC-664
+    impact_summary: >
+      Rò rỉ hơn 100 triệu hồ sơ cá nhân và số an sinh xã hội (SSN) của khách hàng đăng ký thẻ tín dụng.
+      Capital One bị phạt 80 triệu USD và phải chi trả 190 triệu USD để dàn xếp kiện tụng.
+    root_cause_analysis: |
+      Ứng dụng WAF (ModSecurity) tự dựng trên AWS EC2 có lỗ hổng SSRF. Đồng thời, máy chủ EC2 sử dụng AWS Instance Metadata Service
+      phiên bản 1 (IMDSv1) - một giao thức HTTP GET không yêu cầu token xác thực session.
+      IAM Role gán cho EC2 instance có đặc quyền quá rộng (`s3:ListBucket`, `s3:GetObject` trên toàn bộ S3 Buckets của công ty).
+    attack_vector_sequence:
+      - "Bước 1: Attacker phát hiện endpoint WAF vulnerable với SSRF, truyền URL `http://169.254.169.254/latest/meta-data/iam/security-credentials/WAF-Role`."
+      - "Bước 2: WAF Proxy gửi request tới dải IP Metadata nội bộ của AWS EC2 và trả về tạm thời `AccessKeyId`, `SecretAccessKey`, `Token` của WAF Role."
+      - "Bước 3: Attacker cấu hình AWS CLI local với chuỗi credentials vừa lấy được."
+      - "Bước 4: Attacker chạy lệnh `aws s3 ls` và `aws s3 sync` trích xuất hơn 700 S3 buckets chứa dữ liệu nhạy cảm."
+    lessons_learned_remediation: |
+      1. Kích hoạt AWS IMDSv2 bắt buộc (`HttpTokens: required`), yêu cầu HTTP PUT session token trước khi truy cập metadata.
+      2. Áp dụng nguyên tắc Least Privilege cho IAM Roles; không gán wildcard permissions (`s3:*`) cho Web-Facing Services.
+      3. Triển khai S3 Bucket Encryption & Access Guardrails (như AWS Macie / GuardDuty) cảnh báo tự động khi lượng data download tăng bất thường.
+    applicable_stack: [aws, ec2, s3, iam, waf]
+
+  - case_id: CS-CLOUD-002
+    title: AWS IAM Privilege Escalation via Over-Permissioned Lambda Execution Role
+    cve_id: N/A
+    incident_year: 2022
+    target_vulnerability: CWE-269 (Improper Privilege Management)
+    capec_ref: CAPEC-1068
+    impact_summary: >
+      Attacker từ một tài khoản Serverless unprivileged leo quyền thành AdministratorAccess trên toàn bộ AWS Cloud Tenant.
+    root_cause_analysis: |
+      Hàm AWS Lambda được gán IAM Role chứa quyền `iam:CreatePolicyVersion` và `iam:SetDefaultPolicyVersion`.
+      Mặc dù Lambda không có quyền Administrator trực tiếp, quyền tạo Policy Version cho phép tài khoản tự gắn thêm policy cấp toàn quyền `Action: "*", Resource: "*"` cho chính mình.
+    attack_vector_sequence:
+      - "Bước 1: Attacker khai thác lỗ hổng Code Injection trong hàm AWS Lambda."
+      - "Bước 2: Attacker kiểm tra quyền IAM của Lambda Execution Role bằng AWS SDK."
+      - "Bước 3: Attacker gọi API `iam.create_policy_version()` tự định nghĩa Policy JSON mới chứa `Allow * *`."
+      - "Bước 4: Attacker gọi `iam.set_default_policy_version()` kích hoạt policy mới, biến Lambda Role thành Full Admin."
+    lessons_learned_remediation: |
+      1. Sử dụng AWS IAM Access Analyzer và SCP (Service Control Policies) ngăn chặn việc cấp quyền `iam:CreatePolicyVersion`.
+      2. Áp dụng Permission Boundaries để giới hạn trần quyền tối đa mà một Role có thể tự nâng cấp.
+    applicable_stack: [aws, lambda, iam, serverless]

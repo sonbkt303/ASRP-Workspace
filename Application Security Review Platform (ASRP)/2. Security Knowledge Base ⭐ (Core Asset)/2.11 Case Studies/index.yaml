@@ -1,0 +1,41 @@
+catalog_id: ASRP-CATALOG-2.11
+name: Layer 2.11 Case Studies Catalog (Post-Mortem Real-World Security Incidents)
+version: 2.0.0
+last_updated: 2026-08-04
+
+summary:
+  total_case_study_sets: 5
+  description: >
+    Tập hợp các hồ sơ đại án sự cố an toàn thông tin thực tế (Post-Mortem Case Studies), phân tích nguyên nhân gốc rễ,
+    chuỗi hành vi tấn công và bài học kinh nghiệm khắc phục kiến trúc cho AI Assessment Engine.
+
+case_study_sets:
+  - id: ASRP-CS-GENERAL-001
+    name: Real-World Security Incident Case Studies & Root Cause Analysis Handbook
+    path: 2.11 Case Studies/security-incident-case-studies.yaml
+    applicable_stack: [general, top25-cwe, web-api, cloud]
+    status: active
+
+  - id: ASRP-CS-INJ-001
+    name: Injection & Remote Code Execution (RCE) Incident Case Studies
+    path: 2.11 Case Studies/injection-rce-case-studies.yaml
+    applicable_stack: [java, spring, python, nodejs, express, log4j, struts]
+    status: active
+
+  - id: ASRP-CS-CLOUD-001
+    name: Cloud Infrastructure & SSRF Incident Case Studies
+    path: 2.11 Case Studies/cloud-ssrf-case-studies.yaml
+    applicable_stack: [aws, gcp, azure, docker, kubernetes, waf, python, nodejs]
+    status: active
+
+  - id: ASRP-CS-API-001
+    name: API & Access Control Incident Case Studies
+    path: 2.11 Case Studies/api-access-control-case-studies.yaml
+    applicable_stack: [web-api, rest, graphql, nestjs, express, python, java]
+    status: active
+
+  - id: ASRP-CS-SUPPLY-001
+    name: Software Supply Chain & CI/CD Incident Case Studies
+    path: 2.11 Case Studies/supply-chain-case-studies.yaml
+    applicable_stack: [devops, ci-cd, github-actions, npm, nodejs, python, docker]
+    status: active

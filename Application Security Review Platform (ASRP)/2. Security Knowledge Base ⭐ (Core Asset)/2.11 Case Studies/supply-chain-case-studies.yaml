@@ -1,0 +1,51 @@
+catalog_id: ASRP-CS-SUPPLY-001
+name: Software Supply Chain & CI/CD Incident Case Studies
+version: 2.0.0
+applicable_stack: [devops, ci-cd, github-actions, npm, nodejs, python, docker]
+
+case_studies:
+  - case_id: CS-SUPPLY-001
+    title: SolarWinds SUNBURST Supply Chain Poisoning via Compromised Build System
+    cve_id: CVE-2020-10148
+    incident_year: 2020
+    target_vulnerability: CWE-1357 (Reliance on Insufficiently Verified Component Source / CI-CD Poisoning)
+    capec_ref: CAPEC-439
+    impact_summary: >
+      Tấn công chuỗi cung ứng nghiêm trọng nhất lịch sử. Hơn 18,000 tổ chức doanh nghiệp và cơ quan chính phủ Mỹ
+      (Bao gồm Bộ Tài chính, Bộ An ninh Nội địa) bị cài cắm Backdoor độc hại SUNBURST.
+    root_cause_analysis: |
+      Hacker nhóm APT (Cozy Bear) xâm nhập thành công vào hạ tầng máy chủ build nội bộ (Software Build Environment) của SolarWinds.
+      Attacker cài đặt mã độc Sunspot tự động phát hiện khi dự án `SolarWinds.Orion.Core.BusinessLayer.dll` được biên dịch
+      và chèn mã độc backdoor SUNBURST vào mã nguồn trước khi biên dịch ra file DLL phát hành chính thức.
+    attack_vector_sequence:
+      - "Bước 1: Attacker xâm nhập vào mạng nội bộ SolarWinds qua tài khoản VPN/Credentials bị lộ."
+      - "Bước 2: Attacker cài cắm mã độc Sunspot nằm chìm trên máy chủ Build Server."
+      - "Bước 3: Khi tiến trình `MsBuild.exe` khởi chạy, Sunspot thay thế file source code tạm thời bằng mã độc SUNBURST."
+      - "Bước 4: File DLL chứa mã độc được ký số hợp lệ bằng Certificate của SolarWinds và tự động đẩy tới khách hàng qua kênh Update chính thức."
+    lessons_learned_remediation: |
+      1. Triển khai Immutable Build Pipeline: Tách biệt môi trường Build khỏi mạng nội bộ và thực hiện Reproducible Builds.
+      2. Kiểm tra tính toàn vẹn (Software Bill of Materials - SBOM & In-Toto Attestation) cho từng bước trong CI/CD.
+      3. Mã hóa và kiểm soát truy cập nghiêm ngặt đối với Code Signing Certificates.
+    applicable_stack: [devops, ci-cd, msbuild, dotnet]
+
+  - case_id: CS-SUPPLY-002
+    title: Event-Stream NPM Package Compromise & Crypto Wallet Theft
+    cve_id: N/A
+    incident_year: 2018
+    target_vulnerability: CWE-1357 (Reliance on Insufficiently Verified Component Source / Malicious Dependency)
+    capec_ref: CAPEC-439
+    impact_summary: >
+      Hàng triệu lượt tải package `event-stream` trên NPM bị dính mã độc đánh cắp ví tiền mã hóa Bitcoin từ ứng dụng Copay Wallet.
+    root_cause_analysis: |
+      Attacker tiếp cận tác giả gốc của package phổ biến `event-stream` (có 2 triệu lượt download/tuần) qua GitHub và ngỏ ý hỗ trợ duy trì mã nguồn.
+      Tác giả bàn giao quyền publish NPM package cho Attacker. Attacker tạo package phụ thuộc độc hại `flatmap-stream` chứa mã obfuscated
+      nhắm mục tiêu trích xuất private keys từ ví Copay Bitcoin Client.
+    attack_vector_sequence:
+      - "Bước 1: Attacker nhận quyền Maintainer package `event-stream` từ tác giả gốc."
+      - "Bước 2: Attacker push phiên bản mới 3.3.6 thêm dependency `flatmap-stream` chứa mã độc mã hóa."
+      - "Bước 3: Hàng ngàn dự án Node.js/React tự động tải bản update mới thông qua `npm install`."
+      - "Bước 4: Mã độc chạy ngầm trong trình duyệt client, quét bộ nhớ ứng dụng Copay và gửi Private Key ví Bitcoin về C2 Server."
+    lessons_learned_remediation: |
+      1. Sử dụng tệp Lockfile (`pnpm-lock.yaml`, `package-lock.json`) để cố định chính xác phiên bản dependency và sha512 integrity hash.
+      2. Kích hoạt công cụ kiểm tra phụ thuộc (SCA) như Socket.dev, Snyk, hoặc Dependabot để phát hiện việc đổi người duy trì (Maintainer handover).
+    applicable_stack: [nodejs, npm, react, pnpm]

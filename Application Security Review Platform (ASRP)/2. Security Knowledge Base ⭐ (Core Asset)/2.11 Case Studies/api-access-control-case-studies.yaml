@@ -1,0 +1,49 @@
+catalog_id: ASRP-CS-API-001
+name: API & Access Control Incident Case Studies
+version: 2.0.0
+applicable_stack: [web-api, rest, graphql, nestjs, express, python, java]
+
+case_studies:
+  - case_id: CS-API-001
+    title: Optus Telecom REST API BOLA / Unauthenticated Customer Data Breach
+    cve_id: N/A
+    incident_year: 2022
+    target_vulnerability: CWE-639 (Authorization Bypass Through User-Controlled Key / BOLA)
+    capec_ref: CAPEC-639
+    impact_summary: >
+      Rò rỉ dữ liệu cá nhân nhạy cảm (Họ tên, ngày sinh, số hộ chiếu, bằng lái xe) của 9.8 triệu khách hàng viễn thông Úc.
+      Công ty chịu khoản phạt hàng chục triệu AUD và tổn hại thương hiệu nghiêm trọng.
+    root_cause_analysis: |
+      Optus xuất bản một REST API endpoint thử nghiệm công khai `/api/v1/customer/identity?contactId=100001` trên Internet mà không có bất kỳ cơ chế xác thực nào (Authentication / API Key / JWT).
+      Endpoint nhận tham số `contactId` dạng chuỗi số tăng dần và trả về nguyên vẹn hồ sơ khách hàng mà không kiểm tra quyền truy cập (Missing Ownership Authorization Check).
+    attack_vector_sequence:
+      - "Bước 1: Attacker phát hiện endpoint API công khai thông qua việc quét DNS/Subdomain hoặc kiểm tra Network Traffic."
+      - "Bước 2: Attacker chạy script tự động thay đổi `contactId` từ 100001 tới 10000000."
+      - "Bước 3: API trả về 200 OK kèm theo dữ liệu định danh cá nhân eKYC của từng khách hàng."
+      - "Bước 4: Attacker trích xuất thành công dữ liệu của gần 10 triệu người dùng và rao bán trên forum hacker."
+    lessons_learned_remediation: |
+      1. Bắt buộc áp dụng Auth Guard toàn cục cho 100% REST/GraphQL Endpoints (mặc định Deny All).
+      2. Đánh giá tính phân quyền BOLA/IDOR: Luôn đối soát Tenant ID và Session User ID với tài nguyên được yêu cầu.
+      3. Triển khai API Gateway Rate Limiting và cảnh báo Scraping tự động khi 1 IP quét hàng nghìn ID liên tiếp.
+    applicable_stack: [web-api, rest, nestjs, express]
+
+  - case_id: CS-API-002
+    title: T-Mobile Customer Data Leak via Unrestricted API Rate Limit Bypass
+    cve_id: N/A
+    incident_year: 2021
+    target_vulnerability: CWE-307 (Improper Restriction of Excessive Authentication Attempts)
+    capec_ref: CAPEC-112
+    impact_summary: >
+      Rò rỉ số SSN, dữ liệu Bằng lái xe và mã PIN bảo mật của hơn 54 triệu khách hàng T-Mobile.
+      T-Mobile phải nộp phạt 350 triệu USD tiền bồi thường dàn xếp kiện tụng.
+    root_cause_analysis: |
+      Một API endpoint phụ trợ bị lộ trên môi trường sản xuất không áp dụng Rate Limiting hoặc IP Throttling.
+      Attacker thực hiện quét Brute-Force đối với dải số SSN và tài khoản khách hàng mà không bị hệ thống ngắt kết nối hay chặn IP.
+    attack_vector_sequence:
+      - "Bước 1: Attacker phát hiện API endpoint không có tài liệu công khai trên cổng kết nối dịch vụ."
+      - "Bước 2: Attacker chạy công cụ Brute-Force gửi hàng trăm nghìn HTTP Requests mỗi phút."
+      - "Bước 3: Do thiếu Throttling Middleware, backend tiếp tục xử lý tất cả requests và trả về phản hồi chứa thông tin khách hàng."
+    lessons_learned_remediation: |
+      1. Áp dụng Throttling & Rate Limiting tập trung tại API Gateway cho mọi đường dẫn công khai.
+      2. Loại bỏ các API endpoint mồ côi (Shadow APIs / Legacy Endpoints) khỏi môi trường Production.
+    applicable_stack: [web-api, rest, express, java]

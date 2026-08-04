@@ -1,16 +1,43 @@
-case_study_id: ASRP-CS-001
-name: Real-World Security Incident Case Studies & Root Cause Analysis
-version: 1.0
+catalog_id: ASRP-CS-GENERAL-001
+name: Real-World Security Incident Case Studies & Root Cause Analysis Handbook
+version: 2.0.0
+applicable_stack: [general, top25-cwe, web-api, cloud]
 
 case_studies:
-  - id: CS-01
-    title: Healthcare ePHI Leak via Unprotected API Resolver
-    impact: Critical PII/ePHI Data Breach
-    root_cause: Lack of tenant authorization check in GraphQL endpoint accepting client-supplied patient ID.
-    lessons_learned: Always enforce automated BOLA/IDOR checks in CI/CD pipeline before releasing healthcare microservices.
+  - case_id: CS-GEN-001
+    title: Healthcare ePHI Leak via Unprotected GraphQL Resolver BOLA
+    cve_id: N/A
+    incident_year: 2023
+    target_vulnerability: CWE-639 (Authorization Bypass Through User-Controlled Key)
+    capec_ref: CAPEC-639
+    impact_summary: Rò rỉ hơn 500,000 hồ sơ bệnh án nhạy cảm (ePHI) và thông tin bảo hiểm y tế.
+    root_cause_analysis: |
+      Resolver GraphQL chấp nhận tham số `patientId` từ client nhưng thiếu kiểm tra quyền sở hữu đối tượng
+      (Missing Tenant & User Context Authorization Check).
+    attack_vector_sequence:
+      - "Bước 1: Attacker đăng nhập tài khoản bệnh nhân bình thường."
+      - "Bước 2: Thay đổi giá trị patientId trong GraphQL Query `getPatient(patientId: 9999)`."
+      - "Bước 3: Resolver trả về toàn bộ dữ liệu y tế của bệnh nhân 9999."
+    lessons_learned_remediation: |
+      1. Bắt buộc kiểm tra Ownership Authorization tại cấp Resolver / Service Layer.
+      2. Áp dụng quét kiểm thử tự động BOLA/IDOR trong pipeline CI/CD.
+    applicable_stack: [graphql, nestjs, nodejs, healthcare]
 
-  - id: CS-02
-    title: Cloud Infrastructure Hijack via Hardcoded Credentials
-    impact: $50,000 unauthorized cloud resource consumption
-    root_cause: AWS secret key hardcoded in config file committed to public repository.
-    lessons_learned: Mandate secret scanning (Gitleaks) on pre-commit hooks and enforce short-lived IAM roles.
+  - case_id: CS-GEN-002
+    title: Cloud Infrastructure Cryptomining Hijack via Hardcoded AWS Credentials
+    cve_id: N/A
+    incident_year: 2024
+    target_vulnerability: CWE-798 (Use of Hard-coded Credentials)
+    capec_ref: CAPEC-798
+    impact_summary: Thiệt hại tài chính hơn $50,000 do chi phí khởi chạy EC2 đào tiền mã hóa trái phép trong 24h.
+    root_cause_analysis: |
+      Lập trình viên vô tình commit file `.env` chứa `AWS_SECRET_ACCESS_KEY` lên public Git repository.
+      Bot quét tự động của Attacker thu thập secret key trong vòng 5 phút sau commit.
+    attack_vector_sequence:
+      - "Bước 1: Git bot quét commit public chứa chuỗi regex AWS Access Key."
+      - "Bước 2: Attacker gọi AWS EC2 API khởi chạy hàng loạt GPU instances."
+      - "Bước 3: Cài đặt phần mềm đào Bitcoin/Monero trên các EC2 instances."
+    lessons_learned_remediation: |
+      1. Bắt buộc kích hoạt Secret Scanning (Gitleaks / Trufflehog) trên Pre-commit Hooks và CI/CD.
+      2. Sử dụng AWS IAM Roles / Workload Identity thay cho static Access Keys.
+    applicable_stack: [aws, git, devops, cloud]
