@@ -1,0 +1,66 @@
+catalog_id: ASRP-ADR-CRYPTO-001
+name: Cryptography & Data Storage Security Architecture Decision Records
+version: 2.0.0
+applicable_stack: [mongodb, postgresql, redis, aws, gcp, nodejs, python, java]
+
+decisions:
+  - adr_number: ADR-CRYPTO-001
+    title: Envelope Encryption & Field-Level AES-256-GCM Encryption with Cloud KMS for PII/ePHI
+    status: Accepted
+    category: Cryptography & Data Protection
+    context_problem: >
+      Dữ liệu y tế cá nhân ePHI (Số CCCD, Tiền sử bệnh lý, Thông tin thanh toán) lưu trữ trong Database
+      có nguy cơ bị rò rỉ nếu Attacker chiếm được file SQL/MongoDB dump thô hoặc tài khoản Database Read-Only.
+    decision_outcome: >
+      Quyết định áp dụng kỹ thuật Envelope Encryption và Field-Level Encryption bằng thuật toán AES-256-GCM
+      cho các trường dữ liệu PII/ePHI. Master Key được quản lý tập trung trên AWS KMS / HashiCorp Vault với cơ chế xoay khóa (Key Rotation) 90 ngày.
+    positive_consequences:
+      - Ngay cả khi lộ tệp Database dump, Attacker cũng không thể đọc được nội dung PII/ePHI nếu không có Data Key mã hóa.
+      - Thuật toán GCM cấp cơ chế Authenticated Encryption ngăn chặn việc sửa đổi dữ liệu mã hóa (Ciphertext Tampering).
+    negative_consequences:
+      - Tăng chi phí tính toán CPU trên Server và không thể tìm kiếm truy vấn SQL dạng `LIKE %search%` trực tiếp trên các trường đã mã hóa.
+    compliance_ref:
+      hipaa: 45 CFR § 164.312(a)(2)(iv)
+      owasp_asvs: V8.2.1
+    applicable_stack: [crypto, kms, postgresql, mongodb]
+
+  - adr_number: ADR-CRYPTO-002
+    title: Migration to Argon2id Password Hashing Function over Legacy MD5/SHA1/Bcrypt
+    status: Accepted
+    category: Password Storage Security
+    context_problem: >
+      Thuật toán băm mật khẩu cũ (MD5, SHA-1, SHA-256) có tốc độ tính toán quá nhanh, dễ bị bẻ khóa bằng GPU/ASIC.
+      Bcrypt giới hạn độ dài mật khẩu 72 bytes và dễ bị tấn công GPU side-channel.
+    decision_outcome: >
+      Quyết định chọn Argon2id (Winner of Password Hashing Competition) làm tiêu chuẩn bắt buộc cho tất cả các dịch vụ lưu trữ mật khẩu.
+      Cấu hình thông số: Memory 64MB, Iterations 3, Parallelism 4.
+    positive_consequences:
+      - Chống lại triệt để các đợt tấn công bẻ khóa mật khẩu bằng GPU/ASIC nhờ cơ chế Memory-Hardness.
+      - Hỗ trợ chuỗi mật khẩu đầu vào độ dài tùy ý mà không bị cắt xén (Truncation).
+    negative_consequences:
+      - Tiêu tốn dung lượng RAM đáng kể (64MB per hash) trên Server Auth khi xử lý đồng thời lượng lớn truy vấn Login.
+    compliance_ref:
+      owasp_asvs: V2.4.1
+      nist: NIST SP 800-63B
+    applicable_stack: [crypto, argon2, auth]
+
+  - adr_number: ADR-CRYPTO-003
+    title: Immutable Security Audit Logging Strategy via AWS S3 Object Lock (WORM Storage)
+    status: Accepted
+    category: Auditability & Log Security
+    domain_ref: 2.2.9 Configuration Security
+    context_problem: >
+      Khi Attacker chiếm được quyền Administrator trên Server hoặc Database, họ thường thực hiện thao tác xóa vết (Log Tampering / Deletion)
+      để che giấu hành vi tấn công và ngăn cản việc điều tra số (Digital Forensics).
+    decision_outcome: >
+      Quyết định đẩy toàn bộ Security Audit Logs tới AWS S3 Bucket riêng biệt được bật chế độ Object Lock với chính sách Compliance Mode WORM (Write Once Read Many)
+      lưu giữ tối thiểu 365 ngày. Ngay cả Root Account của AWS cũng không thể xóa hoặc sửa log trong thời hạn này.
+    positive_consequences:
+      - Đảm bảo tính toàn vẹn 100% của tệp vết kiểm toán cho công tác phục hồi sự cố và điều tra pháp lý.
+      - Đáp ứng các tiêu chuẩn khắt khe của HIPAA, PCI-DSS và ISO 27001 về lưu trữ log.
+    negative_consequences:
+      - Tăng chi phí lưu trữ Cloud S3 Storage dài hạn cho các file log dung lượng lớn.
+    compliance_ref:
+      hipaa: 45 CFR § 164.312(b)
+      owasp_asvs: V7.1.2
+    applicable_stack: [aws, s3, logging, compliance]

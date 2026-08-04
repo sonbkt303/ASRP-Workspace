@@ -1,0 +1,45 @@
+catalog_id: ASRP-ADR-ACCESS-001
+name: Access Control & Authorization Security Architecture Decision Records
+version: 2.0.0
+applicable_stack: [web-api, rest, graphql, nestjs, express, python, java, gateway]
+
+decisions:
+  - adr_number: ADR-ACCESS-001
+    title: Adoption of Hybrid ABAC/RBAC Access Control Model for Multi-Tenant Applications
+    status: Accepted
+    category: Authorization Architecture
+    context_problem: >
+      Mô hình Role-Based Access Control (RBAC) đơn thuần không thể đáp ứng được các bài toán phân quyền phức tạp theo ngữ cảnh y tế/doanh nghiệp
+      (Ví dụ: Bác sĩ A chỉ được xem bệnh án của Bệnh nhân B nếu Bác sĩ A đang trong ca trực và thuộc cùng Bệnh viện C).
+    decision_outcome: >
+      Quyết định áp dụng mô hình phân quyền kết hợp Hybrid ABAC (Attribute-Based Access Control) & RBAC.
+      RBAC định nghĩa vai trò người dùng (Admin, Doctor, Patient), ABAC đánh giá thêm các thuộc tính ngữ cảnh (Tenant ID, Department, Shifts, Data Ownership).
+    positive_consequences:
+      - Loại bỏ triệt để các lỗ hổng phân quyền BOLA/IDOR (CWE-639).
+      - Đảm bảo tính linh hoạt tối đa cho các chính sách phân quyền ngữ cảnh động mà không làm nổ số lượng Roles.
+    negative_consequences:
+      - Tăng độ phức tạp của Authorization Service và yêu cầu truyền đầy đủ Context Attributes trong mỗi request.
+    compliance_ref:
+      owasp_asvs: V4.1.1
+      nist: NIST SP 800-162
+    applicable_stack: [nestjs, express, java, python]
+
+  - adr_number: ADR-ACCESS-002
+    title: Centralized API Authorization & Throttling Enforcement at Gateway Layer
+    status: Accepted
+    category: API Gateway Infrastructure
+    context_problem: >
+      Phân tán logic xác thực và kiểm soát lưu lượng (Throttling) ở từng Microservice dẫn đến việc triển khai không đồng nhất,
+      dễ bị bỏ sót Auth Guards trên các endpoint thử nghiệm hoặc legacy endpoints (Shadow APIs).
+    decision_outcome: >
+      Bắt buộc tập trung hóa việc kiểm tra Authentication, Rate Limiting, và IP Throttling tại API Gateway Layer (Kong / Envoy / Nginx).
+      Chỉ những request hợp lệ mới được chuyển tiếp (forward) vào mạng nội bộ Microservices Mesh.
+    positive_consequences:
+      - Giảm tải CPU cho các Microservices phía sau nhờ loại bỏ sớm các request không hợp lệ.
+      - Đảm bảo 100% API endpoints công khai đều nằm dưới điểm kiểm soát an ninh tập trung.
+    negative_consequences:
+      - API Gateway trở thành Single Point of Failure (SPOF), yêu cầu triển khai Cluster HA với khả năng tự động mở rộng (Auto-scaling).
+    compliance_ref:
+      owasp_asvs: V1.1.2
+      owasp_top10: A05:2021-Security Misconfiguration
+    applicable_stack: [gateway, envoy, kong, nginx]

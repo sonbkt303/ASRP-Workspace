@@ -1,0 +1,65 @@
+catalog_id: ASRP-ADR-INFRA-001
+name: Infrastructure, Cloud & Container Security Architecture Decision Records
+version: 2.0.0
+applicable_stack: [docker, kubernetes, aws, gcp, devops, vault, helm]
+
+decisions:
+  - adr_number: ADR-INFRA-001
+    title: Adoption of Immutable Distroless Container Images and Unprivileged Non-Root Standard
+    status: Accepted
+    category: Container Security Infrastructure
+    context_problem: >
+      Container images thông thường chứa hệ điều hành Alpine/Debian đầy đủ với các công cụ như `curl`, `wget`, `nc`, `bash`, `python`.
+      Nếu Attacker khai thác thành công lỗ hổng RCE trong Web Application, các tiện ích này hỗ trợ Attacker dễ dàng tải mã độc và leo quyền root.
+    decision_outcome: >
+      Quyết định áp dụng tiêu chuẩn Immutable Distroless Container Base Images (Google Distroless / Chainguard)
+      và bắt buộc chạy dưới tài khoản Unprivileged Non-Root User (`USER 10001`) với thuộc tính `readOnlyRootFilesystem: true`.
+    positive_consequences:
+      - Loại bỏ 95% công cụ hỗ trợ tấn công (Attack Tooling / Shells) trong container runtime.
+      - Giảm dung lượng container image từ 500MB+ xuống dưới 50MB, giúp tăng tốc độ triển khai CI/CD và giảm diện tích tấn công (Attack Surface).
+    negative_consequences:
+      - Việc gỡ lỗi (Debugging) trực tiếp trên Container Pods qua `kubectl exec` phức tạp hơn, yêu cầu dùng Ephemeral Debug Containers.
+    compliance_ref:
+      cis_benchmark: CIS Docker Benchmark 4.1
+      owasp_asvs: V14.2.1
+    applicable_stack: [docker, kubernetes, devops]
+
+  - adr_number: ADR-INFRA-002
+    title: Kubernetes Network Micro-Segmentation with Default-Deny Policy Enforcement
+    status: Accepted
+    category: Cloud Network Security
+    context_problem: >
+      Mặc định Kubernetes Cluster cho phép bất kỳ Pod nào kết nối tới tất cả các Pods khác trong Cluster (Flat Network).
+      Khi 1 Pod thuộc Frontend bị chiếm quyền, Attacker có thể tự do quét và tấn công trực tiếp vào Database hoặc các Pod nội bộ khác.
+    decision_outcome: >
+      Quyết định triển khai K8s NetworkPolicies cấp Namespace với chính sách Mặc định Chặn tất cả (Default Deny All Ingress/Egress),
+      và chỉ mở các đường truyền lưu lượng được định nghĩa explicit trong Whitelist.
+    positive_consequences:
+      - Triệt tiêu khả năng di chuyển ngang (Lateral Movement) của Attacker trong Kubernetes Cluster.
+      - Bảo vệ các cơ sở dữ liệu nội bộ khỏi các cuộc tấn công quét mạng ngầm.
+    negative_consequences:
+      - Đội ngũ DevOps phải khai báo NetworkPolicy chi tiết cho từng dịch vụ mới phát triển trước khi deploy.
+    compliance_ref:
+      cis_benchmark: CIS Kubernetes Benchmark 5.3
+      owasp_asvs: V14.4.1
+    applicable_stack: [kubernetes, calico, istio]
+
+  - adr_number: ADR-INFRA-003
+    title: Centralized Secrets Management via HashiCorp Vault & OIDC Workload Identity
+    status: Accepted
+    category: Secrets & Key Management
+    context_problem: >
+      Việc lưu trữ Secrets (Database Password, API Keys, JWT Signing Secrets) trong K8s Secrets thô (Base64)
+      hoặc biến môi trường `.env` có nguy cơ rò rỉ rất cao qua Git commits hoặc log aggregation systems.
+    decision_outcome: >
+      Quyết định tập trung hóa việc quản lý Secrets tại HashiCorp Vault / Cloud Secret Manager,
+      sử dụng OIDC Workload Identity cấp phát Dynamic Ephemeral Secrets ngắn hạn cho ứng dụng khi khởi chạy.
+    positive_consequences:
+      - Tuyệt đối không hardcode bí mật plaintext trong mã nguồn hoặc tệp cấu hình K8s.
+      - Tự động xoay mật khẩu Database (Database Credential Rotation) mà không gây gián đoạn dịch vụ.
+    negative_consequences:
+      - Phụ thuộc vào tính sẵn sàng cao (High Availability) của HashiCorp Vault Cluster.
+    compliance_ref:
+      owasp_asvs: V14.1.1
+      nist_ssdf: PW.4.1
+    applicable_stack: [vault, aws, gcp, kubernetes]

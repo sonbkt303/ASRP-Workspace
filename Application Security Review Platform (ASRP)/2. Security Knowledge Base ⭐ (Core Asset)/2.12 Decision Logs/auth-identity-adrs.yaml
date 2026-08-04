@@ -1,0 +1,68 @@
+catalog_id: ASRP-ADR-AUTH-001
+name: Authentication & Identity Security Architecture Decision Records
+version: 2.0.0
+applicable_stack: [oauth2, oidc, jwt, keycloak, auth0, sso, nestjs, python]
+
+decisions:
+  - adr_number: ADR-AUTH-001
+    title: Adoption of OAuth2 / OpenID Connect Stateless JWT Model with Refresh Token Rotation
+    status: Accepted
+    category: Authentication Architecture
+    context_problem: >
+      Hệ thống ứng dụng chuyển dịch sang kiến trúc Microservices đa vùng (Multi-Region / Multi-Cloud).
+      Mô hình Statefull Cookie Session truyền thống yêu cầu truy vấn Redis Session Store liên tục cho mỗi HTTP Request,
+      gây hiện tượng nghẽn I/O và tăng latency cho dịch vụ API Gateway.
+    decision_outcome: >
+      Quyết định áp dụng chuẩn xác thực OAuth2 / OpenID Connect (OIDC) phát hành Stateless JWT Access Tokens
+      (thời gian sống ngắn 15 phút) kết hợp Refresh Token Rotation (RTR) được mã hóa lưu trữ tại Redis Cluster.
+    positive_consequences:
+      - API Services tự xác thực chữ ký JWT public key (JWKS) tại local memory mà không cần truy vấn Session Database.
+      - Giảm 90% latency cho các truy vấn xác thực người dùng cấp Microservice.
+      - RTR ngăn chặn triệt để việc tái sử dụng Refresh Token bị đánh cắp.
+    negative_consequences:
+      - Không thể thu hồi JWT Access Token tức thì trong vòng 15 phút ngoại trừ việc áp dụng Token Revocation Blacklist tại Gateway.
+    compliance_ref:
+      owasp_asvs: V3.1.1
+      nist_ssdf: PW.1.1
+    applicable_stack: [oauth2, oidc, jwt, microservices]
+
+  - adr_number: ADR-AUTH-002
+    title: Mandatory PKCE (S256) Enforcement for Single-Page and Mobile Applications
+    status: Accepted
+    category: Authentication Security
+    domain_ref: 2.2.1 Authentication
+    context_problem: >
+      Các ứng dụng Frontend Single-Page (React/Next.js) và Mobile Apps không thể lưu trữ bí mật `client_secret` an toàn.
+      Attacker có thể đánh chặn Authorization Code trên Custom URI Schemes hoặc Callback URL để đổi lấy Access Token trái phép.
+    decision_outcome: >
+      Bắt buộc áp dụng luồng Proof Key for Code Exchange (PKCE) với thuật toán mã hóa SHA-256 (`code_challenge_method=S256`)
+      cho tất cả các ứng dụng Public Clients kết nối tới Identity Provider.
+    positive_consequences:
+      - Triệt tiêu lỗ hổng Authorization Code Interception Attack (CAPEC-625).
+      - Đảm bảo chỉ có Client khởi tạo request mới đổi được Token từ Token Endpoint.
+    negative_consequences:
+      - Yêu cầu ứng dụng Frontend phải tự tính toán `code_verifier` và `code_challenge` ngẫu nhiên cho mỗi luồng đăng nhập.
+    compliance_ref:
+      owasp_asvs: V3.1.2
+      rfc: RFC 7636
+    applicable_stack: [react, nextjs, oauth2, oidc]
+
+  - adr_number: ADR-AUTH-003
+    title: Real-time Session Revocation Strategy via Redis Token Blacklist for High-Risk Accounts
+    status: Accepted
+    category: Session Management
+    domain_ref: 2.2.1 Authentication
+    context_problem: >
+      Khi một tài khoản người dùng bị đổi mật khẩu, bị khóa do nghi vấn xâm nhập hoặc đăng xuất khỏi tất cả thiết bị,
+      Stateless JWT Access Token còn hiệu lực vẫn có thể tiếp tục sử dụng cho đến khi hết hạn (TTL 15 phút).
+    decision_outcome: >
+      Quyết định áp dụng cơ chế Token Blacklist lưu vết `jti` (JWT ID) hoặc `userId:pwd_version` trên Redis Cluster với TTL bằng đúng thời hạn còn lại của JWT.
+      API Gateway đối soát Redis Blacklist cực nhanh (dưới 1ms) đối với các tài khoản ở trạng thái rủi ro cao.
+    positive_consequences:
+      - Thu hồi phiên đăng nhập tức thì (Real-time Session Revocation) khi phát hiện sự cố an ninh.
+      - Bảo vệ tài khoản người dùng lập tức sau khi đổi mật khẩu hoặc bấm "Đăng xuất khỏi tất cả thiết bị".
+    negative_consequences:
+      - Yêu cầu kiểm tra Redis Key tồn tại cho mỗi request tại API Gateway Layer.
+    compliance_ref:
+      owasp_asvs: V3.3.1
+    applicable_stack: [jwt, redis, gateway, nestjs]

@@ -1,16 +1,42 @@
-adr_id: ASRP-ADR-001
-name: ASRP Platform Architecture Decision Records (ADR)
-version: 1.0
+catalog_id: ASRP-ADR-PLATFORM-001
+name: ASRP Platform Architecture Decision Records Handbook
+version: 2.0.0
+applicable_stack: [asrp, ai-agent, python, nodejs, security-engine]
 
 decisions:
-  - adr_number: ADR-001
-    title: Adoption of AI-Primary Contextual Code Reviewer Model
+  - adr_number: ADR-PLATFORM-001
+    title: Adoption of AI-Primary Contextual Code Reviewer Engine Model
     status: Accepted
-    context: Static analysis tools produce high false positives and miss business logic flaws (BOLA/IDOR).
-    decision: AI Agent acts as Primary Code Audit Engine, using CLI static tools (Gitleaks, Semgrep, Trivy) as auxiliary data providers.
+    category: Assessment Engine Architecture
+    context_problem: >
+      Các công cụ quét mã tĩnh truyền thống (SAST) tạo ra tỷ lệ Cảnh báo giả (False Positives) rất cao
+      và hoàn toàn bỏ sót các lỗ hổng Logic Nghiệp vụ phức tạp (như BOLA/IDOR, Race Condition, Missing Authorization).
+    decision_outcome: >
+      Quyết định chọn AI Agent đóng vai trò làm Trí tuệ điều phối và Động cơ đánh giá mã nguồn chính (Primary Code Audit Engine),
+      sử dụng các công cụ tĩnh Python CLI (Gitleaks, Semgrep, Trivy) làm nguồn dữ liệu phụ trợ (Auxiliary Data Providers).
+    positive_consequences:
+      - Giảm 85% tỷ lệ False Positives nhờ khả năng phân tích ngữ cảnh mã nguồn thực tế của AI Agent.
+      - Phát hiện được các lỗi phân quyền BOLA/IDOR và Logic Nghiệp vụ mà công cụ SAST không thể phát hiện.
+    negative_consequences:
+      - Tiêu tốn chi phí LLM Token và yêu cầu tối ưu hóa đường dẫn loại trừ (Exclusion Rules) để tránh lãng phí tài nguyên.
+    compliance_ref:
+      nist_ssdf: PW.1.1
+    applicable_stack: [asrp, ai-agent, python]
 
-  - adr_number: ADR-002
-    title: Mandatory Multi-Module Layer 2 Knowledge Base Traceability
+  - adr_number: ADR-PLATFORM-002
+    title: Mandatory Multi-Module Layer 2 Security Knowledge Base Traceability
     status: Accepted
-    context: Security findings must map to international standards, domain classifications, and review checklists.
-    decision: 100% of findings in findings.json must trace back to Layer 2.1 Standards, Layer 2.2 Domains, Layer 2.3 Rules, and Layer 2.4 Review Checklists.
+    category: Security Knowledge Integration
+    context_problem: >
+      Báo cáo đánh giá an ninh nếu chỉ đưa ra danh sách lỗ hổng thô sẽ thiếu tính thuyết phục và không hỗ trợ lộ trình sửa lỗi cho Developer.
+    decision_outcome: >
+      Bắt buộc 100% kết quả đánh giá trong `findings.json` và Executive Reports phải tham chiếu đầy đủ tới 12 module Layer 2
+      (Standards 2.1, Domains 2.2, Rules 2.3, Checklists 2.4, Threat Models 2.6, Best Practices 2.8, Attack Patterns 2.9, Remediation Guides 2.10).
+    positive_consequences:
+      - Đảm bảo tính minh bạch, hỗ trợ lọc báo cáo tương tác (Interactive Filters) trên HTML Dashboard.
+      - Cung cấp sẵn mã Code Diff Patch sửa lỗi (2.10) cho Developer lập tức sau đánh giá.
+    negative_consequences:
+      - Yêu cầu duy trì bộ dữ liệu Layer 2 đồng bộ và chuẩn hóa schema nghiêm ngặt.
+    compliance_ref:
+      owasp_asvs: V1.1.1
+    applicable_stack: [asrp, reporting, html-dashboard]
