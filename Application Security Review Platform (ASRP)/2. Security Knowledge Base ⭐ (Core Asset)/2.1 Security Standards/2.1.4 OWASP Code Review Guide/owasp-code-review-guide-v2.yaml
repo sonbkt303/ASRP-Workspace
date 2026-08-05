@@ -11,7 +11,7 @@ review_areas:
 
   - id: CRG-AUTHZ
     name: Authorization & Access Control Code Review
-    key_patterns: [req.user.id, @UseGuards, @Roles, CanAccess, UserContext.getTenantId]
+    key_patterns: [req.user.id, "@UseGuards", "@Roles", CanAccess, UserContext.getTenantId]
     description: Audit object-level authorization checks (BOLA) and role-based decorator guards.
 
   - id: CRG-INJ

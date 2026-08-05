@@ -6,7 +6,7 @@ applicable_stack: [web-api, graphql, oauth2, nestjs, express, nodejs, python, fa
 attack_patterns:
   - attack_id: ATK-CAPEC-115
     capec_id: CAPEC-115
-    mitre_technique: T1499.003 (Endpoint DoS: Application Complexity)
+    mitre_technique: "T1499.003 (Endpoint DoS: Application Complexity)"
     name: GraphQL Deep Circular Query Denial of Service Attack
     severity: HIGH
     target_vulnerability: CWE-770 (Allocation of Resources Without Limits or Throttling)
@@ -32,7 +32,7 @@ attack_patterns:
 
   - attack_id: ATK-CAPEC-136
     capec_id: CAPEC-136
-    mitre_technique: T1552.001 (Unsecured Credentials: Log Files)
+    mitre_technique: "T1552.001 (Unsecured Credentials: Log Files)"
     name: Credential & Token Harvesting via Application Log Aggregation
     severity: HIGH
     target_vulnerability: CWE-532 (Insertion of Sensitive Information into Log File)
@@ -58,7 +58,7 @@ attack_patterns:
 
   - attack_id: ATK-CAPEC-115-ALIAS
     capec_id: CAPEC-115
-    mitre_technique: T1499.003 (Endpoint DoS: Application Complexity)
+    mitre_technique: "T1499.003 (Endpoint DoS: Application Complexity)"
     name: GraphQL Query Alias & Batching Resource Exhaustion Attack
     severity: HIGH
     target_vulnerability: CWE-770 (Allocation of Resources Without Limits or Throttling)

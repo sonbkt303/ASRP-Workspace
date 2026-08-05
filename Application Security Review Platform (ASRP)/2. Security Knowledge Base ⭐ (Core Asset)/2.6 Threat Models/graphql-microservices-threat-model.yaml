@@ -31,7 +31,7 @@ threat_scenarios:
     affected_components: [graphql.module.ts, main.ts]
     mitigation_controls:
       - control_id: CTRL-T-002
-        description: Tắt Introspection trên production (`introspection: false`) và áp dụng Query Depth Limits.
+        description: "Tắt Introspection trên production (`introspection: false`) và áp dụng Query Depth Limits."
         layer_2_refs:
           standards: [CWE-200]
           guidelines: [SCG-NEST-004]

@@ -27,12 +27,12 @@ attack_patterns:
       Bước 1: Attacker truy cập vào pod và đọc JWT token ServiceAccount tại `/var/run/secrets/kubernetes.io/serviceaccount/token`.
       Bước 2: Attacker sử dụng `kubectl` gửi request tới K8s API Server với token thu thập được.
       Bước 3: Do ClusterRoleBinding gán cho ServiceAccount có quyền `cluster-admin` hoặc `pods/exec create`, Attacker chiếm toàn bộ quyền quản trị Kubernetes Cluster.
-    prerequisites: Pod không bật `automountServiceAccountToken: false` và được gán RBAC Role với đặc quyền quá rộng.
+    prerequisites: "Pod không bật `automountServiceAccountToken: false` và được gán RBAC Role với đặc quyền quá rộng."
     mitigation_refs: [SCG-DOCKER-002, THREAT-E-002, REM-004]
 
   - attack_id: ATK-CAPEC-439
     capec_id: CAPEC-439
-    mitre_technique: T1195.002 (Supply Chain Compromise: Compromised Software Dependencies)
+    mitre_technique: "T1195.002 (Supply Chain Compromise: Compromised Software Dependencies)"
     name: CI/CD Pipeline Poisoning via Compromised Third-Party GitHub Action / NPM Dependency
     severity: HIGH
     target_vulnerability: CWE-1357 (Reliance on Insufficiently Verified Component Source)

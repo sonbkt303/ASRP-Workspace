@@ -22,7 +22,7 @@ phases:
     objective: Thẩm định an toàn lưu lượng truyền thông giữa các microservices nội bộ.
     steps:
       - step_number: 1
-        action: Kiểm tra cấu hình Istio / Envoy PeerAuthentication (Yêu cầu mode: STRICT mTLS).
+        action: "Kiểm tra cấu hình Istio / Envoy PeerAuthentication (Yêu cầu mode: STRICT mTLS)."
         tool_or_command: view_file on k8s/istio-telemetry.yaml
         validation_criteria: mTLS được bật bắt buộc cho 100% inter-pod communications.
       - step_number: 2
@@ -35,7 +35,7 @@ phases:
     objective: Đánh giá phân quyền ServiceAccounts và cấu hình Pod Security Standards.
     steps:
       - step_number: 1
-        action: Kiểm tra thuộc tính `automountServiceAccountToken: false` trên tất cả Deployment specs.
+        action: "Kiểm tra thuộc tính `automountServiceAccountToken: false` trên tất cả Deployment specs."
         tool_or_command: grep_search / view_file
         validation_criteria: Token ServiceAccount không bị tự động mount vào pods không cần thiết.
       - step_number: 2

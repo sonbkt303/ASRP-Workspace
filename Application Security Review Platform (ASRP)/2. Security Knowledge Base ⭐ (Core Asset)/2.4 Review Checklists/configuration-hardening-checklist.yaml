@@ -16,7 +16,7 @@ checklist_items:
 
   - item_id: CFG-CHK-02
     title: Disabling Server Tokens & Banner Grabbing
-    verification_requirement: Check that web server banners (Server: nginx/1.18.0, X-Powered-By: Express/NestJS) are stripped to prevent adversary technology fingerprinting.
+    verification_requirement: "Check that web server banners (Server: nginx/1.18.0, X-Powered-By: Express/NestJS) are stripped to prevent adversary technology fingerprinting."
     severity: LOW
     rule_mapping: ASRP-MISCFG-001
 

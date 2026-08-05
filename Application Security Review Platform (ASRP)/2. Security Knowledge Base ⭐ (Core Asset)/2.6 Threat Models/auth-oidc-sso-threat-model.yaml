@@ -44,7 +44,7 @@ threat_scenarios:
     affected_components: [password-reset.controller.ts, frontend-reset-page]
     mitigation_controls:
       - control_id: CTRL-I-005
-        description: Thêm header `Referrer-Policy: no-referrer` trên trang reset password và gửi token qua POST body thay vì URL Query Parameter.
+        description: "Thêm header `Referrer-Policy: no-referrer` trên trang reset password và gửi token qua POST body thay vì URL Query Parameter."
         layer_2_refs:
           standards: [CWE-200, ASVS-V2.5.4]
           guidelines: [SCG-REACT-003, SCG-REACT-008]

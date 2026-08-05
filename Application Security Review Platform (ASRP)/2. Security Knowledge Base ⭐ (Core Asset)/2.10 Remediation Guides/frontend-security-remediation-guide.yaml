@@ -13,7 +13,7 @@ remediations:
     owasp_top10: [A05:2021-Security Misconfiguration]
     asvs_control: V14.2.1
     priority_sla: 7d
-    summary: Bật reactStrictMode: true trong tất cả các tệp next.config.js.
+    summary: "Bật reactStrictMode: true trong tất cả các tệp next.config.js."
     code_diff: |
       - reactStrictMode: false
       + reactStrictMode: true

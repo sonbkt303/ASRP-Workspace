@@ -19,7 +19,7 @@ attack_patterns:
 
   - attack_id: ATK-CAPEC-798
     capec_id: CAPEC-798
-    mitre_technique: T1552.001 (Unsecured Credentials: Code Repositories)
+    mitre_technique: "T1552.001 (Unsecured Credentials: Code Repositories)"
     name: AWS Cloud Access Key Leak via Git Commit History
     severity: CRITICAL
     target_vulnerability: CWE-798 (Use of Hard-coded Credentials)

@@ -27,12 +27,12 @@ attack_patterns:
       Bước 1: Attacker thay đổi thuật toán trong JWT Header thành `none` hoặc gán tham số `kid` trỏ tới đường dẫn file độc hại trên máy chủ (ví dụ `/dev/null` hoặc URL công khai của Attacker).
       Bước 2: Attacker gửi JWT token tự ký số giả mạo quyền Admin qua Authorization Header.
       Bước 3: Auth Guard chấp nhận token do thiếu Whitelist thuật toán ký số cố định và thiếu validate thuộc tính `kid`.
-    prerequisites: Thư viện xác thực JWT chấp nhận thuật toán `alg: none` hoặc chấp nhận `kid` tùy biến từ client.
+    prerequisites: "Thư viện xác thực JWT chấp nhận thuật toán `alg: none` hoặc chấp nhận `kid` tùy biến từ client."
     mitigation_refs: [SCG-JAVA-001, SCG-NEST-002, THREAT-T-005, REM-001]
 
   - attack_id: ATK-CAPEC-625-SSO
     capec_id: CAPEC-625
-    mitre_technique: T1556.006 (Alternative Authentication Material: OAuth Tokens)
+    mitre_technique: "T1556.006 (Alternative Authentication Material: OAuth Tokens)"
     name: SSO OAuth2 Callback State Parameter Abuse & Account Takeover
     severity: HIGH
     target_vulnerability: CWE-352 (Cross-Site Request Forgery - CSRF)
@@ -53,5 +53,5 @@ attack_patterns:
       Bước 1: Nạn nhân nhận email chứa liên kết đặt lại mật khẩu: `https://app.com/reset-password?token=SECRET_TOKEN`.
       Bước 2: Trang reset password tải tài nguyên hình ảnh hoặc script ngoài từ Domain thứ 3 (`https://analytics.evil.com`).
       Bước 3: Trình duyệt tự động gửi HTTP Referer Header chứa nguyên vẹn URL và `SECRET_TOKEN` sang server của `evil.com`, cho phép Attacker chiếm quyền token đổi mật khẩu.
-    prerequisites: Trang web không cấu hình HTTP Header `Referrer-Policy: strict-origin-when-cross-origin`.
+    prerequisites: "Trang web không cấu hình HTTP Header `Referrer-Policy: strict-origin-when-cross-origin`."
     mitigation_refs: [SCG-REACT-004, THREAT-I-001, REM-003]

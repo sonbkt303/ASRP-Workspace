@@ -163,7 +163,7 @@ class ReportGenerator:
         cards = []
 
         # 2.1 Standards
-        s21 = stages_data.get("2.1", {}).get("results", [])
+        s21 = (stages_data.get("2.1") or {}).get("results", [])
         for item in s21:
             if item.get("status") in ["PASS", "COMPLIANT", "NOT_APPLICABLE"]: continue
             cid = item.get("component_id", "all")
@@ -211,7 +211,7 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.2 Domains
-        s22 = stages_data.get("2.2", {}).get("results", [])
+        s22 = (stages_data.get("2.2") or {}).get("results", [])
         for item in s22:
             if item.get("status") in ["PASS", "COMPLIANT", "NOT_APPLICABLE"]: continue
             cid = item.get("component_id", "all")
@@ -242,39 +242,40 @@ class ReportGenerator:
         <div class="finding-body">
           <div class="fb-grid">
             <div class="fb-field"><label>Security Domain</label><p>{title}</p></div>
-            <div class="fb-field"><label>File Location</label><p class="path">{fpath}</p></div>
+            <div class="fb-field"><label>Target Scope</label><p class="path">{fpath}</p></div>
           </div>
           <p style="font-size:13px;color:var(--text-secondary);margin:8px 0;">{desc}</p>
           <div class="fix-box">
-            <label>✅ Domain Security Guidance</label>
+            <label>✅ Domain Security Remediation</label>
             <p>{rem}</p>
           </div>
         </div>
       </div>'''
             cards.append(card)
 
-        # 2.3 Rules
-        s23 = stages_data.get("2.3", {}).get("results", [])
+        # 2.3 Rule Library
+        s23 = (stages_data.get("2.3") or {}).get("results", [])
         for item in s23:
-            if item.get("status") not in ["TRIGGERED", "FAIL", "WARNING"]: continue
+            if item.get("status") in ["PASS", "COMPLIANT", "NOT_TRIGGERED"]: continue
             cid = item.get("component_id", "all")
             if component_id and cid != component_id: continue
             
-            item_id = item.get("rule_id", "RULE-000")
+            item_id = item.get("rule_id", item.get("item_id", "RULE-000"))
             clean_id = str(item_id).replace('.', '_').replace('/', '_').replace(':', '_').replace('-', '_')
             title = item.get("rule_name", item_id)
             sev = item.get("severity", "HIGH").upper()
             sev_class = sev.lower()
-            matches = item.get("matches", [])
+            ev = item.get("evidence", {})
+            if isinstance(ev, dict):
+                fpath = ev.get("file_path", "N/A")
+                line = ev.get("line", 1)
+                snippet = ev.get("snippet", "")
+            else:
+                fpath, line, snippet = "N/A", 1, ""
             rem = item.get("remediation", "")
             
-            match_desc = ""
-            for m in matches:
-                if isinstance(m, dict):
-                    match_desc += f"<p class='path'>{m.get('file_path')}:{m.get('line')}</p><div class='code-block'>{m.get('snippet', '')}</div>"
-                else:
-                    match_desc += f"<p class='path'>{str(m)}</p>"
-                
+            snippet_html = f'<div class="code-block">{snippet}</div>' if snippet else ''
+            
             card = f'''
       <div class="finding-card" id="card-{clean_id}" data-stages="2.3" data-comp="{cid}">
         <div class="finding-header" onclick="toggleF(\'card-{clean_id}\')">
@@ -285,9 +286,13 @@ class ReportGenerator:
           <span class="find-toggle">▼</span>
         </div>
         <div class="finding-body">
-          {match_desc}
+          <div class="fb-grid">
+            <div class="fb-field"><label>Rule Pattern ID</label><p>{item_id}</p></div>
+            <div class="fb-field"><label>File Location</label><p class="path">{fpath}:{line}</p></div>
+          </div>
+          {snippet_html}
           <div class="fix-box" style="margin-top:8px;">
-            <label>✅ Static Rule Remediation</label>
+            <label>✅ Rule Remediation Guidance</label>
             <p>{rem}</p>
           </div>
         </div>
@@ -295,7 +300,7 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.4 Checklists
-        s24 = stages_data.get("2.4", {}).get("results", [])
+        s24 = (stages_data.get("2.4") or {}).get("results", [])
         for item in s24:
             if item.get("status") in ["PASS", "COMPLIANT", "NOT_APPLICABLE"]: continue
             cid = item.get("component_id", "all")
@@ -304,19 +309,15 @@ class ReportGenerator:
             item_id = item.get("item_id", "CHK-000")
             clean_id = str(item_id).replace('.', '_').replace('/', '_').replace(':', '_').replace('-', '_')
             title = item.get("verification_requirement", item_id)
-            sev = item.get("severity", "HIGH").upper()
+            sev = item.get("severity", "MEDIUM").upper()
             sev_class = sev.lower()
             ev = item.get("evidence", {})
             if isinstance(ev, dict):
                 fpath = ev.get("file_path", "N/A")
-                line = ev.get("line", 1)
                 desc = ev.get("description", "")
-                snippet = ev.get("snippet", "")
             else:
-                fpath, line, desc, snippet = "N/A", 1, str(ev or ""), ""
+                fpath, desc = "N/A", str(ev or "")
             rem = item.get("remediation", "")
-            
-            snippet_html = f'<div class="code-block">{snippet}</div>' if snippet else ''
             
             card = f'''
       <div class="finding-card" id="card-{clean_id}" data-stages="2.4" data-comp="{cid}">
@@ -329,13 +330,12 @@ class ReportGenerator:
         </div>
         <div class="finding-body">
           <div class="fb-grid">
-            <div class="fb-field"><label>Checklist Requirement</label><p>{title}</p></div>
-            <div class="fb-field"><label>File Location</label><p class="path">{fpath}:{line}</p></div>
+            <div class="fb-field"><label>Auditor Requirement</label><p>{title}</p></div>
+            <div class="fb-field"><label>Target Scope</label><p class="path">{fpath}</p></div>
           </div>
-          {snippet_html}
           <p style="font-size:13px;color:var(--text-secondary);margin:8px 0;">{desc}</p>
           <div class="fix-box">
-            <label>✅ Auditor Verification Guidance</label>
+            <label>✅ Verification Remediation</label>
             <p>{rem}</p>
           </div>
         </div>
@@ -343,7 +343,7 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.6 Threat Models
-        s26 = stages_data.get("2.6", {}).get("results", [])
+        s26 = (stages_data.get("2.6") or {}).get("results", [])
         for item in s26:
             if item.get("status") in ["PASS", "COMPLIANT", "MITIGATED"]: continue
             cid = item.get("component_id", "all")
@@ -387,7 +387,7 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.7 Secure Coding Guidelines
-        s27 = stages_data.get("2.7", {}).get("results", [])
+        s27 = (stages_data.get("2.7") or {}).get("results", [])
         for item in s27:
             if item.get("status") in ["PASS", "COMPLIANT", "NOT_APPLICABLE"]: continue
             cid = item.get("component_id", "all")
@@ -433,12 +433,6 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.10 Remediation Guides
-        s210 = stages_data.get("2.10", {}).get("results", [])
-        for item in s210:
-            if item.get("status") in ["PASS", "DONE", "RESOLVED"]: continue
-            cid = item.get("component_id", "all")
-            if component_id and cid != component_id: continue
-            
             item_id = item.get("item_id", "REM-000")
             clean_id = str(item_id).replace('.', '_').replace('/', '_').replace(':', '_').replace('-', '_')
             title = item.get("summary", item_id)

@@ -18,7 +18,7 @@ threat_scenarios:
     affected_components: [k8s-pod, service-account]
     mitigation_controls:
       - control_id: CTRL-S-003
-        description: Cấu hình `automountServiceAccountToken: false` cho các Pods không cần tương tác với Kubernetes API.
+        description: "Cấu hình `automountServiceAccountToken: false` cho các Pods không cần tương tác với Kubernetes API."
         layer_2_refs:
           standards: [CWE-306, CIS-K8S-5.1.6]
           guidelines: [SCG-DOC-001]
@@ -57,7 +57,7 @@ threat_scenarios:
     affected_components: [Dockerfile, k8s-deployment]
     mitigation_controls:
       - control_id: CTRL-E-003
-        description: Ép buộc `USER node` non-root, bật `readOnlyRootFilesystem: true` và `allowPrivilegeEscalation: false`.
+        description: "Ép buộc `USER node` non-root, bật `readOnlyRootFilesystem: true` và `allowPrivilegeEscalation: false`."
         layer_2_refs:
           standards: [CWE-250, CIS-K8S-5.2.6]
           guidelines: [SCG-DOC-001, SCG-DOC-005]
