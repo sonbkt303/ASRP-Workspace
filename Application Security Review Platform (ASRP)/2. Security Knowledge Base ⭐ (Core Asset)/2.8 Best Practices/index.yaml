@@ -12,30 +12,30 @@ summary:
 best_practice_sets:
   - id: ASRP-BP-DEVSECOPS-001
     name: Cloud-Native DevSecOps & CI/CD Security Best Practices
-    path: 2.8 Best Practices/devsecops-best-practices.yaml
+    path: devsecops-best-practices.yaml
     applicable_stack: [devops, ci-cd, github-actions, gitlab-ci, docker, kubernetes]
     status: active
 
   - id: ASRP-BP-CLOUD-001
     name: Cloud-Native & Container Infrastructure Best Practices
-    path: 2.8 Best Practices/cloud-native-best-practices.yaml
+    path: cloud-native-best-practices.yaml
     applicable_stack: [docker, kubernetes, aws, gcp, azure, devops, helm]
     status: active
 
   - id: ASRP-BP-ZEROTRUST-001
     name: Zero-Trust Architecture & Network Security Best Practices
-    path: 2.8 Best Practices/zero-trust-architecture-best-practices.yaml
+    path: zero-trust-architecture-best-practices.yaml
     applicable_stack: [istio, envoy, kubernetes, microservices, oauth2, oidc, tls]
     status: active
 
   - id: ASRP-BP-API-001
     name: API & Microservices Security Best Practices
-    path: 2.8 Best Practices/api-microservices-best-practices.yaml
+    path: api-microservices-best-practices.yaml
     applicable_stack: [web-api, nestjs, express, graphql, nodejs, python, java, go]
     status: active
 
   - id: ASRP-BP-DATA-001
     name: Data Privacy, Encryption & Compliance Best Practices
-    path: 2.8 Best Practices/data-privacy-compliance-best-practices.yaml
+    path: data-privacy-compliance-best-practices.yaml
     applicable_stack: [mongodb, postgresql, redis, aws, gcp, nodejs, python, java]
     status: active

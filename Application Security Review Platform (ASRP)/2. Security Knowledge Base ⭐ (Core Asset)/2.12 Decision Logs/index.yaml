@@ -12,30 +12,30 @@ summary:
 adr_sets:
   - id: ASRP-ADR-PLATFORM-001
     name: ASRP Platform Architecture Decision Records Handbook
-    path: 2.12 Decision Logs/architecture-decision-records.yaml
+    path: architecture-decision-records.yaml
     applicable_stack: [asrp, ai-agent, python, nodejs, security-engine]
     status: active
 
   - id: ASRP-ADR-AUTH-001
     name: Authentication & Identity Security Architecture Decision Records
-    path: 2.12 Decision Logs/auth-identity-adrs.yaml
+    path: auth-identity-adrs.yaml
     applicable_stack: [oauth2, oidc, jwt, keycloak, auth0, sso, nestjs, python]
     status: active
 
   - id: ASRP-ADR-CRYPTO-001
     name: Cryptography & Data Storage Security Architecture Decision Records
-    path: 2.12 Decision Logs/cryptography-storage-adrs.yaml
+    path: cryptography-storage-adrs.yaml
     applicable_stack: [mongodb, postgresql, redis, aws, gcp, nodejs, python, java]
     status: active
 
   - id: ASRP-ADR-ACCESS-001
     name: Access Control & Authorization Security Architecture Decision Records
-    path: 2.12 Decision Logs/access-control-adrs.yaml
+    path: access-control-adrs.yaml
     applicable_stack: [web-api, rest, graphql, nestjs, express, python, java, gateway]
     status: active
 
   - id: ASRP-ADR-INFRA-001
     name: Infrastructure, Cloud & Container Security Architecture Decision Records
-    path: 2.12 Decision Logs/infra-cloud-adrs.yaml
+    path: infra-cloud-adrs.yaml
     applicable_stack: [docker, kubernetes, aws, gcp, devops, vault, helm]
     status: active

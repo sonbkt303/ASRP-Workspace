@@ -12,66 +12,66 @@ summary:
 checklists:
   - id: ASRP-CHK-API-001
     name: API & Microservices Security Review Checklist
-    path: 2.4 Review Checklists/api-security-checklist.yaml
+    path: api-security-checklist.yaml
     applicable_stack: [rest, graphql, gRPC, api-gateway, microservices]
     status: active
 
   - id: ASRP-CHK-ARCH-001
     name: Architecture & System Design Security Review Checklist
-    path: 2.4 Review Checklists/architecture-security-checklist.yaml
+    path: architecture-security-checklist.yaml
     applicable_stack: [architecture, zero-trust, threat-modeling, cloud]
     status: active
 
   - id: ASRP-CHK-AUTH-001
     name: Authentication & Secrets Management Review Checklist
-    path: 2.4 Review Checklists/authentication-secrets-checklist.yaml
+    path: authentication-secrets-checklist.yaml
     applicable_stack: [jwt, oauth2, oidc, session, secrets, vault]
     status: active
 
   - id: ASRP-CHK-CFG-001
     name: Configuration & Environment Hardening Review Checklist
-    path: 2.4 Review Checklists/configuration-hardening-checklist.yaml
+    path: configuration-hardening-checklist.yaml
     applicable_stack: [web-server, env-vars, headers, flags]
     status: active
 
   - id: ASRP-CHK-CONTAINER-001
     name: Container & Cloud Infrastructure Review Checklist
-    path: 2.4 Review Checklists/container-infrastructure-checklist.yaml
+    path: container-infrastructure-checklist.yaml
     applicable_stack: [docker, kubernetes, aws, terraform, helm]
     status: active
 
   - id: ASRP-CHK-CRYPTO-001
     name: Cryptography & Sensitive Data Protection Review Checklist
-    path: 2.4 Review Checklists/cryptography-secrets-checklist.yaml
+    path: cryptography-secrets-checklist.yaml
     applicable_stack: [encryption, hashing, tls, key-management]
     status: active
 
   - id: ASRP-CHK-DEP-001
     name: Dependency & Supply Chain Security Review Checklist
-    path: 2.4 Review Checklists/dependency-supply-chain-checklist.yaml
+    path: dependency-supply-chain-checklist.yaml
     applicable_stack: [npm, pip, maven, go-modules, sca, lockfiles]
     status: active
 
   - id: ASRP-CHK-BIZ-001
     name: File Upload & Business Logic Security Review Checklist
-    path: 2.4 Review Checklists/file-upload-business-logic-checklist.yaml
+    path: file-upload-business-logic-checklist.yaml
     applicable_stack: [file-upload, mime, workflow, payment, authorization]
     status: active
 
   - id: ASRP-CHK-INJ-001
     name: Input Validation & Injection Prevention Review Checklist
-    path: 2.4 Review Checklists/input-validation-injection-checklist.yaml
+    path: input-validation-injection-checklist.yaml
     applicable_stack: [sqli, xss, rce, cmdi, ssrf, path-traversal]
     status: active
 
   - id: ASRP-CHK-LOG-001
     name: Logging, Monitoring & Error Handling Review Checklist
-    path: 2.4 Review Checklists/logging-monitoring-error-checklist.yaml
+    path: logging-monitoring-error-checklist.yaml
     applicable_stack: [logging, audit-trail, error-handling, telemetry]
     status: active
 
   - id: ASRP-CHK-SESS-001
     name: Session Management & Data Protection Review Checklist
-    path: 2.4 Review Checklists/session-data-protection-checklist.yaml
+    path: session-data-protection-checklist.yaml
     applicable_stack: [cookies, session-tokens, storage, privacy]
     status: active

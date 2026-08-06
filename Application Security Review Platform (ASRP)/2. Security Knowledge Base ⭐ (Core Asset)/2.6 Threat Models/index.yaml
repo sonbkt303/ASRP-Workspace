@@ -13,36 +13,36 @@ summary:
 threat_models:
   - id: ASRP-TM-STRIDE-001
     name: STRIDE Threat Modeling Template for Web APIs and Microservices
-    path: 2.6 Threat Models/stride-threat-model-template.yaml
+    path: stride-threat-model-template.yaml
     target_architecture: [general-api, microservices]
     status: active
 
   - id: ASRP-TM-HEALTHCARE-001
     name: Healthcare & Dental Clinic EHR Platform Threat Model (HIPAA / PII)
-    path: 2.6 Threat Models/healthcare-ehr-threat-model.yaml
+    path: healthcare-ehr-threat-model.yaml
     target_architecture: [healthcare-ehr, patient-records, dental-clinic]
     status: active
 
   - id: ASRP-TM-PAYMENT-001
     name: Payment Gateway, E-Commerce & Fintech Platform Threat Model (PCI-DSS)
-    path: 2.6 Threat Models/payment-fintech-threat-model.yaml
+    path: payment-fintech-threat-model.yaml
     target_architecture: [payment-gateway, e-commerce, wallet, billing]
     status: active
 
   - id: ASRP-TM-AUTH-001
     name: Identity Provider, OAuth2 & OpenID Connect (SSO) Threat Model
-    path: 2.6 Threat Models/auth-oidc-sso-threat-model.yaml
+    path: auth-oidc-sso-threat-model.yaml
     target_architecture: [identity-provider, oauth2, oidc, sso]
     status: active
 
   - id: ASRP-TM-GRAPHQL-001
     name: GraphQL Gateway & Microservices Architecture Threat Model
-    path: 2.6 Threat Models/graphql-microservices-threat-model.yaml
+    path: graphql-microservices-threat-model.yaml
     target_architecture: [graphql, api-gateway, microservices]
     status: active
 
   - id: ASRP-TM-CLOUD-001
     name: Cloud-Native Container & Kubernetes Infrastructure Threat Model
-    path: 2.6 Threat Models/cloud-kubernetes-threat-model.yaml
+    path: cloud-kubernetes-threat-model.yaml
     target_architecture: [docker, kubernetes, cloud-native]
     status: active

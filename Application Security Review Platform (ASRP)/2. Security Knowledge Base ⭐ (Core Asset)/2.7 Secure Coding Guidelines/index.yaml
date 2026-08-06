@@ -12,54 +12,54 @@ summary:
 guideline_sets:
   - id: ASRP-SCG-NODEJS-001
     name: Node.js Core & Express.js Enterprise Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/nodejs-express-secure-coding-guidelines.yaml
+    path: nodejs-express-secure-coding-guidelines.yaml
     applicable_stack: [nodejs, express, fastify, koa, javascript, typescript]
     status: active
 
   - id: ASRP-SCG-NESTJS-001
     name: NestJS & TypeScript Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/nestjs-secure-coding-guidelines.yaml
+    path: nestjs-secure-coding-guidelines.yaml
     applicable_stack: [nestjs, typescript, express, fastify, graphql]
     status: active
 
   - id: ASRP-SCG-REACT-NEXTJS-001
     name: React & Next.js Frontend Monorepo Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/react-nextjs-secure-coding-guidelines.yaml
+    path: react-nextjs-secure-coding-guidelines.yaml
     applicable_stack: [react, nextjs, typescript, pnpm]
     status: active
 
   - id: ASRP-SCG-PYTHON-001
     name: Python & Django / FastAPI Enterprise Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/python-secure-coding-guidelines.yaml
+    path: python-secure-coding-guidelines.yaml
     applicable_stack: [python, django, fastapi, flask]
     status: active
 
   - id: ASRP-SCG-JAVA-001
     name: Java & Spring Boot Enterprise Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/java-spring-secure-coding-guidelines.yaml
+    path: java-spring-secure-coding-guidelines.yaml
     applicable_stack: [java, spring-boot, spring-security, hibernate]
     status: active
 
   - id: ASRP-SCG-GO-001
     name: Go (Golang) Enterprise Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/golang-secure-coding-guidelines.yaml
+    path: golang-secure-coding-guidelines.yaml
     applicable_stack: [golang, gin, fiber, gorm, grpc]
     status: active
 
   - id: ASRP-SCG-DB-001
     name: Database, Storage & ORM Enterprise Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/database-orm-secure-coding-guidelines.yaml
+    path: database-orm-secure-coding-guidelines.yaml
     applicable_stack: [mongodb, mongoose, prisma, typeorm, redis, postgresql, mysql]
     status: active
 
   - id: ASRP-SCG-MICROSERVICES-001
     name: API Gateway, Microservices & Message Broker Secure Coding Guidelines
-    path: 2.7 Secure Coding Guidelines/api-gateway-microservices-secure-coding-guidelines.yaml
+    path: api-gateway-microservices-secure-coding-guidelines.yaml
     applicable_stack: [grpc, rabbitmq, kafka, kong, envoy, NGINX, jwt, mtls]
     status: active
 
   - id: ASRP-SCG-DOCKER-001
     name: Docker & Container Infrastructure Hardening Guidelines
-    path: 2.7 Secure Coding Guidelines/docker-container-secure-coding-guidelines.yaml
+    path: docker-container-secure-coding-guidelines.yaml
     applicable_stack: [docker, kubernetes, alpine, nginx]
     status: active
