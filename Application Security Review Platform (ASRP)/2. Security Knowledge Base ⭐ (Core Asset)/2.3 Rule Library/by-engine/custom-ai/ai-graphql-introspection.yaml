@@ -1,0 +1,32 @@
+rule:
+  id: "ASRP-AI-002"
+  name: "GraphQL Introspection and Unlimited Query Depth"
+  description: "Phát hiện GraphQL API Server kích hoạt tính năng Introspection trong môi trường Production hoặc không cấu hình giới hạn độ sâu truy vấn (Query Depth Limit)."
+  severity: "medium"
+  engine: "custom_ai"
+  category: "api_security"
+  
+  applicable_technologies:
+    languages: ["javascript", "typescript", "python", "go", "java"]
+    frameworks: ["apollo", "graphql-express", "graphene", "gqlgen"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration", "API8:2023-Security Misconfiguration"]
+    cwe: ["CWE-200", "CWE-400"]
+    asvs_v4: ["V13.2.3"]
+
+  knowledge_ref: "knowledge/domains/api-security.md"
+  
+  engine_config:
+    ai_prompt_template: |
+      Rà soát mã nguồn khởi tạo GraphQL Server (ApolloServer, Express-GraphQL, Graphene).
+      Kiểm tra xem thuộc tính `introspection` có bị thiết lập là `true` trong môi trường sản xuất không, hoặc thiếu middleware `graphql-depth-limit` / `validationRules`.
+    
+    positive_examples:
+      - "new ApolloServer({ typeDefs, resolvers, introspection: true })"
+    negative_examples:
+      - "new ApolloServer({ typeDefs, resolvers, introspection: process.env.NODE_ENV !== 'production', validationRules: [depthLimit(5)] })"
+    
+  remediation:
+    summary: "Tắt Introspection trên Production (introspection: false) và bổ sung graphql-depth-limit middleware với giới hạn độ sâu tối đa từ 5-7 cấp."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html"

@@ -1,7 +1,7 @@
 rule_library:
   version: "1.0"
-  updated_at: "2026-07-24T00:00:00Z"
-  total_rules: 21
+  updated_at: "2026-08-10T00:00:00Z"
+  total_rules: 27
   engines_supported: ["semgrep", "gitleaks", "trivy", "checkov", "cicd", "custom_ai"]
   design_pattern: "Multi-Language Rule Design (1 Rule ID = 1 Security Concept across Python, JS/TS, Go, Java)"
   
@@ -50,6 +50,20 @@ rule_library:
       severity: "critical"
       rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
 
+    - id: "ASRP-INJ-003"
+      path: "by-engine/semgrep/nosql-injection.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-INJ-004"
+      path: "by-engine/semgrep/prototype-pollution.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
     - id: "ASRP-PATH-001"
       path: "by-engine/semgrep/path-traversal.yaml"
       enabled: true
@@ -83,6 +97,13 @@ rule_library:
       enabled: true
       engine: "semgrep"
       severity: "high"
+      rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
+
+    - id: "ASRP-AUTH-001"
+      path: "by-engine/semgrep/jwt-weak-secret.yaml"
+      enabled: true
+      engine: "semgrep"
+      severity: "critical"
       rule_set_ids: ["multi-lang-secure-coding", "owasp-top10-2021"]
 
     - id: "ASRP-MISCFG-001"
@@ -136,6 +157,20 @@ rule_library:
       severity: "critical"
       rule_set_ids: ["iac-security", "owasp-top10-2021"]
 
+    - id: "ASRP-IAC-003"
+      path: "by-engine/checkov/iac-dockerfile-root-user.yaml"
+      enabled: true
+      engine: "checkov"
+      severity: "high"
+      rule_set_ids: ["iac-security", "owasp-top10-2021"]
+
+    - id: "ASRP-IAC-004"
+      path: "by-engine/checkov/iac-terraform-unencrypted-storage.yaml"
+      enabled: true
+      engine: "checkov"
+      severity: "high"
+      rule_set_ids: ["iac-security", "owasp-top10-2021"]
+
     # CI/CD Pipeline Security Rules
     - id: "ASRP-CICD-001"
       path: "by-engine/cicd/cicd-unpinned-github-action.yaml"
@@ -159,9 +194,17 @@ rule_library:
       severity: "high"
       rule_set_ids: ["business-logic", "owasp-top10-2021"]
 
+    - id: "ASRP-AI-002"
+      path: "by-engine/custom-ai/ai-graphql-introspection.yaml"
+      enabled: true
+      engine: "custom_ai"
+      severity: "medium"
+      rule_set_ids: ["api-security", "owasp-top10-2021"]
+
   mappings:
     - name: "OWASP Top 10 2021 Rule Mapping"
       path: "mappings/owasp-top10-2021.yaml"
     - name: "Tech Stack & Technology Framework Rule Mapping"
       path: "mappings/tech-stack-map.yaml"
+
 

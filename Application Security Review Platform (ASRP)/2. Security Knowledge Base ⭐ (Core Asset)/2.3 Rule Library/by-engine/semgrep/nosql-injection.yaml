@@ -1,0 +1,31 @@
+rule:
+  id: "ASRP-INJ-003"
+  name: "NoSQL Database Injection"
+  description: "Phát hiện đối tượng truy vấn NoSQL (MongoDB/Mongoose/PyMongo) nhận trực tiếp đầu vào chưa kiểm soát từ người dùng (ví dụ: $ne, $gt operator injection)."
+  severity: "high"
+  engine: "semgrep"
+  category: "injection"
+  
+  applicable_technologies:
+    languages: ["javascript", "typescript", "python"]
+    frameworks: ["express", "nestjs", "django", "fastapi"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A03:2021-Injection"]
+    cwe: ["CWE-943"]
+    asvs_v4: ["V5.3.4"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "javascript"
+        pattern: "$MODEL.find({ username: req.body.username, password: req.body.password })"
+      - language: "typescript"
+        pattern: "$MODEL.findOne(req.body)"
+      - language: "python"
+        pattern: "db.$COLLECTION.find({'username': request.POST.get('username')})"
+    
+  remediation:
+    summary: "Ep kiểu và kiểm tra đầu vào trước khi truyền vào NoSQL query (sử dụng mongo-sanitize hoặc validator middleware để loại bỏ các ký tự $ và đối tượng lồng ghép)."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Testing_for_NoSQL_injection.html"

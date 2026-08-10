@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-IAC-003"
+  name: "Container Running as Root User in Dockerfile"
+  description: "Phát hiện Dockerfile không khai báo chỉ thị USER non-root khiến container chạy mặc định dưới quyền root của host."
+  severity: "high"
+  engine: "checkov"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["dockerfile"]
+    frameworks: ["docker"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A05:2021-Security Misconfiguration"]
+    cwe: ["CWE-250"]
+    asvs_v4: ["V14.2.1"]
+
+  knowledge_ref: "knowledge/domains/infrastructure.md"
+  
+  engine_config:
+    checkov_id: "CKV_DOCKER_3"
+    pattern: "FROM ... NOT_CONTAINS USER"
+    
+  remediation:
+    summary: "Bổ sung lệnh RUN adduser -D appuser và USER appuser vào Dockerfile trước khi khởi chạy lệnh CMD/ENTRYPOINT."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html"

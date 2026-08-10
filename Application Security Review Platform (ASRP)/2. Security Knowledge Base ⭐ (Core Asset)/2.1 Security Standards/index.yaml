@@ -1,9 +1,9 @@
 standard_kernel_metadata:
   kernel_id: ASRP-STD-KERNEL-001
   name: ASRP Unified Security Standard Kernel
-  version: 1.0.0
+  version: 1.1.0
   total_standard_modules: 10
-  last_updated: "2026-07-29"
+  last_updated: "2026-08-10"
 
 standard_modules:
   - id: 2.1.1
@@ -47,4 +47,21 @@ standard_modules:
     path: 2.1.10 Internal Standards/index.yaml
     enabled: true
 
+standard_files:
+  - 2.1.1 OWASP ASVS/owasp-asvs-v4.0.3.yaml
+  - 2.1.2 OWASP Top 10/owasp-top10-2021.yaml
+  - 2.1.2 OWASP Top 10/owasp-api-top10-2023.yaml
+  - 2.1.3 OWASP WSTG/owasp-wstg-v4.2.yaml
+  - 2.1.4 OWASP Code Review Guide/owasp-code-review-guide-v2.yaml
+  - 2.1.5 OWASP Cheat Sheets/owasp-proactive-controls-v3.yaml
+  - 2.1.6 NIST SSDF/nist-sp800-218-ssdf.yaml
+  - 2.1.7 CWE/cwe-top-25-2023.yaml
+  - 2.1.8 CAPEC/capec-top-attack-patterns.yaml
+  - 2.1.9 CIS Benchmarks/cis-container-benchmarks.yaml
+  - 2.1.10 Internal Standards/nd-13-2023-bhtdcn.yaml
+  - 2.1.10 Internal Standards/pci-dss-v4.0.yaml
+  - 2.1.10 Internal Standards/iso-27001-annex-a.yaml
+  - 2.1.10 Internal Standards/hipaa-gdpr-pci-compliance.yaml
+
 unified_matrix_path: unified-standards-matrix.yaml
+

@@ -1,0 +1,29 @@
+rule:
+  id: "ASRP-INJ-004"
+  name: "Prototype Pollution in JavaScript/Node.js"
+  description: "Phát hiện mã nguồn thực hiện gán thuộc tính __proto__, constructor, hoặc prototype một cách không an toàn thông qua các hàm merge/extend đối tượng."
+  severity: "high"
+  engine: "semgrep"
+  category: "injection"
+  
+  applicable_technologies:
+    languages: ["javascript", "typescript"]
+    frameworks: ["express", "nestjs", "node"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A03:2021-Injection"]
+    cwe: ["CWE-1321"]
+    asvs_v4: ["V5.2.1"]
+
+  knowledge_ref: "knowledge/domains/input-validation.md"
+  
+  engine_config:
+    semgrep_patterns:
+      - language: "javascript"
+        pattern: "Object.assign(target, JSON.parse(req.body))"
+      - language: "typescript"
+        pattern: "$TARGET[req.body.key] = req.body.value"
+    
+  remediation:
+    summary: "Sử dụng Object.create(null) cho các map tĩnh, freeze Object.prototype hoặc sử dụng thư viện lodash phiên bản đã được vá lỗi bảo mật."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Prototype_Pollution_Prevention_Cheat_Sheet.html"

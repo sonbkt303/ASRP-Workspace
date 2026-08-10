@@ -1,0 +1,26 @@
+rule:
+  id: "ASRP-IAC-004"
+  name: "Unencrypted Storage Resource in IaC Terraform"
+  description: "Phát hiện tài nguyên lưu trữ (AWS S3, EBS, RDS, Azure Blob) trong mã nguồn Terraform không bật thuộc tính mã hóa dữ liệu tại chỗ (Encryption at Rest)."
+  severity: "high"
+  engine: "checkov"
+  category: "infrastructure"
+  
+  applicable_technologies:
+    languages: ["hcl", "terraform"]
+    frameworks: ["terraform", "aws", "azure", "gcp"]
+  
+  standard_mapping:
+    owasp_top10_2021: ["A02:2021-Cryptographic Failures"]
+    cwe: ["CWE-311"]
+    asvs_v4: ["V6.2.1"]
+
+  knowledge_ref: "knowledge/domains/infrastructure.md"
+  
+  engine_config:
+    checkov_id: "CKV_AWS_19"
+    pattern: "resource aws_s3_bucket NOT_CONTAINS server_side_encryption_configuration"
+    
+  remediation:
+    summary: "Cấu hình block server_side_encryption_configuration với sse_algorithm = 'AES256' hoặc aws:kms cho tất cả các tài nguyên lưu trữ."
+    reference_url: "https://cheatsheetseries.owasp.org/cheatsheets/Infrastructure_as_Code_Security_Cheat_Sheet.html"
