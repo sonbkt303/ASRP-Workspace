@@ -94,9 +94,14 @@ class ReportGenerator:
             "2.2": "stage_2_2_domains.json",
             "2.3": "stage_2_3_rules.json",
             "2.4": "stage_2_4_checklists.json",
+            "2.5": "stage_2_5_playbooks.json",
             "2.6": "stage_2_6_threats.json",
             "2.7": "stage_2_7_guidelines.json",
-            "2.10": "stage_2_10_remediations.json"
+            "2.8": "stage_2_8_best_practices.json",
+            "2.9": "stage_2_9_attack_patterns.json",
+            "2.10": "stage_2_10_remediations.json",
+            "2.11": "stage_2_11_case_studies.json",
+            "2.12": "stage_2_12_decision_logs.json"
         }
         for key, fname in stage_files.items():
             fpath = os.path.join(self.stage_outputs_dir, fname)

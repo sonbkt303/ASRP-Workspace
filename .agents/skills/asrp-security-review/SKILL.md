@@ -71,32 +71,44 @@ Update profile YAML files in `1. Projects Registry/{project_id}/` following temp
 
 ### 1. Multi-Module Knowledge Base Scope Loading
 1. Load Layer 1 Security Matrix (`standards`, `security_domains`, `rule_set_ids`, `checklists`).
-2. Load Layer 2 knowledge base artifacts from:
+2. Load 100% Layer 2 knowledge base artifacts from all 12 modules:
    - `2.1 Security Standards` (OWASP ASVS v4.0, OWASP Top 10 2021, NIST SSDF, CWE Top 25, CIS Benchmarks)
    - `2.2 Security Domains` (13 core security domains)
    - `2.3 Rule Library/index.yaml` (executable rules catalog)
    - `2.4 Review Checklists` (Domain & architecture review checklists)
+   - `2.5 Playbooks` (Standard Operating Procedures catalog)
    - `2.6 Threat Models` (STRIDE threat modeling scenarios)
    - `2.7 Secure Coding Guidelines/index.yaml` (Stack-aware guidelines: Node.js, NestJS, React/Next.js, Python, Database/ORM, Docker)
+   - `2.8 Best Practices` (Cloud-Native, DevSecOps, Data Privacy & Zero-Trust Best Practices)
    - `2.9 Attack Patterns/index.yaml` (CAPEC attack scenarios catalog: API/GraphQL, Auth/OIDC, Frontend Client)
    - `2.10 Remediation Guides/index.yaml` (Actionable code diff patches catalog: API/Auth, Frontend, Database, Containers)
-### 2. Multi-Dimensional AI Code Audit & Modular Stage JSON Generation (AI-Primary Engine)
-AI Agent acts as the Primary Security Audit Engine to perform direct code analysis against the full Layer 2 Security Knowledge Matrix in `clones/{project_id}/{component_id}/` and generate individual stage output files in `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:
+   - `2.11 Case Studies` (Post-Mortem Incident Reports & Prevention Matrix)
+   - `2.12 Decision Logs` (Security Architecture Decision Records - ADR)
+
+### 2. Mandatory AI-Primary Code Audit & 12-Module Stage JSON Generation (CRITICAL MANDATE)
+**CRITICAL INVARIANT:** AI Agent MUST act as the Primary Security Audit Engine by performing direct, contextual code analysis on the actual codebase in `clones/{project_id}/{component_id}/`. 
+AI Agent MUST NOT rely on or shortcut through `python asrp.py scan` to do the audit. The AI Agent itself evaluates all 12 Layer 2 Security Knowledge Base modules and writes 12 individual stage output files to `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:
 
 - **Stage 2.1 Standards Audit:** Generate `stage_2_1_standards.json` verifying compliance against OWASP ASVS v4.0, CWE Top 25.
 - **Stage 2.2 Security Domains:** Generate `stage_2_2_domains.json` evaluating the 13 Security Domains.
 - **Stage 2.3 Executable Rules:** Generate `stage_2_3_rules.json` running static & AI rules across engines.
 - **Stage 2.4 Review Checklists:** Generate `stage_2_4_checklists.json` systematically evaluating domain checklist items (`verification_requirement`).
+- **Stage 2.5 Playbooks:** Generate `stage_2_5_playbooks.json` evaluating review phase SOP compliance.
 - **Stage 2.6 Threat Models:** Generate `stage_2_6_threats.json` evaluating STRIDE architectural threat scenarios.
+- **Stage 2.7 Secure Coding Guidelines:** Generate `stage_2_7_guidelines.json` evaluating stack-specific coding rules.
+- **Stage 2.8 Best Practices:** Generate `stage_2_8_best_practices.json` evaluating architecture & DevSecOps practices.
+- **Stage 2.9 Attack Patterns:** Generate `stage_2_9_attack_patterns.json` evaluating CAPEC attack vector resistance.
 - **Stage 2.10 Remediation Guides:** Generate `stage_2_10_remediations.json` containing actionable code diff patches.
+- **Stage 2.11 Case Studies:** Generate `stage_2_11_case_studies.json` evaluating incident prevention readiness.
+- **Stage 2.12 Decision Logs:** Generate `stage_2_12_decision_logs.json` evaluating security ADR compliance.
 
-### 3. Auxiliary Python CLI Tooling Integration (Auxiliary Data)
-Optionally invoke Python CLI runner `python asrp.py scan --project {project_id}` or individual engine modules (`rule_resolver.py`, `scanner_orchestrator.py`) as auxiliary helper tools to gather supplementary static tool findings (`raw_outputs/`).
+### 3. Auxiliary Python CLI Tooling Integration (STRICTLY SECONDARY / OPTIONAL)
+The Python CLI runner (`asrp.py scan`) is ONLY a secondary auxiliary helper tool for gathering raw static tool outputs (`raw_outputs/`). It MUST NEVER replace or overwrite the primary AI-driven code audit and stage JSON generation performed by the AI Agent.
 
-### 4. Verification, Deduplication & Aggregated Normalization (Layer 3.6)
+### 4. Verification, Deduplication & Master Consolidation into findings.json (Layer 3.6)
 1. Cross-verify raw tool findings against AI contextual code analysis and Review Checklists.
 2. Eliminate False Positives and duplicate findings across engines.
-3. Aggregate all `stage_outputs/*.json` into a master `findings.json`.
+3. **CONSOLIDATE ALL 12 STAGES:** Aggregate 100% of all non-PASS items across all 12 `stage_outputs/*.json` files into the master `findings.json`.
 4. **STRICT MULTI-MODULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference:
    - Valid `rule_id` from Layer 2.3 (e.g. `ASRP-AI-001`, `ASRP-SEC-004`).
    - `security_domain` from Layer 2.2 (e.g. `access_control`, `secrets`).

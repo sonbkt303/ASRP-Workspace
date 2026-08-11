@@ -70,15 +70,26 @@
 
 ## ASRP Layer 2 Modular Stage JSON Output Guardrail
 
-- **Modular Stage Output Files:** Trong Step 2, kết quả đánh giá của từng module Layer 2 (2.1 Standards, 2.2 Domains, 2.3 Rules, 2.4 Checklists, 2.6 Threat Models, 2.10 Remediation) BẮT BUỘC được ghi nhận riêng thành các tệp JSON tương ứng tại `runs/{run_id}/stage_outputs/`:
+- **Complete 12-Module Stage Output Files:** Trong Step 2, kết quả đánh giá của tất cả 12 module Layer 2 BẮT BUỘC được ghi nhận riêng thành 12 tệp JSON tương ứng tại `runs/{run_id}/stage_outputs/`:
   - `stage_2_1_standards.json`
   - `stage_2_2_domains.json`
   - `stage_2_3_rules.json`
   - `stage_2_4_checklists.json`
+  - `stage_2_5_playbooks.json`
   - `stage_2_6_threats.json`
+  - `stage_2_7_guidelines.json`
+  - `stage_2_8_best_practices.json`
+  - `stage_2_9_attack_patterns.json`
   - `stage_2_10_remediations.json`
+  - `stage_2_11_case_studies.json`
+  - `stage_2_12_decision_logs.json`
 - **Common Template Compliance:** Tất cả các file stage output PHẢI tuân thủ 100% Common Stage JSON Schema với các trường cố định: `stage_id`, `layer_module_ref`, `summary`, `results` (`item_id`, `status`, `evidence`, `standard_mappings`, `remediation`).
 - **Report Aggregation Requirement:** Layer 3.7 (Risk Assessor) và Layer 5 (Report Generator) sẽ đọc và hợp nhất dữ liệu từ tất cả các tệp `stage_outputs/*.json` để tính điểm Health Score và tổng hợp báo cáo Executive HTML/MD Report.
+
+## ASRP AI-Primary Security Audit Engine Guardrail
+
+- **AI Agent as Primary Audit Engine:** Khi nhận lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC đóng vai trò là Động cơ Đánh giá An ninh Trung tâm (Primary Security Audit Engine). AI Agent trực tiếp đọc đệ quy mã nguồn clone thực tế, phân tích ngữ cảnh kiến trúc/nghiệp vụ thực tế, kiểm tra lỗ hổng logic phức tạp và sinh 100% dữ liệu cho 12 tệp Stage JSON Output (`stage_2_1` đến `stage_2_12`).
+- **Strict Non-Reliance on CLI Script:** Script `python asrp.py scan` CHỈ là công cụ phụ trợ (Auxiliary Helper Tool). Tuyệt đối KHÔNG được gọi duy nhất script CLI tắt rồi lấy kết quả mẫu của script thay cho quá trình AI tự rà soát mã nguồn.
 
 ## ASRP Real Codebase Deep Discovery Guardrail
 
@@ -93,7 +104,7 @@
 
 ## ASRP Interactive Stage Module Navigation Guardrail
 
-- **Interactive Stage-to-Finding Mapping in HTML Reports:** Executive and Component HTML Security Reports generated in Step 3 MUST feature interactive navigation (click-to-filter / accordions). Clicking on any Layer 2 Stage Module (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.6 Threat Models, 2.10 Remediation Guides) MUST dynamically filter and display only the security findings/issues corresponding to that module.
+- **Interactive Stage-to-Finding Mapping in HTML Reports:** Executive and Component HTML Security Reports generated in Step 3 MUST feature interactive navigation (click-to-filter / accordions). Clicking on any Layer 2 Stage Module (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.5 Playbooks, 2.6 Threat Models, 2.7 Guidelines, 2.8 Best Practices, 2.9 Attack Patterns, 2.10 Remediation Guides, 2.11 Case Studies, 2.12 Decision Logs) MUST dynamically filter and display only the security findings/issues corresponding to that module.
 
 ## ASRP Standard Report Template Reference Guardrail
 
@@ -101,21 +112,15 @@
 
 ## ASRP Smart Dynamic Stage Module Mapping Guardrail
 
-- **Granular Checks to Consolidated Findings Mapping:** Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_10`) contain granular check items. Layer 3 consolidates related stage check failures into normalized Findings (`findings.json`).
-- **Comprehensive Stage Tagging:** A finding in `findings.json` MUST be tagged with ALL Layer 2 stages where it failed or passed evaluation:
-  - `2.1 Standards`: Tagged if standard mapping (CWE / OWASP / ASVS) exists.
-  - `2.2 Security Domains`: Tagged if classified under a Security Domain.
-  - `2.3 Rule Library`: Tagged if triggered by AST/Semgrep/Regex or AI Rule patterns (`rule_id`).
-  - `2.4 Review Checklists`: Tagged if associated with auditor verification checklist items (`review_checklist_ref`).
-  - `2.6 Threat Models`: Tagged if linked to STRIDE threat model scenarios (`threat_model_ref`) or high architectural impact.
-  - `2.10 Remediation Guides`: Tagged if actionable remediation guidance, `remediation_ref`, or code diff patch is present.
+- **Granular Checks to Consolidated Findings Mapping:** Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_12`) contain granular check items. Layer 3 consolidates related stage check failures into normalized Findings (`findings.json`).
+- **Comprehensive Stage Tagging:** A finding in `findings.json` MUST be tagged with ALL Layer 2 stages where it failed or passed evaluation across all 12 modules.
 - **Dynamic Filter Counts:** Filter pills in HTML reports MUST reflect the exact count of findings satisfying each module's comprehensive mapping condition.
 
 ## ASRP Layer 3 Full Stage Issue Synthesis Invariant
 
-- **100% Stage Issue Coverage:** `findings.json` MUST synthesize and consolidate 100% of all non-PASS items (FAIL, WARNING, TRIGGERED, CONFIRMED, REQUIRES_FIX) generated across all 6 Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_10`).
+- **100% 12-Stage Issue Coverage:** `findings.json` MUST synthesize and consolidate 100% of all non-PASS items (FAIL, WARNING, TRIGGERED, CONFIRMED, REQUIRES_FIX) generated across all 12 Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_12`).
 - **Zero Omission Rule:** No stage check failure from Layer 2 may be omitted, ignored, or left unmapped during Layer 3 Findings normalization and Executive/Component report generation.
-- **Traceability Guarantee:** Every stage issue ID (`STD-*`, `DOM-*`, `RULE-*`, `CHK-*`, `THREAT-*`, `REM-*`) MUST be explicitly traceable back to its parent Finding in `findings.json` and rendered in the report filters.
+- **Traceability Guarantee:** Every stage issue ID MUST be explicitly traceable back to its parent Finding in `findings.json` and rendered in the report filters.
 
 
 
