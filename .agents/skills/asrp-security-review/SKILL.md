@@ -150,6 +150,7 @@ Invoke Report Generator to build multi-level reports using stage outputs from th
 1. **Mandatory Report Template Usage:** AI Agent MUST load the standard HTML templates from `1. Projects Registry/1.1 Template/reports/`:
    - `1.1 Template/reports/executive_dashboard.html` for project-wide dashboard reports.
    - `1.1 Template/reports/component_report.html` for component-specific reports.
+   - **NO INLINE HTML GENERATION:** Any Python script or internal tool written to generate these reports MUST read the template files directly from disk and perform string replacement (e.g. replacing `<!-- Data: PROJECT_NAME -->` with actual data). Do not hardcode `<style>`, `<script>`, or HTML scaffolding in the script.
 2. **Interactive Stage Output Mapping:** Each report includes interactive stage pills (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.6 Threat Models, 2.10 Remediation Guides). Clicking a stage pill filters and lists only the findings mapped to that specific module.
 3. **Component-Specific Reports:** Generate independent reports for each repository defined in `components.yaml` using `component_report.html` as the baseline design:
    - `security_review_report_{component_id}.html`

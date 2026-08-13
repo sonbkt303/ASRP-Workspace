@@ -109,6 +109,7 @@
 ## ASRP Standard Report Template Reference Guardrail
 
 - **Standard Report Template Source:** Tất cả các báo cáo Security Review xuất ra ở Step 3 (bao gồm `security_review_report.html` và `security_review_report_{component_id}.html`) BẮT BUỘC lấy mẫu thiết kế từ bộ Template chuẩn tại `1. Projects Registry/1.1 Template/reports/` (`executive_dashboard.html` và `component_report.html`) làm chuẩn tham chiếu duy nhất cho tất cả các đợt review tiếp theo.
+- **Strict No-Inline HTML Rule:** Tuyệt đối KHÔNG được tự ý sinh mã HTML nội tuyến (inline HTML) trong các script Python hay khi AI tự xử lý. AI Agent hoặc Python Script bắt buộc phải đọc nội dung file mẫu HTML gốc, sau đó sử dụng kỹ thuật thay thế chuỗi (string replacement) hoặc inject DOM để điền dữ liệu `findings.json` vào template.
 
 ## ASRP Smart Dynamic Stage Module Mapping Guardrail
 
