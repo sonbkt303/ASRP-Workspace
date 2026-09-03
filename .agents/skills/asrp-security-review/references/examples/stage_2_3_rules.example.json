@@ -1,0 +1,46 @@
+{
+  "stage_id": "2.3",
+  "layer_module_ref": "Rule Library",
+  "run_id": "run-20260731_145000",
+  "project_id": "cleverdent",
+  "evaluated_at": "2026-07-31T14:50:00Z",
+  "summary": {
+    "total_checks": 19,
+    "passed": 17,
+    "failed": 1,
+    "warnings": 1
+  },
+  "results": [
+    {
+      "item_id": "ASRP-INJ-001",
+      "status": "FAIL",
+      "component_id": "dent-api-nestjs",
+      "title": "SQL Injection via string concatenation",
+      "rule_id": "ASRP-INJ-001",
+      "review_checklist_ref": "CHK-INJ-001",
+      "evidence": {
+        "file_path": "src/modules/users/users.service.ts",
+        "start_line": 42,
+        "end_line": 44,
+        "code_snippet": "const query = `SELECT * FROM users WHERE id = ${userId}`;",
+        "message": "User input interpolated into SQL query without parameterization"
+      },
+      "standard_mappings": {
+        "cwe": ["CWE-89"],
+        "owasp_top10_2021": ["A03:2021-Injection"],
+        "asvs_v4": ["V5.3.4"]
+      },
+      "remediation": {
+        "summary": "Use parameterized queries or ORM safe APIs",
+        "patch_ref": "REM-INJ-001"
+      }
+    },
+    {
+      "item_id": "ASRP-SEC-004",
+      "status": "PASS",
+      "component_id": "dent-api-nestjs",
+      "title": "Hardcoded secrets scan",
+      "rule_id": "ASRP-SEC-004"
+    }
+  ]
+}

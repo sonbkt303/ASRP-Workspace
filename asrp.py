@@ -28,6 +28,7 @@ sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.4 Rule Evaluat
 sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.6 Findings"))
 sys.path.append(os.path.join(asrp_dir, "3. Assessment Engine", "3.7 Risk Assessment"))
 sys.path.append(os.path.join(asrp_dir, "5. Reporting"))
+sys.path.append(os.path.join(asrp_dir, "1. Projects Registry"))
 
 try:
     from source_acquisition import SourceAcquisition
@@ -36,6 +37,7 @@ try:
     from findings_normalizer import FindingsNormalizer
     from risk_assessor import RiskAssessor
     from report_generator import ReportGenerator
+    from profile_validator import validate_project, sign_off_project
 except ImportError as e:
     print(f"[!] Critical Import Error: {e}")
     sys.exit(1)
@@ -56,6 +58,10 @@ def cmd_scan(args):
     print(f"📌 Target Project: {project_id}")
     print(f"📅 Audit Date    : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"=======================================================\n")
+
+    # Validate Gate — abort if profile not validated
+    print("👉 [Gate] Validating Layer 1 Profile...")
+    validate_project(asrp_dir, project_id, stage="gate", exit_on_fail=True)
 
     # Step 1: Source Acquisition
     print("👉 [Step 1/6] Running Source Acquisition...")
@@ -113,46 +119,14 @@ def cmd_acquire(args):
 
 
 def cmd_validate(args):
-    """Validate Layer 1 Project Profile & Manifest Gate."""
-    project_id = args.project
-    project_dir = os.path.join(asrp_dir, "1. Projects Registry", project_id)
-    manifest_path = os.path.join(project_dir, "registry.manifest.yaml")
-
-    print(f"\n=======================================================")
-    print(f"🔎 VALIDATING LAYER 1 PROJECT PROFILE: {project_id}")
-    print(f"=======================================================\n")
-
-    if not os.path.exists(manifest_path):
-        print(f"[X] FAIL: registry.manifest.yaml not found for project '{project_id}'.")
-        sys.exit(1)
-
-    manifest_data = load_yaml(manifest_path).get("registry_manifest", {})
-    status = manifest_data.get("lifecycle_status")
-    profile_hash = manifest_data.get("profile_hash")
-
-    required_files = [
-        "project.yaml", "context.yaml", "scope.yaml",
-        "architecture.yaml", "technologies.yaml", "components.yaml", "assessment.yaml"
-    ]
-
-    all_exist = True
-    for fname in required_files:
-        fpath = os.path.join(project_dir, fname)
-        if os.path.exists(fpath):
-            print(f"  [✓] Found profile file: {fname}")
-        else:
-            print(f"  [X] Missing profile file: {fname}")
-            all_exist = False
-
-    print("\n-------------------------------------------------------")
-    print(f"• Human Gate Status : {status}")
-    print(f"• Manifest Hash     : {profile_hash}")
-    print("-------------------------------------------------------")
-
-    if status == "validated" and all_exist:
-        print(f"🎉 PROJECT PROFILE IS VALIDATED AND READY TO SCAN!\n")
+    """Validate Layer 1 Project Profile (profile stage) or Manifest Gate (gate stage)."""
+    if args.sign_off:
+        if not args.by:
+            print("[X] FAIL: --sign-off requires --by \"Name or Role\"")
+            sys.exit(1)
+        sign_off_project(asrp_dir, args.project, args.by, exit_on_fail=True)
     else:
-        print(f"[!] WARNING: Project profile is NOT ready. Lifecycle status must be 'validated'.\n")
+        validate_project(asrp_dir, args.project, stage=args.stage, exit_on_fail=True)
 
 
 def cmd_rules_list(args):
@@ -244,6 +218,8 @@ def main():
         epilog="Examples:\n"
                "  python asrp.py scan --project cleverdent\n"
                "  python asrp.py validate --project cleverdent\n"
+               "  python asrp.py validate --project cleverdent --stage profile\n"
+               "  python asrp.py validate --project cleverdent --sign-off --by \"Security Lead\"\n"
                "  python asrp.py rules list\n"
                "  python asrp.py coverage --standard asvs-v4\n"
                "  python asrp.py status --project cleverdent\n"
@@ -265,8 +241,27 @@ def main():
     parser_acq.set_defaults(func=cmd_acquire)
 
     # Command: validate
-    parser_val = subparsers.add_parser("validate", help="Validate project profile YAML files and human gate")
+    parser_val = subparsers.add_parser(
+        "validate",
+        help="Validate profile (Step 1) or manifest gate (pre-scan)",
+    )
     parser_val.add_argument("--project", default="cleverdent", help="Target project ID")
+    parser_val.add_argument(
+        "--stage",
+        choices=["profile", "gate"],
+        default="gate",
+        help="profile = Step 1 DoD (7 YAMLs, lifecycle profiled); gate = pre-scan human gate (default)",
+    )
+    parser_val.add_argument(
+        "--sign-off",
+        action="store_true",
+        help="Human gate sign-off: profile check → write manifest → sync lifecycle → gate check",
+    )
+    parser_val.add_argument(
+        "--by",
+        default=None,
+        help="Sign-off author name/role (required with --sign-off)",
+    )
     parser_val.set_defaults(func=cmd_validate)
 
     # Command: rules

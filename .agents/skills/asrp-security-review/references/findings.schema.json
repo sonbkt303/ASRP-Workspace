@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://skill/findings.schema.json",
+  "title": "ASRP Findings JSON",
+  "description": "Normalized findings payload for Layer 3.6. Derived from findings_normalizer.py plus skill traceability fields.",
+  "type": "object",
+  "required": ["run_id", "project_id", "total_findings", "findings"],
+  "additionalProperties": true,
+  "properties": {
+    "run_id": { "type": "string" },
+    "project_id": { "type": "string" },
+    "normalized_at": { "type": "string", "format": "date-time" },
+    "total_findings": { "type": "integer", "minimum": 0 },
+    "severity_summary": {
+      "type": "object",
+      "properties": {
+        "CRITICAL": { "type": "integer", "minimum": 0 },
+        "HIGH": { "type": "integer", "minimum": 0 },
+        "MEDIUM": { "type": "integer", "minimum": 0 },
+        "LOW": { "type": "integer", "minimum": 0 },
+        "INFO": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/finding" }
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["finding_id", "rule_id", "title", "severity"],
+      "additionalProperties": true,
+      "properties": {
+        "finding_id": { "type": "string" },
+        "rule_id": {
+          "type": "string",
+          "description": "Layer 2.3 executable rule ID, e.g. ASRP-INJ-001"
+        },
+        "title": { "type": "string" },
+        "engine": {
+          "type": "string",
+          "enum": ["semgrep", "gitleaks", "trivy", "checkov", "cicd", "custom_ai", "ai_reviewer"]
+        },
+        "category": { "type": "string" },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"]
+        },
+        "component_id": { "type": "string" },
+        "security_domain": {
+          "type": "string",
+          "description": "Layer 2.2 domain, e.g. access_control, secrets"
+        },
+        "review_checklist_ref": {
+          "type": "string",
+          "description": "Layer 2.4 checklist item, e.g. CHK-AUTH-001"
+        },
+        "threat_model_ref": { "type": "string" },
+        "guideline_ref": { "type": "string" },
+        "remediation_ref": { "type": "string" },
+        "stage_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^2\\.(1[0-2]|[1-9])$"
+          },
+          "description": "All Layer 2 stages where this finding was evaluated"
+        },
+        "stage_item_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Traceability back to stage output item_id values"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "file_path": { "type": "string" },
+            "start_line": { "type": "integer" },
+            "end_line": { "type": "integer" },
+            "start_column": { "type": "integer" },
+            "end_column": { "type": "integer" },
+            "commit_sha": { "type": "string" }
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "properties": {
+            "code_snippet": { "type": "string" },
+            "message": { "type": "string" },
+            "masked_secret": { "type": "string" }
+          }
+        },
+        "standard_mapping": {
+          "type": "object",
+          "properties": {
+            "cwe": { "type": "array", "items": { "type": "string" } },
+            "owasp_top10_2021": { "type": "array", "items": { "type": "string" } },
+            "asvs_v4": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "remediation": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "patch": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

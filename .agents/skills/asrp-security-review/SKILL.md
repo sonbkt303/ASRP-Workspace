@@ -1,167 +1,159 @@
 ---
 name: asrp-security-review
-description: Execute the full 4-step AI End-to-End Security Review workflow for a target project (Source Acquisition -> AI Auto-Profiling -> AI Orchestrated Scan -> Executive HTML Report). Trigger whenever the user wants to audit a project or run a full security assessment.
+description: >-
+  Runs ASRP security review (acquire → profile → validate → scan → report)
+  for a Projects Registry project_id. Use when auditing, scanning, profiling,
+  or generating findings.json / executive HTML security reports; or when the
+  user mentions /asrp-security-review, Layer 1 registry, or ASRP assessment.
 ---
 
-# ASRP AI Security Review Skill Workflow
+# ASRP Security Review
 
-## Step Invocation & Routing
-AI Agent supports running steps independently or as a complete workflow:
-- **Command `/asrp-security-review profile [project_id]`** (or `step 1`): Runs **Step 1 ONLY** (Layer 1 AI Auto-Profiling & Registry Generation).
-- **Command `/asrp-security-review scan [project_id]`** (or `step 2`): Runs **Step 2 ONLY** (AI-Primary Security Scanning & Verification using Layer 1 profiles as input).
-- **Command `/asrp-security-review report [project_id]`** (or `step 3`): Runs **Step 3 ONLY** (Risk Assessment & Executive HTML/MD Report Generation using `findings.json` as input).
-- **Command `/asrp-security-review review [project_id]`** (or `full` / default): Runs **Full Workflow (Step 1 -> Step 2 -> Step 3)**.
+## What this skill does
 
----
+End-to-end Application Security Review for ASRP: clone source → auto-profile Layer 1 YAML → validate gate → AI-primary scan with 12 Layer 2 stage outputs → risk score → executive HTML/MD reports.
 
-## Step 1: AI Auto-Profiling & Selective Registry Generation (Layer 1)
+Project invariants: [`.agents/AGENTS.md`](../../AGENTS.md). This skill is the operational runbook.
 
-### 1. Target Component Isolation & Discovery
-1. Access `Application Security Review Platform (ASRP)/3. Assessment Engine/3.1 Source Acquisition/clones/{project_id}/`.
-2. Check if a specific target component/sub-repo is specified (e.g., `dent-api-nestjs`):
-   - **If specific component requested:** Focus inspection ONLY on `clones/{project_id}/{target_component_id}/`.
-   - **If entire project requested:** Discover and inspect all component subdirectories under `clones/{project_id}/`.
-3. **RESOURCE OPTIMIZATION EXCLUSION RULE:**
-   - Always exclude non-essential folders and files that do not contain project source code: `node_modules`, `.devcontainer`, `.husky`, `.vscode`, `.idea`, `.github`, `.agents`, `dist`, `build`, `coverage`, `.pnpm-store`, `yarn-error.log`, `.git`, `tmp`, `temp`.
-   - Populating `exclude_paths` in `components.yaml` and `out_of_scope_paths` in `scope.yaml` is MANDATORY to prevent AI orchestrator and SAST tools from wasting CPU, memory, and LLM context resources on non-project artifacts.
+## How to invoke
 
+- `@asrp-security-review` in Cursor chat, or
+- `/asrp-security-review [subcommand] [project_id]`
 
-### 2. Deep Component Code & Stack Inspection
-Deep-dive into the target component's repository and inspect structural configuration files:
-- Node.js / TypeScript: `package.json`, `nest-cli.json`, `tsconfig.json`, `pnpm-workspace.yaml`, `biome.json`
-- Python: `requirements.txt`, `pyproject.toml`, `setup.py`, `Pipfile`
-- Docker & Infrastructure: `docker-compose.yaml`, `Dockerfile`, `k8s/`, `helm/`, `envs/`
-- DB & Storage: MongoDB schemas, Prisma, TypeORM, Mongoose, Redis connections
+Optional prompt fields: `--component`, `--run-id`, `--source`, `execution_mode: interactive`.
 
-### 3. AI Intelligent Security Standards & Compliance Selection (Layer 2.1)
-Analyze the discovered code, tech stack, and business domain to select optimal security standards from all 10 subdirectories in `2. Security Knowledge Base ⭐ (Core Asset)/2.1 Security Standards/`:
-- **OWASP ASVS** (Application Security Verification Standard v4.0)
-- **OWASP Top 10** (Web & API Security Vulnerability Risks)
-- **OWASP WSTG** (Web Security Testing Guide v4.2)
-- **OWASP Code Review Guide** (Secure Code Review & Architecture Inspection)
-- **OWASP Cheat Sheets** (Proactive Security Controls & Defensive Design)
-- **NIST SSDF** (NIST SP 800-218 Secure Software Development Framework)
-- **CWE** (Common Weakness Enumeration & CWE Top 25)
-- **CAPEC** (Common Attack Pattern Enumeration and Classification)
-- **CIS Benchmarks** (Kubernetes, Docker & Container Hardening)
-- **Internal Standards** (HIPAA, GDPR, PCI-DSS, ISO 27001 Domain Compliance)
+Full routing: [`references/routing.md`](references/routing.md).
 
-**STRICT COMPLIANCE MANDATE:**
-AI Agent MUST automatically write and map the selected standard IDs into:
-1. `technologies.yaml` -> `technologies[].rule_set_ids` (mapped specifically per component tech stack).
-2. `assessment.yaml` -> `assessment.rule_sets` (aggregated project-wide security standards).
+## Skill routing
 
+| Subcommand | Step | Pre-condition |
+|------------|------|---------------|
+| `acquire` | 0 | Project exists or bootstrap from `1.1 Template/` |
+| `profile` | 1 | Clones exist |
+| `validate` | Gate | 7 profile YAMLs schema-valid |
+| `scan` | 2 | `lifecycle_status == validated` |
+| `report` | 3 | `findings.json` exists for run |
+| `review` | 0→3 | Full pipeline |
 
-### 4. Non-Destructive Merging into Layer 1 Profiles
-Update profile YAML files in `1. Projects Registry/{project_id}/` following template schemas from `1. Projects Registry/1.1 Template`:
-- **CRITICAL SAFE MERGE RULE:** When updating a specific sub-repo/component (e.g. `dent-api-nestjs`), update or append ONLY its entry in `components.yaml` and `technologies.yaml`. **DO NOT overwrite, wipe, or affect existing other components** (e.g., preserve `dent-monorepo` intact).
-- Update files:
-  - `project.yaml`
-  - `components.yaml` (safely merged per component)
-  - `technologies.yaml` (safely merged per component)
-  - `architecture.yaml`
-  - `context.yaml`
-  - `scope.yaml`
-  - `assessment.yaml`
-  - `registry.manifest.yaml`
+Legacy: `step 0`–`step 3`, `full` / default → `review`.
 
----
+## Global invariants
 
-## Step 2: AI-Driven Security Scanning & Verification (Layer 3.4 & 3.6)
+1. **AI-Primary audit** — Do not run `python asrp.py scan` alone as the sole audit; AI must read clones and write stage JSON.
+2. **Multi-component safe merge** — Never wipe unrelated entries in `components.yaml` / `technologies.yaml`.
+3. **Exclude non-source paths** — See [`references/exclusion-paths.md`](references/exclusion-paths.md).
+4. **12-stage traceability** — Every finding maps to `rule_id`, `security_domain`, `standard_mapping`, `review_checklist_ref`, `stage_refs[]`.
+5. **Template-based reports** — Use `1.1 Template/reports/`; no inline HTML scaffolding.
 
-### 1. Multi-Module Knowledge Base Scope Loading
-1. Load Layer 1 Security Matrix (`standards`, `security_domains`, `rule_set_ids`, `checklists`).
-2. Load 100% Layer 2 knowledge base artifacts from all 12 modules:
-   - `2.1 Security Standards` (OWASP ASVS v4.0, OWASP Top 10 2021, NIST SSDF, CWE Top 25, CIS Benchmarks)
-   - `2.2 Security Domains` (13 core security domains)
-   - `2.3 Rule Library/index.yaml` (executable rules catalog)
-   - `2.4 Review Checklists` (Domain & architecture review checklists)
-   - `2.5 Playbooks` (Standard Operating Procedures catalog)
-   - `2.6 Threat Models` (STRIDE threat modeling scenarios)
-   - `2.7 Secure Coding Guidelines/index.yaml` (Stack-aware guidelines: Node.js, NestJS, React/Next.js, Python, Database/ORM, Docker)
-   - `2.8 Best Practices` (Cloud-Native, DevSecOps, Data Privacy & Zero-Trust Best Practices)
-   - `2.9 Attack Patterns/index.yaml` (CAPEC attack scenarios catalog: API/GraphQL, Auth/OIDC, Frontend Client)
-   - `2.10 Remediation Guides/index.yaml` (Actionable code diff patches catalog: API/Auth, Frontend, Database, Containers)
-   - `2.11 Case Studies` (Post-Mortem Incident Reports & Prevention Matrix)
-   - `2.12 Decision Logs` (Security Architecture Decision Records - ADR)
+## Pre-flight
 
-### 2. Mandatory AI-Primary Code Audit & 12-Module Stage JSON Generation (CRITICAL MANDATE)
-**CRITICAL INVARIANT:** AI Agent MUST act as the Primary Security Audit Engine by performing direct, contextual code analysis on the actual codebase in `clones/{project_id}/{component_id}/`. 
-AI Agent MUST NOT rely on or shortcut through `python asrp.py scan` to do the audit. The AI Agent itself evaluates all 12 Layer 2 Security Knowledge Base modules and writes 12 individual stage output files to `runs/{run_id}/stage_outputs/` complying with the **Common Stage JSON Schema**:
+Before Step 0 or Step 1, emit **`## ASRPReviewJob`** fenced YAML per [`references/job-schema.md`](references/job-schema.md).
 
-- **Stage 2.1 Standards Audit:** Generate `stage_2_1_standards.json` verifying compliance against OWASP ASVS v4.0, CWE Top 25.
-- **Stage 2.2 Security Domains:** Generate `stage_2_2_domains.json` evaluating the 13 Security Domains.
-- **Stage 2.3 Executable Rules:** Generate `stage_2_3_rules.json` running static & AI rules across engines.
-- **Stage 2.4 Review Checklists:** Generate `stage_2_4_checklists.json` systematically evaluating domain checklist items (`verification_requirement`).
-- **Stage 2.5 Playbooks:** Generate `stage_2_5_playbooks.json` evaluating review phase SOP compliance.
-- **Stage 2.6 Threat Models:** Generate `stage_2_6_threats.json` evaluating STRIDE architectural threat scenarios.
-- **Stage 2.7 Secure Coding Guidelines:** Generate `stage_2_7_guidelines.json` evaluating stack-specific coding rules.
-- **Stage 2.8 Best Practices:** Generate `stage_2_8_best_practices.json` evaluating architecture & DevSecOps practices.
-- **Stage 2.9 Attack Patterns:** Generate `stage_2_9_attack_patterns.json` evaluating CAPEC attack vector resistance.
-- **Stage 2.10 Remediation Guides:** Generate `stage_2_10_remediations.json` containing actionable code diff patches.
-- **Stage 2.11 Case Studies:** Generate `stage_2_11_case_studies.json` evaluating incident prevention readiness.
-- **Stage 2.12 Decision Logs:** Generate `stage_2_12_decision_logs.json` evaluating security ADR compliance.
+Required: `project_id`, `subcommand`, `execution_mode` (`batch` default).
 
-### 3. Auxiliary Python CLI Tooling Integration (STRICTLY SECONDARY / OPTIONAL)
-The Python CLI runner (`asrp.py scan`) is ONLY a secondary auxiliary helper tool for gathering raw static tool outputs (`raw_outputs/`). It MUST NEVER replace or overwrite the primary AI-driven code audit and stage JSON generation performed by the AI Agent.
+## Step 0 — Source Acquisition
 
-### 4. Verification, Deduplication & Master Consolidation into findings.json (Layer 3.6)
-1. Cross-verify raw tool findings against AI contextual code analysis and Review Checklists.
-2. Eliminate False Positives and duplicate findings across engines.
-3. **CONSOLIDATE ALL 12 STAGES:** Aggregate 100% of all non-PASS items across all 12 `stage_outputs/*.json` files into the master `findings.json`.
-4. **STRICT MULTI-MODULE TRACEABILITY REQUIREMENT:** Every finding in `findings.json` MUST strictly reference:
-   - Valid `rule_id` from Layer 2.3 (e.g. `ASRP-AI-001`, `ASRP-SEC-004`).
-   - `security_domain` from Layer 2.2 (e.g. `access_control`, `secrets`).
-   - Standard mappings from Layer 2.1 (CWE ID, OWASP Top 10 2021, OWASP ASVS v4.0).
-   - Corresponding Review Checklist item reference from Layer 2.4 (`review_checklist_ref`).
-5. Save normalized findings to `1. Projects Registry/{project_id}/runs/{run_id}/findings.json`.
+Clone/copy source to `3. Assessment Engine/3.1 Source Acquisition/clones/{project_id}/{component_id}/`. Create `runs/{run_id}/acquisition.json`.
 
-### 5. Summary Output
-Output a clean, professional summary table of discovered vulnerabilities categorized by severity, engine source, and target component.
+Details: [`references/step-0-acquire.md`](references/step-0-acquire.md)
 
+**DoD:** All target components have clones. **Abort if:** no source and no `--source`.
 
----
+## Gate — Validate Profile
 
-## Step 3: Risk Assessment & Executive Reporting (Layer 3.7 & Layer 5)
+Details: [`references/step-gate-validate.md`](references/step-gate-validate.md)
 
-### 1. Input Data Loading
-1. Access target run directory: `1. Projects Registry/{project_id}/runs/{run_id}/`.
-2. Load verified findings: `findings.json` (from Step 2).
-3. Load project context: `context.yaml`, `project.yaml`, `architecture.yaml` (from Step 1).
+**Step 1 check (after profile):**
+```bash
+python asrp.py validate --project {project_id} --stage profile
+```
 
-### 2. Layer 3.7 Risk Assessment Engine Execution
-Calculate Security Health Score and Risk Metrics:
-- **Health Score Calculation (0 - 100):** Deduct severity weights from 100 base score (`CRITICAL`: -25, `HIGH`: -10, `MEDIUM`: -5, `LOW`: -2).
-- **Security Grade Assignment:**
-  - `Grade A`: 90 - 100 (Pass)
-  - `Grade B`: 80 - 89 (Pass)
-  - `Grade C`: 70 - 79 (Conditional)
-  - `Grade D`: 50 - 69 (Action Required)
-  - `Grade F`: < 50 (Fail / Critical Risk)
-- **Gate Status Evaluation:** Mark status as `PASSED` or `ACTION REQUIRED`.
-- **SLA Remediation Roadmap Creation:**
-  - `Phase 1 (Immediate SLA 24-48h)`: Critical & High secrets / RCE / Injection flaws.
-  - `Phase 2 (Short-term SLA 7d)`: High severity access control & dependency flaws.
-  - `Phase 3 (Maintenance SLA 30d)`: Medium severity misconfigurations.
-- Save output to: `1. Projects Registry/{project_id}/runs/{run_id}/risk_assessment.json`.
+**Human sign-off (creates manifest + syncs lifecycle):**
+```bash
+python asrp.py validate --project {project_id} --sign-off --by "Security Lead"
+```
 
-### 3. Layer 5 Report Generation Execution
-Invoke Report Generator to build multi-level reports using stage outputs from the designated run directory (e.g., `run-20260730_171130`):
-1. **Mandatory Report Template Usage:** AI Agent MUST load the standard HTML templates from `1. Projects Registry/1.1 Template/reports/`:
-   - `1.1 Template/reports/executive_dashboard.html` for project-wide dashboard reports.
-   - `1.1 Template/reports/component_report.html` for component-specific reports.
-   - **NO INLINE HTML GENERATION:** Any Python script or internal tool written to generate these reports MUST read the template files directly from disk and perform string replacement (e.g. replacing `<!-- Data: PROJECT_NAME -->` with actual data). Do not hardcode `<style>`, `<script>`, or HTML scaffolding in the script.
-2. **Interactive Stage Output Mapping:** Each report includes interactive stage pills (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.6 Threat Models, 2.10 Remediation Guides). Clicking a stage pill filters and lists only the findings mapped to that specific module.
-3. **Component-Specific Reports:** Generate independent reports for each repository defined in `components.yaml` using `component_report.html` as the baseline design:
-   - `security_review_report_{component_id}.html`
-   - `security_review_report_{component_id}.md`
-4. **Executive Project Dashboard:** Generate consolidated project dashboard showing side-by-side health scores & grade comparisons across all components using `executive_dashboard.html` as the baseline design:
-   - `security_review_report.html`
-   - `security_review_report.md`
+**Pre-scan gate check (default):**
+```bash
+python asrp.py validate --project {project_id}   # --stage gate
+```
 
-### 4. Summary Output
-Output a clean, professional executive summary table including Security Health Score, Grade, Rating, Gate Status, SLA Roadmap breakdown, and clickable links to all generated HTML & Markdown reports (both component-level and project-level).
+**Lifecycle model:** Step 1 → `project.yaml: profiled`. Sign-off → manifest + `project.yaml: validated`. Gate is authoritative for scan; `project.yaml` mirrors manifest.
 
+**Gate checks (exit 1 on fail):** schema (7 + manifest), cross-file, lifecycle sync, `profile_hash` match.
 
+**Require:** gate PASS before scan. **`asrp.py scan` enforces gate automatically.**
 
+**Abort scan if:** validation fails.
 
+## Step 1 — AI Auto-Profiling (Layer 1)
+
+Inspect clones; update **7 schema-valid profile YAMLs** with safe merge; map `rule_set_ids`; set `exclude_paths` / `scope.exclude`; set `lifecycle_status: profiled`.
+
+Do **not** set `registry.manifest.yaml` → `validated` (Validate Gate only).
+
+Details: [`references/step-1-profile.md`](references/step-1-profile.md) · Snippets: [`references/examples/profile-snippets.yaml`](references/examples/profile-snippets.yaml)
+
+**DoD:** 7 YAMLs pass JSON schema + cross-file checks; `lifecycle_status: profiled`. **Abort if:** clone missing or schema fail after 2 fixes.
+
+## Step 2 — AI-Primary Scan (Layer 3.4 & 3.6)
+
+Phased: **2A** pre-flight → **2B** per-component audit → **2C** 12 stage JSON → **2D** consolidate `findings.json`.
+
+Details: [`references/step-2-scan.md`](references/step-2-scan.md)
+
+Schemas: [`stage-output.schema.json`](references/stage-output.schema.json), [`findings.schema.json`](references/findings.schema.json)
+
+**DoD:** 12/12 stage files; findings with 100% non-PASS coverage. **Abort if:** validate gate fails.
+
+## Step 3 — Risk & Report (Layer 3.7 & 5)
+
+Risk score + HTML/MD reports via `risk_assessor.py` and `report_generator.py`. All 12 stage pills in reports.
+
+Details: [`references/step-3-report.md`](references/step-3-report.md)
+
+**DoD:** `risk_assessment.json` + all report files. **Abort if:** `findings.json` missing.
+
+## Response structure
+
+### Batch (`execution_mode: batch` or omitted)
+
+1. `## ASRPReviewJob` — fenced YAML
+2. Execute steps per subcommand (full order: acquire → profile → validate → scan → report)
+3. `## Summary` — table per [`references/summary-format.md`](references/summary-format.md)
+
+**Gate:** No step execution until `## ASRPReviewJob` is emitted.
+
+### Interactive (`execution_mode: interactive`)
+
+One phase per turn. After each phase emit:
+
+```markdown
+## Checkpoint — Phase {id}
+- [x] ...
+Proceed? (yes / amend / abort)
+```
+
+Resume via updated `phases_completed` in job YAML.
+
+## Tooling matrix
+
+| Task | Owner | Reference |
+|------|-------|-----------|
+| Clone / pull | CLI optional | step-0-acquire.md |
+| Profile YAML | AI | step-1-profile.md |
+| Static scan evidence | CLI optional | step-2-scan.md |
+| Stage JSON + audit | **AI mandatory** | step-2-scan.md |
+| Findings | AI (+ normalizer assist) | findings.schema.json |
+| Risk + HTML | CLI preferred | step-3-report.md |
+| Full pipeline shortcut | **Forbidden** | `asrp.py scan` as sole audit |
+
+## Canonical references
+
+- [`references/routing.md`](references/routing.md) — subcommands, flags, CLI map
+- [`references/job-schema.md`](references/job-schema.md) — ASRPReviewJob YAML
+- [`references/step-gate-validate.md`](references/step-gate-validate.md) — Validate Gate sign-off
+- [`references/step-0-acquire.md`](references/step-0-acquire.md) through [`step-3-report.md`](references/step-3-report.md)
+- [`references/exclusion-paths.md`](references/exclusion-paths.md)
+- [`references/summary-format.md`](references/summary-format.md)
+- [`references/examples/`](references/examples/) — golden stage, finding JSON, profile snippets

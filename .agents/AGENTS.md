@@ -19,112 +19,25 @@
 - **AI-Driven Orchestration:** Mô hình ASRP hướng tới sử dụng AI làm Trí tuệ điều phối trung tâm (Agentic Orchestrator). AI tự động hiểu ngữ cảnh dự án, chọn Tooling và Rules phù hợp thay vì phụ thuộc hoàn toàn vào Script cố định.
 - **Hybrid Contextual Verification:** AI chịu trách nhiệm kiểm tra lại kết quả quét từ các công cụ tĩnh, lọc bỏ False Positives, phát hiện lỗi Logic Nghiệp vụ phức tạp và đưa ra khuyến nghị sửa lỗi (Code Remediation).
 
-## ASRP 4-Step AI Master Workflow Invariant
+## ASRP Master Workflow Invariant
 
-1. **Layer 3.1 Source Acquisition:** Clone/copy mã nguồn cố định tại `3.1 Source Acquisition/clones/{project_id}/{component_id}/`.
-2. **Layer 1 AI Auto-Profiling:** AI tự đọc mã nguồn clone để tự động sinh 100% tệp Hồ sơ Dự án Layer 1 theo template `1.1 Template` (Không nhập thủ công YAML).
-3. **Layer 3.4/3.6 AI Orchestrated Scan:** AI tự chọn Tooling/Rules, lọc False Positives và xuất dữ liệu chuẩn `findings.json`.
-4. **Layer 3.7/5 Risk & Reporting:** Tự động tính điểm Health Score, lập lộ trình SLA và xuất Executive HTML Dashboard.
-## ASRP Strict Skill Execution & AI Workflow Guardrail
+0. **Layer 3.1 Source Acquisition:** Clone/copy mã nguồn tại `3.1 Source Acquisition/clones/{project_id}/{component_id}/`.
+1. **Layer 1 AI Auto-Profiling:** AI sinh hồ sơ Layer 1 từ clone theo `1.1 Template`.
+2. **Validate Gate:** `registry.manifest.yaml` → `lifecycle_status == validated` trước khi scan.
+3. **Layer 3.4/3.6 AI Orchestrated Scan:** AI audit + 12 stage JSON + `findings.json`.
+4. **Layer 3.7/5 Risk & Reporting:** Health Score, SLA roadmap, Executive HTML Dashboard.
 
-- **Strict Skill Step-by-Step Compliance:** Khi nhận câu lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC phải tuân thủ nghiêm ngặt từng bước chi tiết được mô tả trong `SKILL.md` (bắt đầu bằng Step 1: AI Auto-Profiling & Layer 1 Registry Generation từ mã nguồn clone). Không tự ý bỏ qua bước hoặc thực hiện lệnh CLI tắt nếu chưa hoàn tất đúng quy trình chỉ định.
+## ASRP Security Review Execution
 
-## ASRP Resource Optimization & Non-Essential Exclusion Guardrail
+Khi chạy `/asrp-security-review`, tuân thủ runbook tại [`.agents/skills/asrp-security-review/SKILL.md`](skills/asrp-security-review/SKILL.md).
 
-- **Strict Non-Essential Path Exclusion:** Khi thực hiện AI Auto-Profiling, Rule Resolution hoặc Scanner Orchestration, AI Agent & Scanner Orchestrator BẮT BUỘC phải loại trừ hoàn toàn các thư mục/tệp phụ trợ không trực tiếp chứa mã nguồn nghiệp vụ để tối ưu tài nguyên tính toán (avoid unnecessary token & CPU resource consumption).
-- **Mandatory Excluded Paths:**
-  - Dependencies & Build Artifacts: `node_modules`, `vendor`, `dist`, `build`, `out`, `coverage`, `.pnpm-store`
-  - Tooling & IDE Configurations: `.vscode`, `.idea`, `.devcontainer`, `.husky`, `.github`, `.agents`
-  ## ASRP Stack-Aware Security Standards Auto-Selection Guardrail
+**Invariants (tóm tắt):**
 
-## ASRP Modular Step Execution & AI-Primary Scanning Guardrail
+- AI-Primary audit — không shortcut qua `python asrp.py scan` làm sole audit
+- Multi-component safe merge — không ghi đè component không liên quan
+- 12-stage traceability — mọi finding có `rule_id`, `security_domain`, `standard_mapping`, `review_checklist_ref`
+- Template-based reports — `1.1 Template/reports/`; không inline HTML
+- Exclude non-source paths — xem `references/exclusion-paths.md` trong skill
+- 100% non-PASS stage coverage trong `findings.json` — zero omission
 
-- **Modular Independent Step Execution:** Khi nhận câu lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC hỗ trợ thực thi độc lập từng bước tùy theo tham số/yêu cầu của người dùng:
-  - `profile` (hoặc `step 1`): Chỉ thực hiện Step 1 (AI Auto-Profiling & Layer 1 Profile Generation).
-  - `scan` (hoặc `step 2`): Chỉ thực hiện Step 2 (AI-Primary Security Scanning & Verification từ nguồn clone).
-  - `report` (hoặc `step 3`): Chỉ thực hiện Step 3 (Risk Assessment & Executive HTML/MD Report Generation).
-  - `full` / `review`: Thực hiện lần lượt toàn bộ 3 bước.
-## ASRP Strict Rule Library Traceability Guardrail
-
-## ASRP Layer 2 Multi-Module Knowledge Base Scanning Guardrail
-
-## ASRP Layer 2 Knowledge Base Pre-Building Guardrail
-
-- **Pre-Scan Knowledge Base Completeness:** Trước khi tiến hành quét mã nguồn (Step 2), AI Agent BẮT BUỘC phải chủ động rà soát và xây dựng đầy đủ các bộ Tiêu chuẩn (Layer 2.1), Miền An ninh (Layer 2.2), Checklist kiểm thử (Layer 2.4), Playbooks (Layer 2.5) và Threat Models (Layer 2.6). AI Agent không thực hiện quét rỗng khi chưa có tri thức checklist và quy chuẩn đối soát cụ thể.
-
-## ASRP Layer 2 Complete Single Responsibility & Zero-Overlap Guardrail
-
-- **Strict Separation of Concerns across Layer 2 Assets:** Tất cả 12 module trong Layer 2 BẮT BUỘC tuân thủ phạm vi chức năng duy nhất, tuyệt đối không xâm phạm ranh giới của nhau:
-  1. `2.1 Security Standards`: Tri thức định danh & Ma trận quy chiếu tiêu chuẩn quốc tế tĩnh (Khóa chính CWE ID).
-  2. `2.2 Security Domains`: Danh mục phân loại miền an ninh kỹ thuật nghiệp vụ (13 Domains).
-  3. `2.3 Rule Library`: Pattern thực thi tĩnh dành cho Tooling & AI Prompts (Semgrep AST, Gitleaks Regex, AI System Prompts).
-  4. `2.4 Review Checklists`: Câu hỏi thẩm định đối soát dành cho Auditor / AI Reviewer (`verification_requirement`).
-  5. `2.5 Playbooks`: Quy trình Vận hành Chuẩn (SOP) từng bước thực hiện đợt Security Review từ Step 1 đến Step 3.
-  6. `2.6 Threat Models`: Khung Phân tích Mối đe dọa Kiến trúc (STRIDE Framework) trước khi phát triển.
-  7. `2.7 Secure Coding Guidelines`: Hướng dẫn lập trình an toàn dành cho Developer theo từng Framework (NestJS, Django, React).
-  8. `2.8 Best Practices`: Nguyên tắc khuyên dùng cấp Kiến trúc & DevSecOps.
-  9. `2.9 Attack Patterns`: Kịch bản tấn công giả lập của Hacker (CAPEC Scenarios) dành cho Red Team.
-  10. `2.10 Remediation Guides`: Hướng dẫn sửa lỗi chi tiết & Code Diff Patches cho Developer sau khi phát hiện lỗ hổng.
-  11. `2.11 Case Studies`: Bài học kinh nghiệm sự cố thực tế (Post-Mortem Incident Reports).
-  12. `2.12 Decision Logs`: Nhật ký quyết định kiến trúc an toàn thông tin (Architecture Decision Records - ADR).
-
-## ASRP Layer 2 Modular Stage JSON Output Guardrail
-
-- **Complete 12-Module Stage Output Files:** Trong Step 2, kết quả đánh giá của tất cả 12 module Layer 2 BẮT BUỘC được ghi nhận riêng thành 12 tệp JSON tương ứng tại `runs/{run_id}/stage_outputs/`:
-  - `stage_2_1_standards.json`
-  - `stage_2_2_domains.json`
-  - `stage_2_3_rules.json`
-  - `stage_2_4_checklists.json`
-  - `stage_2_5_playbooks.json`
-  - `stage_2_6_threats.json`
-  - `stage_2_7_guidelines.json`
-  - `stage_2_8_best_practices.json`
-  - `stage_2_9_attack_patterns.json`
-  - `stage_2_10_remediations.json`
-  - `stage_2_11_case_studies.json`
-  - `stage_2_12_decision_logs.json`
-- **Common Template Compliance:** Tất cả các file stage output PHẢI tuân thủ 100% Common Stage JSON Schema với các trường cố định: `stage_id`, `layer_module_ref`, `summary`, `results` (`item_id`, `status`, `evidence`, `standard_mappings`, `remediation`).
-- **Report Aggregation Requirement:** Layer 3.7 (Risk Assessor) và Layer 5 (Report Generator) sẽ đọc và hợp nhất dữ liệu từ tất cả các tệp `stage_outputs/*.json` để tính điểm Health Score và tổng hợp báo cáo Executive HTML/MD Report.
-
-## ASRP AI-Primary Security Audit Engine Guardrail
-
-- **AI Agent as Primary Audit Engine:** Khi nhận lệnh trigger `/asrp-security-review`, AI Agent BẮT BUỘC đóng vai trò là Động cơ Đánh giá An ninh Trung tâm (Primary Security Audit Engine). AI Agent trực tiếp đọc đệ quy mã nguồn clone thực tế, phân tích ngữ cảnh kiến trúc/nghiệp vụ thực tế, kiểm tra lỗ hổng logic phức tạp và sinh 100% dữ liệu cho 12 tệp Stage JSON Output (`stage_2_1` đến `stage_2_12`).
-- **Strict Non-Reliance on CLI Script:** Script `python asrp.py scan` CHỈ là công cụ phụ trợ (Auxiliary Helper Tool). Tuyệt đối KHÔNG được gọi duy nhất script CLI tắt rồi lấy kết quả mẫu của script thay cho quá trình AI tự rà soát mã nguồn.
-
-## ASRP Real Codebase Deep Discovery Guardrail
-
-- **Recursive Real Codebase Discovery:** AI Agent & Scanner Orchestrator BẮT BUỘC thực hiện rà soát đệ quy toàn bộ cây thư mục mã nguồn thực tế của dự án (đặc biệt là các thư mục `apps/`, `libs/`, `src/`, `packages/`, `services/`, `controllers/`, `dockerfiles/`, `k8s/`). Tuyệt đối không chỉ quét tệp mẫu hoặc tệp thử nghiệm ở thư mục gốc (`main.py`, `test.py`).
-- **Framework & Technology Stack Alignment:** Khi quét dự án (ví dụ NestJS Monorepo), AI Agent BẮT BUỘC phải đọc các tệp mã nguồn thuộc đúng techstack chính (`.ts`, `.js`, `.json`, `.yaml`, NestJS `@Controller`, `@Injectable`, `package.json`, `docker-compose.yaml`) của tất cả các microservices trong dự án.
-
-## ASRP Multi-Component Independent Reporting Guardrail
-
-- **Multi-Repo / Multi-Component Separation:** Khi một dự án chứa nhiều repositories/components trong `components.yaml` có techstack khác nhau (như `dent-api-nestjs` cho Backend và `dent-monorepo` cho Frontend), AI Agent & Report Generator BẮT BUỘC:
-  1. Đánh giá và xuất báo cáo độc lập cho từng component: `security_review_report_{component_id}.html` & `.md` (Ví dụ: `security_review_report_dent-api-nestjs.html` và `security_review_report_dent-monorepo.html`).
-  2. Tạo báo cáo tổng hợp **Executive Project Dashboard** (`security_review_report.html`) hiển thị thẻ điểm Health Score, xếp hạng Grade và bảng so sánh rủi ro song song của tất cả các repository component thuộc dự án.
-
-## ASRP Interactive Stage Module Navigation Guardrail
-
-- **Interactive Stage-to-Finding Mapping in HTML Reports:** Executive and Component HTML Security Reports generated in Step 3 MUST feature interactive navigation (click-to-filter / accordions). Clicking on any Layer 2 Stage Module (2.1 Standards, 2.2 Security Domains, 2.3 Rule Library, 2.4 Review Checklists, 2.5 Playbooks, 2.6 Threat Models, 2.7 Guidelines, 2.8 Best Practices, 2.9 Attack Patterns, 2.10 Remediation Guides, 2.11 Case Studies, 2.12 Decision Logs) MUST dynamically filter and display only the security findings/issues corresponding to that module.
-
-## ASRP Standard Report Template Reference Guardrail
-
-- **Standard Report Template Source:** Tất cả các báo cáo Security Review xuất ra ở Step 3 (bao gồm `security_review_report.html` và `security_review_report_{component_id}.html`) BẮT BUỘC lấy mẫu thiết kế từ bộ Template chuẩn tại `1. Projects Registry/1.1 Template/reports/` (`executive_dashboard.html` và `component_report.html`) làm chuẩn tham chiếu duy nhất cho tất cả các đợt review tiếp theo.
-- **Strict No-Inline HTML Rule:** Tuyệt đối KHÔNG được tự ý sinh mã HTML nội tuyến (inline HTML) trong các script Python hay khi AI tự xử lý. AI Agent hoặc Python Script bắt buộc phải đọc nội dung file mẫu HTML gốc, sau đó sử dụng kỹ thuật thay thế chuỗi (string replacement) hoặc inject DOM để điền dữ liệu `findings.json` vào template.
-
-## ASRP Smart Dynamic Stage Module Mapping Guardrail
-
-- **Granular Checks to Consolidated Findings Mapping:** Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_12`) contain granular check items. Layer 3 consolidates related stage check failures into normalized Findings (`findings.json`).
-- **Comprehensive Stage Tagging:** A finding in `findings.json` MUST be tagged with ALL Layer 2 stages where it failed or passed evaluation across all 12 modules.
-- **Dynamic Filter Counts:** Filter pills in HTML reports MUST reflect the exact count of findings satisfying each module's comprehensive mapping condition.
-
-## ASRP Layer 3 Full Stage Issue Synthesis Invariant
-
-- **100% 12-Stage Issue Coverage:** `findings.json` MUST synthesize and consolidate 100% of all non-PASS items (FAIL, WARNING, TRIGGERED, CONFIRMED, REQUIRES_FIX) generated across all 12 Layer 2 Stage Output JSON files (`stage_2_1` through `stage_2_12`).
-- **Zero Omission Rule:** No stage check failure from Layer 2 may be omitted, ignored, or left unmapped during Layer 3 Findings normalization and Executive/Component report generation.
-- **Traceability Guarantee:** Every stage issue ID MUST be explicitly traceable back to its parent Finding in `findings.json` and rendered in the report filters.
-
-
-
-
-
-
+Chi tiết từng step, schema JSON, phased scan protocol: skill `references/` folder.

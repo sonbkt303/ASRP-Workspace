@@ -1,0 +1,47 @@
+{
+  "run_id": "run-20260731_145000",
+  "project_id": "cleverdent",
+  "normalized_at": "2026-07-31T15:30:00Z",
+  "total_findings": 1,
+  "severity_summary": {
+    "CRITICAL": 0,
+    "HIGH": 1,
+    "MEDIUM": 0,
+    "LOW": 0,
+    "INFO": 0
+  },
+  "findings": [
+    {
+      "finding_id": "FIND-cleverdent-001",
+      "rule_id": "ASRP-INJ-001",
+      "title": "SQL Injection via string concatenation",
+      "engine": "ai_reviewer",
+      "category": "injection",
+      "severity": "HIGH",
+      "component_id": "dent-api-nestjs",
+      "security_domain": "input_validation",
+      "review_checklist_ref": "CHK-INJ-001",
+      "remediation_ref": "REM-INJ-001",
+      "stage_refs": ["2.1", "2.2", "2.3", "2.4", "2.10"],
+      "stage_item_ids": ["ASRP-INJ-001", "CHK-INJ-001"],
+      "location": {
+        "file_path": "src/modules/users/users.service.ts",
+        "start_line": 42,
+        "end_line": 44,
+        "commit_sha": "head"
+      },
+      "evidence": {
+        "code_snippet": "const query = `SELECT * FROM users WHERE id = ${userId}`;",
+        "message": "User input interpolated into SQL query without parameterization"
+      },
+      "standard_mapping": {
+        "cwe": ["CWE-89"],
+        "owasp_top10_2021": ["A03:2021-Injection"],
+        "asvs_v4": ["V5.3.4"]
+      },
+      "remediation": {
+        "summary": "Use parameterized queries or ORM safe APIs"
+      }
+    }
+  ]
+}

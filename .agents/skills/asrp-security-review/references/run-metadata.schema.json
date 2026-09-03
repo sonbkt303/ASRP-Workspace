@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://skill/run-metadata.schema.json",
+  "title": "ASRP Run Metadata",
+  "description": "Run folder metadata for report template placeholders. Aligns with 1.1 Template/reports/README.md.",
+  "type": "object",
+  "required": ["run_id", "project_id", "created_at"],
+  "additionalProperties": true,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "pattern": "^run-",
+      "description": "Run folder name, e.g. run-20260731_145000"
+    },
+    "project_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "engine": {
+      "type": "string",
+      "description": "Audit engine identifier for {{ENGINE}} placeholder"
+    },
+    "lifecycle_status_at_start": {
+      "type": "string",
+      "enum": ["draft", "profiled", "validated", "scanning", "completed"]
+    },
+    "components_scanned": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "component_id values evaluated in this run"
+    },
+    "acquisition_ref": {
+      "type": "string",
+      "description": "Relative path to acquisition.json"
+    },
+    "profile_hash": {
+      "type": "string",
+      "description": "registry.manifest.yaml profile_hash at scan time"
+    }
+  }
+}

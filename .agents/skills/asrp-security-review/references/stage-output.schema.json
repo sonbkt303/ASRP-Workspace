@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "asrp://skill/stage-output.schema.json",
+  "title": "ASRP Stage Output JSON",
+  "description": "Common Stage JSON Schema for Layer 2 module evaluation outputs. Derived from report_generator.py and AGENTS.md guardrails.",
+  "type": "object",
+  "required": ["stage_id", "layer_module_ref", "summary", "results"],
+  "additionalProperties": false,
+  "properties": {
+    "stage_id": {
+      "type": "string",
+      "pattern": "^2\\.(1[0-2]|[1-9])$",
+      "description": "Layer 2 module identifier (2.1 through 2.12)"
+    },
+    "layer_module_ref": {
+      "type": "string",
+      "description": "Human-readable module name, e.g. Rule Library"
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Assessment run identifier, e.g. run-20260731_145000"
+    },
+    "project_id": {
+      "type": "string"
+    },
+    "evaluated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_checks", "passed", "failed", "warnings"],
+      "additionalProperties": false,
+      "properties": {
+        "total_checks": { "type": "integer", "minimum": 0 },
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/stageResult" }
+    }
+  },
+  "$defs": {
+    "stageResult": {
+      "type": "object",
+      "required": ["item_id", "status"],
+      "additionalProperties": true,
+      "properties": {
+        "item_id": {
+          "type": "string",
+          "description": "Check item identifier from Layer 2 module catalog"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PASS", "FAIL", "WARNING", "TRIGGERED", "CONFIRMED", "REQUIRES_FIX"]
+        },
+        "component_id": {
+          "type": "string",
+          "description": "Target component from components.yaml"
+        },
+        "title": { "type": "string" },
+        "evidence": {
+          "type": "object",
+          "properties": {
+            "file_path": { "type": "string" },
+            "start_line": { "type": "integer" },
+            "end_line": { "type": "integer" },
+            "code_snippet": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        },
+        "standard_mappings": {
+          "type": "object",
+          "properties": {
+            "cwe": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "owasp_top10_2021": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "asvs_v4": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "remediation": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "patch_ref": { "type": "string" }
+          }
+        },
+        "rule_id": { "type": "string" },
+        "review_checklist_ref": { "type": "string" }
+      }
+    }
+  }
+}

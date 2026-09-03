@@ -1,0 +1,137 @@
+# Golden profile snippets — schema-valid field reference for Step 1
+# Copy structure from 1.1 Template/; fill values from clone inspection.
+# Validate each file individually against 1. Projects Registry/schema/*.schema.json
+
+# --- project.yaml ---
+# project:
+#   id: cleverdent
+#   name: Cleverdent Enterprise Dental Management Platform
+#   description: Dental Clinic & EHR Management System
+#   lifecycle_status: profiled          # Step 1 ONLY — not "validated"
+#   owner: Dental Core Dev Team
+#   organization: Ewoosoft / Cleverdent
+#   version: "2.6.4"
+#   status: active
+#   registry_version: "1.0"
+#   created_at: "2026-07-28"
+#   updated_at: "2026-09-03"
+
+# --- components.yaml (one entry per clone subdirectory) ---
+# components:
+#   - id: dent-api-nestjs
+#     project_id: cleverdent
+#     name: Cleverdent API & Backend Monorepo
+#     type: backend
+#     repository: git@github.com:vtsw/dent-api-nestjs.git
+#     branch: main
+#     path: Application Security Review Platform (ASRP)/3. Assessment Engine/3.1 Source Acquisition/clones/cleverdent/dent-api-nestjs
+#     scan_paths:
+#       - apps/dent-api-nestjs
+#       - apps/dent-login
+#       - libs
+#     exclude_paths:
+#       - node_modules
+#       - dist
+#       - .git
+#     vcs: git
+#     owner: Dental Core Dev Team
+#     description: Core NestJS Backend Services
+
+# --- technologies.yaml (one entry per component) ---
+# technologies:
+#   - component_id: dent-api-nestjs
+#     language: typescript
+#     runtime: Node.js v18
+#     framework: nestjs
+#     package_managers: [yarn]
+#     libraries: [mongoose, graphql, ioredis]
+#     database: mongodb
+#     rule_set_ids:
+#       - nodejs-secure-coding
+#       - owasp-top10-2021
+#       - owasp-api-security-top10
+
+# --- architecture.yaml ---
+# architecture:
+#   project_id: cleverdent
+#   style: microservices-monorepo
+#   gateway: nestjs-api-gateway
+#   authentication: jwt-oidc-passport
+#   authorization: rbac
+#   communication: rest-graphql-rabbitmq
+#   database: mongodb
+#   cache: redis
+#   queue: rabbitmq
+#   storage: minio-s3
+#   external_services:
+#     - google-calendar-api
+
+# --- scope.yaml ---
+# scope:
+#   project_id: cleverdent
+#   component_ids:
+#     - dent-api-nestjs
+#     - dent-monorepo
+#   include:
+#     - apps
+#     - packages
+#     - libs
+#     - src
+#   exclude:
+#     - node_modules
+#     - dist
+#     - .git
+#     - coverage
+#   review_level: source_code
+
+# --- context.yaml ---
+# context:
+#   project_id: cleverdent
+#   business:
+#     industry: healthcare-dental
+#     description: Enterprise Dental Clinic Management Platform
+#   security:
+#     internet_facing: true
+#     contains_pii: true
+#     data_classification: confidential    # enum: public | internal | confidential | restricted
+#   deployment:
+#     environment: kubernetes-docker
+#   compliance:
+#     - HIPAA Security Rule
+#     - GDPR
+#   risk_tier: critical                    # enum: low | medium | high | critical
+
+# --- assessment.yaml ---
+# assessment:
+#   project_id: cleverdent
+#   standards:
+#     - OWASP Top 10 2021
+#     - OWASP API Security Top 10
+#     - OWASP ASVS v4
+#   security_domains:
+#     - Authentication
+#     - Authorization
+#     - Secrets Management
+#     - API Security
+#   rule_set_ids:
+#     - owasp-top10-2021
+#     - owasp-api-security-top10
+#     - nodejs-secure-coding
+#     - react-xss-prevention
+#   tools_enabled:
+#     sast: true
+#     sca: true
+#     secrets: true
+#     iac: true
+#     dast: false
+#   severity_threshold: low
+#   ai:
+#     enabled: true
+#     focus_domains:
+#       - Authentication
+#       - Secrets Management
+#   output:
+#     formats:
+#       - markdown
+#       - html
+#       - json

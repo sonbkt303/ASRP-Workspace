@@ -139,79 +139,131 @@ class SourceAcquisition:
         return selected_id, target_dir
 
     def init_new_project_profile(self, target_dir, project_id):
-        """Create standard Layer 1 YAML files for a new project."""
-        manifest = {
-            "registry_manifest": {
-                "project_id": project_id,
-                "lifecycle_status": "validated",
-                "profile_hash": "sha256:auto_generated_profile",
-                "validated_by": "Security Lead",
-                "validated_at": datetime.now().isoformat() + "Z"
-            }
-        }
-        save_yaml(manifest, os.path.join(target_dir, "registry.manifest.yaml"))
+        """Create schema-valid Layer 1 draft profile files for a new project."""
+        now = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        component_id = f"{project_id.lower()}-api"
 
-        proj = {
+        save_yaml({
             "project": {
                 "id": project_id,
                 "name": f"{project_id.capitalize()} Application",
-                "business_criticality": "business-critical",
-                "owner": "App Development Team"
+                "description": "",
+                "lifecycle_status": "draft",
+                "owner": "App Development Team",
+                "organization": "App Development Team",
+                "version": "1.0",
+                "status": "active",
+                "registry_version": "1.0",
+                "created_at": now[:10],
+                "updated_at": now[:10],
             }
-        }
-        save_yaml(proj, os.path.join(target_dir, "project.yaml"))
+        }, os.path.join(target_dir, "project.yaml"))
 
-        context = {
-            "context": {
-                "environment": "production",
-                "compliance_requirements": ["OWASP Top 10"],
-                "data_classification": "confidential"
-            }
-        }
-        save_yaml(context, os.path.join(target_dir, "context.yaml"))
-
-        scope = {
-            "scope": {
-                "in_scope_paths": ["src", "app"],
-                "out_of_scope_paths": ["tests"]
-            }
-        }
-        save_yaml(scope, os.path.join(target_dir, "scope.yaml"))
-
-        arch = {
-            "architecture": {
-                "pattern": "microservices",
-                "deployment_model": "cloud-native"
-            }
-        }
-        save_yaml(arch, os.path.join(target_dir, "architecture.yaml"))
-
-        tech = {
-            "technologies": {
-                "languages": ["python"],
-                "frameworks": ["fastapi"]
-            }
-        }
-        save_yaml(tech, os.path.join(target_dir, "technologies.yaml"))
-
-        comp = {
+        save_yaml({
             "components": [{
-                "id": f"{project_id.lower()}-api",
-                "name": f"{project_id} API",
+                "id": component_id,
+                "project_id": project_id,
+                "name": f"{project_id.capitalize()} API",
                 "type": "backend",
                 "repository": f"local://{project_id}",
-                "branch": "main"
+                "branch": "main",
+                "path": "",
+                "scan_paths": ["src", "app"],
+                "exclude_paths": [
+                    "node_modules", "dist", "build", "coverage",
+                    ".git", ".vscode", ".github", ".agents",
+                ],
+                "vcs": "git",
+                "owner": "App Development Team",
+                "description": f"{project_id.capitalize()} primary component",
             }]
-        }
-        save_yaml(comp, os.path.join(target_dir, "components.yaml"))
+        }, os.path.join(target_dir, "components.yaml"))
 
-        assess = {
-            "assessment": {
-                "rule_sets": ["owasp-top10-2021", "python-secure-coding"],
-                "frequency": "trigger"
+        save_yaml({
+            "technologies": [{
+                "component_id": component_id,
+                "language": "python",
+                "runtime": "",
+                "framework": "fastapi",
+                "package_managers": [],
+                "libraries": [],
+                "database": "",
+                "rule_set_ids": ["python-secure-coding", "owasp-top10-2021"],
+            }]
+        }, os.path.join(target_dir, "technologies.yaml"))
+
+        save_yaml({
+            "architecture": {
+                "project_id": project_id,
+                "style": "",
+                "gateway": "",
+                "authentication": "",
+                "authorization": "",
+                "communication": "",
+                "database": "",
+                "cache": "",
+                "queue": "",
+                "storage": "",
+                "external_services": [],
             }
-        }
-        save_yaml(assess, os.path.join(target_dir, "assessment.yaml"))
+        }, os.path.join(target_dir, "architecture.yaml"))
+
+        save_yaml({
+            "scope": {
+                "project_id": project_id,
+                "component_ids": [component_id],
+                "include": ["src", "app"],
+                "exclude": [
+                    "node_modules", "dist", "build", "coverage",
+                    ".git", ".vscode", ".github", ".agents",
+                ],
+                "review_level": "source_code",
+            }
+        }, os.path.join(target_dir, "scope.yaml"))
+
+        save_yaml({
+            "context": {
+                "project_id": project_id,
+                "business": {
+                    "industry": "",
+                    "description": "",
+                },
+                "security": {
+                    "internet_facing": false,
+                    "contains_pii": false,
+                    "data_classification": "internal",
+                },
+                "deployment": {
+                    "environment": "",
+                },
+                "compliance": [],
+                "risk_tier": "medium",
+            }
+        }, os.path.join(target_dir, "context.yaml"))
+
+        save_yaml({
+            "assessment": {
+                "project_id": project_id,
+                "standards": ["OWASP Top 10 2021"],
+                "security_domains": [],
+                "rule_set_ids": ["owasp-top10-2021", "python-secure-coding"],
+                "tools_enabled": {
+                    "sast": True,
+                    "sca": True,
+                    "secrets": True,
+                    "iac": False,
+                    "dast": False,
+                },
+                "severity_threshold": "low",
+                "ai": {
+                    "enabled": False,
+                    "focus_domains": [],
+                },
+                "output": {
+                    "formats": ["markdown", "json"],
+                },
+            }
+        }, os.path.join(target_dir, "assessment.yaml"))
 
     def get_git_commit_sha(self, repo_path):
         """Retrieve current commit SHA from a local git repository."""
