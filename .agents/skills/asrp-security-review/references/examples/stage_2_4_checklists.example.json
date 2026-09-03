@@ -1,0 +1,50 @@
+{
+  "stage_id": "2.4",
+  "layer_module_ref": "Review Checklists",
+  "run_id": "run-20260731_145000",
+  "project_id": "cleverdent",
+  "evaluated_at": "2026-07-31T14:50:00Z",
+  "summary": {
+    "total_checks": 3,
+    "passed": 2,
+    "failed": 1,
+    "warnings": 0
+  },
+  "results": [
+    {
+      "item_id": "CHK-AUTH-004",
+      "status": "FAIL",
+      "component_id": "dent-api-nestjs",
+      "title": "No hardcoded secrets in authentication configuration",
+      "rule_id": "ASRP-SEC-001",
+      "review_checklist_ref": "CHK-AUTH-004",
+      "evidence": {
+        "file_path": "apps/dent-login/src/config/clients/client-credentials.ts",
+        "start_line": 8,
+        "code_snippet": "client_secret: 'w564rRzEjS3EjPMKAYKpXRoFqa+CEObJy79aCK6SlUQig3uZhoii3A==',",
+        "message": "Checklist item CHK-AUTH-004 failed — hardcoded client secret"
+      },
+      "standard_mappings": {
+        "cwe": ["CWE-798"],
+        "owasp_top10_2021": ["A07:2021-Identification and Authentication Failures"],
+        "asvs_v4": ["V2.10.3"]
+      },
+      "remediation": {
+        "summary": "Load secrets from ConfigService or environment variables",
+        "patch_ref": "REM-SEC-001"
+      }
+    },
+    {
+      "item_id": "CHK-INJ-001",
+      "status": "PASS",
+      "component_id": "dent-api-nestjs",
+      "title": "SQL injection prevention — parameterized queries"
+    },
+    {
+      "item_id": "CHK-SEC-001",
+      "status": "PASS",
+      "component_id": "dent-api-nestjs",
+      "title": "No production secrets in version control"
+    }
+  ]
+}

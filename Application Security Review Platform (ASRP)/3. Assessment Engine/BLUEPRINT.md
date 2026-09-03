@@ -34,7 +34,9 @@
 ├── 3.4 Rule Evaluation/                # Rule Resolver & Tool Orchestrator
 │   └── rule_resolver.py                # Core Rule Resolver CLI Tool
 ├── 3.5 AI Reviewer/                    # Business Logic & Auth Flow LLM Agent
-├── 3.6 Findings/                       # Findings Normalizer & Schema
+├── 3.6 Findings/                       # Findings Normalizer, Scan Validator & Schema
+│   ├── findings_normalizer.py
+│   └── scan_validator.py               # Step 2 DoD enforcement
 ├── 3.7 Risk Assessment/                # Risk scoring & Business Impact
 └── 3.8 Report Generator/               # Reporting data preparer
 ```
@@ -77,3 +79,56 @@ Tệp `resolved-rules.json` được sinh tại `1. Projects Registry/{project_i
   "rules": [ ... ]
 }
 ```
+
+**Bổ sung (2026-09):** `scan_scope` block (include/exclude, per-component clone paths) và `component_id` trên từng rule khi resolve per-component.
+
+---
+
+## 5. Scan Context Contract (`scan_context.json`)
+
+AI pre-flight artifact sinh cùng run folder:
+
+```json
+{
+  "project_id": "cleverdent",
+  "run_id": "run-...",
+  "manifest_hash": "sha256:...",
+  "components": [{ "id", "scan_paths", "exclude_paths", "clone_path" }],
+  "technologies": [{ "component_id", "language", "framework", "rule_set_ids" }],
+  "context": { "risk_tier", "business", "compliance", "data_classification" },
+  "assessment": { "standards", "security_domains", "tools_enabled", "ai", "severity_threshold" },
+  "resolved_rules_by_component": { "dent-api-nestjs": ["ASRP-SEC-001"] },
+  "resolved_rule_count": 15
+}
+```
+
+---
+
+## 6. Rule Set Filtering
+
+`rule_resolver.py` lọc rules từ `index.yaml` theo:
+
+- Union `assessment.rule_set_ids` + per-component `technologies[].rule_set_ids`
+- Alias expansion qua `2.3 Rule Library/mappings/rule-set-map.yaml`
+- Framework normalization (`nestjs (v9.4.3) / express` → `{nestjs, express}`)
+- `tools_enabled` gates
+
+---
+
+## 7. Scanner Orchestrator — Clone-Based Scanning
+
+`scanner_orchestrator.py` quét clone root `clones/{project_id}/{component_id}/` (một lần per component). Raw outputs: `raw_outputs/{component_id}/{engine}_raw.json`. Respects `assessment.tools_enabled`. Default: empty `_meta` placeholder khi native tool không có; `--allow-emulated` cho dev/demo. `execution_summary.json` báo `emulated_by_engine`, `tools_enabled`, `allow_emulated`.
+
+---
+
+## 8. Scan Validator (Step 2 DoD)
+
+`scan_validator.py` — invoked via `python asrp.py validate --stage scan --run-id {run_id}` (`--strict` for CI).
+
+**Checks:** 12 stage files + findings.json schema; summary integrity; anti copy-paste; forbid `FND-*` item_ids; consolidation completeness; `manifest_hash` freshness vs `registry.manifest.yaml`; emulated-only raw outputs when `tools_enabled` (warning default, error with `--strict`).
+
+**Findings normalizer:** merge mode — append raw hits to AI `findings.json`, dedupe by rule_id+location, filter by `severity_threshold`, emit `components_summary`.
+
+**Stage overlap semantics:** Cùng vulnerability được phép FAIL ở nhiều stage với catalog `item_id` khác nhau; dedupe chỉ ở `findings.json`. Copy-paste toàn bộ `results[]` sang nhiều stage → FAIL.
+
+---

@@ -9,7 +9,7 @@ Base path prefix: `Application Security Review Platform (ASRP)/`
 | `acquire [project_id]` | 0 | Project folder exists or bootstrap from `1.1 Template/` | `clones/{project_id}/{component_id}/`, `runs/{run_id}/acquisition.json` |
 | `profile [project_id]` | 1 | Clones exist for target component(s) | 7 schema-valid profile YAMLs; `lifecycle_status: profiled` |
 | `validate [project_id]` | Gate | `--stage profile` pass | `--sign-off` → manifest + `lifecycle_status: validated` |
-| `scan [project_id]` | 2 | Validate gate PASS | `stage_outputs/*.json`, `findings.json` |
+| `scan [project_id]` | 2 | Validate gate PASS | `stage_outputs/*.json`, `findings.json`, `scan_context.json` |
 | `report [project_id]` | 3 | `findings.json` exists for run | `risk_assessment.json`, `security_review_report*.html` |
 | `review [project_id]` | 0→3 | — | Full pipeline outputs |
 
@@ -18,9 +18,10 @@ Base path prefix: `Application Security Review Platform (ASRP)/`
 | Flag | Applies to | Description |
 |------|------------|-------------|
 | `--component {id}` | profile, scan, report | Limit to one `component_id` from `components.yaml` |
-| `--run-id {id}` | scan, report | Use specific run folder; default latest for report |
+| `--run-id {id}` | scan, report, validate | Use specific run folder |
 | `--source {url\|path}` | acquire | Override clone source when not in profile |
-| `--stage profile\|gate` | validate | `profile` = Step 1 DoD; `gate` = pre-scan (default) |
+| `--stage profile\|gate\|scan` | validate | `profile` = Step 1; `gate` = pre-scan (default); `scan` = Step 2 DoD |
+| `--strict` | validate (--stage scan) | Fail on stale `manifest_hash` or emulated-only raw outputs |
 | `--sign-off --by {name}` | validate | Human gate: write manifest + sync lifecycle |
 | `execution_mode: interactive` | all | One phase per turn + `## Checkpoint` |
 
@@ -32,6 +33,10 @@ Base path prefix: `Application Security Review Platform (ASRP)/`
 | validate (Step 1) | `python asrp.py validate --project {id} --stage profile` |
 | validate (sign-off) | `python asrp.py validate --project {id} --sign-off --by "Security Lead"` |
 | validate (gate) | `python asrp.py validate --project {id}` |
+| validate (Step 2) | `python asrp.py validate --project {id} --stage scan --run-id {run_id} [--strict]` |
+| scanner | `python scanner_orchestrator.py --project {id} --run-id {run_id} [--allow-emulated]` |
+| findings merge | `python findings_normalizer.py --project {id} --run-id {run_id}` |
+| rule resolver | `python rule_resolver.py --project {id}` → `resolved-rules.json`, `scan_context.json` |
 | report (risk + HTML) | `risk_assessor.py` + `report_generator.py` via workspace root |
 | full pipeline shortcut | **Forbidden as sole audit** — `python asrp.py scan` alone |
 

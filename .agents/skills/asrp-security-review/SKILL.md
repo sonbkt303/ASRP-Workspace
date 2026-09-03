@@ -102,9 +102,14 @@ Phased: **2A** pre-flight → **2B** per-component audit → **2C** 12 stage JSO
 
 Details: [`references/step-2-scan.md`](references/step-2-scan.md)
 
+**Step 2 validation (mandatory DoD):**
+```bash
+python asrp.py validate --project {project_id} --stage scan --run-id {run_id}
+```
+
 Schemas: [`stage-output.schema.json`](references/stage-output.schema.json), [`findings.schema.json`](references/findings.schema.json)
 
-**DoD:** 12/12 stage files; findings with 100% non-PASS coverage. **Abort if:** validate gate fails.
+**DoD:** 12/12 stage files; findings with 100% non-PASS coverage; scan validation PASS. **Abort if:** validate gate fails or scan validation fails (copy-paste stages, `FND-*` item_ids in stages).
 
 ## Step 3 — Risk & Report (Layer 3.7 & 5)
 

@@ -1,0 +1,30 @@
+# Rule set alias map — expands Layer 1 profile rule_set_ids to Layer 2 index rule_set_ids
+rule_set_map:
+  version: "1.0"
+  description: >
+    Maps assessment/technology rule_set_ids to executable rule library rule_set_ids.
+    Used by rule_resolver.py to filter index.yaml entries.
+
+  aliases:
+    nodejs-secure-coding:
+      - multi-lang-secure-coding
+      - secrets-basic
+    typescript-secure-coding:
+      - multi-lang-secure-coding
+      - secrets-basic
+    react-xss-prevention:
+      - multi-lang-secure-coding
+    docker-k8s-container-hardening:
+      - container-security
+      - k8s-security
+      - iac-security
+    owasp-top10-2021:
+      - owasp-top10-2021
+    owasp-api-security-top10:
+      - api-security
+      - owasp-top10-2021
+    owasp-asvs-v4:
+      - owasp-top10-2021
+    cwe-top25-weaknesses:
+      - multi-lang-secure-coding
+      - owasp-top10-2021

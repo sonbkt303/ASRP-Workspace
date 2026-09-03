@@ -4,43 +4,43 @@
   "normalized_at": "2026-07-31T15:30:00Z",
   "total_findings": 1,
   "severity_summary": {
-    "CRITICAL": 0,
-    "HIGH": 1,
+    "CRITICAL": 1,
+    "HIGH": 0,
     "MEDIUM": 0,
     "LOW": 0,
     "INFO": 0
   },
   "findings": [
     {
-      "finding_id": "FIND-cleverdent-001",
-      "rule_id": "ASRP-INJ-001",
-      "title": "SQL Injection via string concatenation",
+      "finding_id": "FND-001",
+      "rule_id": "ASRP-SEC-001",
+      "title": "Hardcoded OIDC client secrets in source code",
       "engine": "ai_reviewer",
-      "category": "injection",
-      "severity": "HIGH",
+      "category": "secrets",
+      "severity": "CRITICAL",
       "component_id": "dent-api-nestjs",
-      "security_domain": "input_validation",
-      "review_checklist_ref": "CHK-INJ-001",
-      "remediation_ref": "REM-INJ-001",
-      "stage_refs": ["2.1", "2.2", "2.3", "2.4", "2.10"],
-      "stage_item_ids": ["ASRP-INJ-001", "CHK-INJ-001"],
+      "security_domain": "secrets_management",
+      "review_checklist_ref": "CHK-AUTH-004",
+      "remediation_ref": "REM-SEC-001",
+      "stage_refs": ["2.1", "2.2", "2.3", "2.4"],
+      "stage_item_ids": ["V2.10.3", "secrets_management", "ASRP-SEC-001", "CHK-AUTH-004"],
       "location": {
-        "file_path": "src/modules/users/users.service.ts",
-        "start_line": 42,
-        "end_line": 44,
+        "file_path": "apps/dent-login/src/config/clients/client-credentials.ts",
+        "start_line": 8,
+        "end_line": 8,
         "commit_sha": "head"
       },
       "evidence": {
-        "code_snippet": "const query = `SELECT * FROM users WHERE id = ${userId}`;",
-        "message": "User input interpolated into SQL query without parameterization"
+        "code_snippet": "client_secret: 'w564rRzEjS3EjPMKAYKpXRoFqa+CEObJy79aCK6SlUQig3uZhoii3A==',",
+        "message": "Multiple OIDC client secrets hardcoded in client config files"
       },
       "standard_mapping": {
-        "cwe": ["CWE-89"],
-        "owasp_top10_2021": ["A03:2021-Injection"],
-        "asvs_v4": ["V5.3.4"]
+        "cwe": ["CWE-798"],
+        "owasp_top10_2021": ["A07:2021-Identification and Authentication Failures"],
+        "asvs_v4": ["V2.10.3"]
       },
       "remediation": {
-        "summary": "Use parameterized queries or ORM safe APIs"
+        "summary": "Move client secrets to environment variables or a secrets manager; rotate all exposed credentials"
       }
     }
   ]

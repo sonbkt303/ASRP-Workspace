@@ -1,0 +1,50 @@
+{
+  "stage_id": "2.1",
+  "layer_module_ref": "Security Standards",
+  "run_id": "run-20260731_145000",
+  "project_id": "cleverdent",
+  "evaluated_at": "2026-07-31T14:50:00Z",
+  "summary": {
+    "total_checks": 3,
+    "passed": 2,
+    "failed": 1,
+    "warnings": 0
+  },
+  "results": [
+    {
+      "item_id": "V2.10.3",
+      "status": "FAIL",
+      "component_id": "dent-api-nestjs",
+      "title": "ASVS V2.10.3 — Credential storage",
+      "rule_id": "ASRP-SEC-001",
+      "review_checklist_ref": "CHK-AUTH-004",
+      "evidence": {
+        "file_path": "apps/dent-login/src/config/clients/client-credentials.ts",
+        "start_line": 8,
+        "code_snippet": "client_secret: 'w564rRzEjS3EjPMKAYKpXRoFqa+CEObJy79aCK6SlUQig3uZhoii3A==',",
+        "message": "Hardcoded OIDC client secret violates ASVS credential storage requirements"
+      },
+      "standard_mappings": {
+        "cwe": ["CWE-798"],
+        "owasp_top10_2021": ["A07:2021-Identification and Authentication Failures"],
+        "asvs_v4": ["V2.10.3"]
+      },
+      "remediation": {
+        "summary": "Move client secrets to environment variables or secrets manager",
+        "patch_ref": "REM-SEC-001"
+      }
+    },
+    {
+      "item_id": "V5.3.4",
+      "status": "PASS",
+      "component_id": "dent-api-nestjs",
+      "title": "ASVS V5.3.4 — Parameterized database queries"
+    },
+    {
+      "item_id": "A07:2021",
+      "status": "PASS",
+      "component_id": "dent-api-nestjs",
+      "title": "OWASP A07 — Authentication controls baseline"
+    }
+  ]
+}

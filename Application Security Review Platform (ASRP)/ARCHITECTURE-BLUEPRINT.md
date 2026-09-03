@@ -196,10 +196,14 @@ flowchart TB
 | `3.3 Evidence Collection` | Lưu file:line, snippet, tool raw output, hash |
 | `3.4 Rule Evaluation` | Chạy rules đã chọn theo assessment lens |
 | `3.5 AI Reviewer` | Review logic flaws, auth flow, business logic gaps |
-| `3.6 Findings` | Chuẩn hóa kết quả: severity, CWE, standard mapping, status |
+| `3.6 Findings` | Chuẩn hóa kết quả; **`scan_validator.py`** enforce Step 2 DoD |
 | `3.7 Risk Assessment` | Scoring, prioritization, business impact |
 | `3.8 Report Generator` | Sinh báo cáo từ findings + evidence |
 | `3.9 Re-Verification` | Scan lại sau remediation, so sánh delta |
+
+**Step 2 artifacts (2026-09):** `scan_context.json` (AI pre-flight), `resolved-rules.json` (rule_set filtering + scan_scope), `stage_outputs/` (12 catalog-driven stage JSON), `findings.json` (deduplicated). Validation: `asrp.py validate --stage scan --run-id {id}`. Stage overlap: cùng vuln có thể map qua nhiều stage với catalog `item_id` khác nhau; copy-paste `results[]` → FAIL.
+
+**Detail:** [3. Assessment Engine/BLUEPRINT.md](3.%20Assessment%20Engine/BLUEPRINT.md) §5–8.
 
 **Workspace buckets (`3.2`):**
 

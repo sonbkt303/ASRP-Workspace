@@ -70,6 +70,12 @@ Emit the appropriate summary table at the end of each step.
 
 **Findings:** runs/{run_id}/findings.json
 **Stage coverage:** {non_pass_mapped}/{non_pass_total} non-PASS items consolidated
+**Scan validation:** pass / FAIL (`asrp.py validate --stage scan --run-id {run_id}`)
+**Profile freshness:** pass / stale (manifest_hash match)
+**Raw scan evidence:** native / emulated / empty
+**Unique findings:** {n}
+**Copy-paste check:** pass / FAIL
+**Cross-stage mappings:** {n} findings mapped across multiple stages
 ```
 
 ## Step 3 — Report

@@ -38,6 +38,7 @@ try:
     from risk_assessor import RiskAssessor
     from report_generator import ReportGenerator
     from profile_validator import validate_project, sign_off_project
+    from scan_validator import validate_scan
 except ImportError as e:
     print(f"[!] Critical Import Error: {e}")
     sys.exit(1)
@@ -119,12 +120,17 @@ def cmd_acquire(args):
 
 
 def cmd_validate(args):
-    """Validate Layer 1 Project Profile (profile stage) or Manifest Gate (gate stage)."""
+    """Validate Layer 1 profile/gate or Step 2 scan outputs."""
     if args.sign_off:
         if not args.by:
             print("[X] FAIL: --sign-off requires --by \"Name or Role\"")
             sys.exit(1)
         sign_off_project(asrp_dir, args.project, args.by, exit_on_fail=True)
+    elif args.stage == "scan":
+        if not args.run_id:
+            print("[X] FAIL: --stage scan requires --run-id {run_id}")
+            sys.exit(1)
+        validate_scan(asrp_dir, args.project, args.run_id, exit_on_fail=True, strict=getattr(args, "strict", False))
     else:
         validate_project(asrp_dir, args.project, stage=args.stage, exit_on_fail=True)
 
@@ -220,6 +226,7 @@ def main():
                "  python asrp.py validate --project cleverdent\n"
                "  python asrp.py validate --project cleverdent --stage profile\n"
                "  python asrp.py validate --project cleverdent --sign-off --by \"Security Lead\"\n"
+               "  python asrp.py validate --project cleverdent --stage scan --run-id run-20260903_103000\n"
                "  python asrp.py rules list\n"
                "  python asrp.py coverage --standard asvs-v4\n"
                "  python asrp.py status --project cleverdent\n"
@@ -248,9 +255,14 @@ def main():
     parser_val.add_argument("--project", default="cleverdent", help="Target project ID")
     parser_val.add_argument(
         "--stage",
-        choices=["profile", "gate"],
+        choices=["profile", "gate", "scan"],
         default="gate",
-        help="profile = Step 1 DoD (7 YAMLs, lifecycle profiled); gate = pre-scan human gate (default)",
+        help="profile = Step 1 DoD; gate = pre-scan human gate (default); scan = Step 2 DoD",
+    )
+    parser_val.add_argument(
+        "--run-id",
+        default=None,
+        help="Run ID (required when --stage scan)",
     )
     parser_val.add_argument(
         "--sign-off",
@@ -261,6 +273,11 @@ def main():
         "--by",
         default=None,
         help="Sign-off author name/role (required with --sign-off)",
+    )
+    parser_val.add_argument(
+        "--strict",
+        action="store_true",
+        help="Strict scan validation: fail on stale profile_hash or emulated-only raw outputs",
     )
     parser_val.set_defaults(func=cmd_validate)
 

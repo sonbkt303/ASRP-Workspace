@@ -38,6 +38,7 @@ Layer 3 là **Motor thực thi tiếp theo** biến "Profile + Rules" thành "Fi
 | D3 | **Scanner Orchestrator** | Gọi Semgrep/Gitleaks/Trivy/Checkov chạy theo `resolved-rules.json` | `resolved-rules.json` |
 | D4 | **Findings Normalizer** | Chuẩn hóa JSON raw output của scanner về schema ASRP Findings | Raw tool outputs |
 | D5 | **`ASSESSMENT-ENGINE-BLUEPRINT.md`** | Bản thiết kế colocated tại `3. Assessment Engine/BLUEPRINT.md` | ARCHITECTURE-BLUEPRINT.md |
+| D6 | **Scan Validator** | `scan_validator.py` + `asrp.py validate --stage scan` — Step 2 DoD enforcement | `stage_outputs/`, `findings.json` |
 
 ---
 
@@ -75,5 +76,7 @@ flowchart LR
 
 | Date | Change |
 |------|--------|
+| 2026-09-03 | Step 2 improvements: scan_validator, scan_context.json, rule_set filtering, clone-based scanner, stage overlap contract |
+| 2026-09-03 | Step 2 P0/P1: extended scan_context (technologies, business, tools_enabled), scanner tools_enabled + honest raw outputs, findings merge/dedupe, validate --strict |
 | 2026-07-24 | Layer 2 completed (19 Rules, 6 Engines, Multi-Lang Spec). Handoff to Layer 3 Assessment Engine. |
 | 2026-07-22 | Initial handoff from Layer 1 → Layer 2 |
