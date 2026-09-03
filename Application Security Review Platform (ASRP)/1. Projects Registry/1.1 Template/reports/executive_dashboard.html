@@ -366,14 +366,29 @@ body::after {
         <div class="stage-pill" id="pill-2.4" onclick="filterStage('2.4')">
           ✅ 2.4 Checklists <span class="stage-pill-count">{{STAGE_2_4_COUNT}}</span>
         </div>
+        <div class="stage-pill" id="pill-2.5" onclick="filterStage('2.5')">
+          📖 2.5 Playbooks <span class="stage-pill-count">{{STAGE_2_5_COUNT}}</span>
+        </div>
         <div class="stage-pill" id="pill-2.6" onclick="filterStage('2.6')">
           ⚔️ 2.6 Threats <span class="stage-pill-count">{{STAGE_2_6_COUNT}}</span>
         </div>
         <div class="stage-pill" id="pill-2.7" onclick="filterStage('2.7')">
           📘 2.7 Guidelines <span class="stage-pill-count">{{STAGE_2_7_COUNT}}</span>
         </div>
+        <div class="stage-pill" id="pill-2.8" onclick="filterStage('2.8')">
+          ⭐ 2.8 Best Practices <span class="stage-pill-count">{{STAGE_2_8_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.9" onclick="filterStage('2.9')">
+          🎯 2.9 Attack Patterns <span class="stage-pill-count">{{STAGE_2_9_COUNT}}</span>
+        </div>
         <div class="stage-pill" id="pill-2.10" onclick="filterStage('2.10')">
           🔧 2.10 Remediation <span class="stage-pill-count">{{STAGE_2_10_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.11" onclick="filterStage('2.11')">
+          📚 2.11 Case Studies <span class="stage-pill-count">{{STAGE_2_11_COUNT}}</span>
+        </div>
+        <div class="stage-pill" id="pill-2.12" onclick="filterStage('2.12')">
+          📝 2.12 Decision Logs <span class="stage-pill-count">{{STAGE_2_12_COUNT}}</span>
         </div>
       </div>
     </div>
@@ -415,40 +430,7 @@ body::after {
       </div>
 
       <!-- Phase 1 -->
-      <div class="phase-header"><span class="phase-badge ph-1">Phase 1 · 24-48h</span> IMMEDIATE</div>
-      <!-- {{#EACH sla.phase_1}} -->
-      <div class="sla-row">
-        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
-        <span class="sla-title">{{item.title}} ({{item.component_id}})</span>
-        <span class="sla-phase-label">🚨 24-48h</span>
-        <span class="sla-effort">{{item.effort}}</span>
-        <span class="sla-team">{{item.team}}</span>
-      </div>
-      <!-- {{/EACH}} -->
-
-      <!-- Phase 2 -->
-      <div class="phase-header"><span class="phase-badge ph-2">Phase 2 · 7 Days</span> SHORT-TERM</div>
-      <!-- {{#EACH sla.phase_2}} -->
-      <div class="sla-row">
-        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
-        <span class="sla-title">{{item.title}}</span>
-        <span class="sla-phase-label">⚡ 7 days</span>
-        <span class="sla-effort">{{item.effort}}</span>
-        <span class="sla-team">{{item.team}}</span>
-      </div>
-      <!-- {{/EACH}} -->
-
-      <!-- Phase 3 -->
-      <div class="phase-header"><span class="phase-badge ph-3">Phase 3 · 30 Days</span> MAINTENANCE</div>
-      <!-- {{#EACH sla.phase_3}} -->
-      <div class="sla-row">
-        <span class="finding-sev sev-{{item.severity_class}}">{{item.severity}}</span>
-        <span class="sla-title">{{item.title}}</span>
-        <span class="sla-phase-label">🔧 30 days</span>
-        <span class="sla-effort">{{item.effort}}</span>
-        <span class="sla-team">{{item.team}}</span>
-      </div>
-      <!-- {{/EACH}} -->
+      {{SLA_ROADMAP_HTML}}
 
     </div><!-- /sla-table -->
   </div>
@@ -484,7 +466,7 @@ body::after {
     cards.forEach(card => {
       const stages   = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
       const comp     = card.getAttribute('data-comp') || '';
-      const stageOk  = (currentStage === 'all') ? stages.includes('all') : stages.includes(currentStage);
+      const stageOk  = (currentStage === 'all') || stages.includes(currentStage);
       const compOk   = currentComp  === 'all' || comp === currentComp;
       if (stageOk && compOk) { card.classList.remove('hidden'); visible++; }
       else { card.classList.add('hidden'); }

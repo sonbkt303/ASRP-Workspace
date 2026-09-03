@@ -354,16 +354,42 @@ class FindingsNormalizer:
 
         return list(merged.values())
 
+    def _load_technology_map(self) -> dict[str, str]:
+        tech_path = os.path.join(self.project_dir, "technologies.yaml")
+        raw = load_yaml(tech_path) if os.path.exists(tech_path) else {}
+        mapping = {}
+        for entry in (raw or {}).get("technologies", []) if isinstance(raw, dict) else []:
+            if not isinstance(entry, dict):
+                continue
+            cid = entry.get("component_id")
+            if not cid:
+                continue
+            lang = entry.get("language", "")
+            fw = entry.get("framework", "")
+            mapping[cid] = f"{lang} / {fw}".strip(" /") or "Source Sub-repository"
+        return mapping
+
     def build_components_summary(self, findings: list) -> dict:
+        tech_map = self._load_technology_map()
         summary = {}
         for f in findings:
             cid = f.get("component_id") or "unknown"
             sev = str(f.get("severity", "MEDIUM")).upper()
             bucket = summary.setdefault(
                 cid,
-                {"total": 0, "critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0},
+                {
+                    "total": 0,
+                    "findings_count": 0,
+                    "critical": 0,
+                    "high": 0,
+                    "medium": 0,
+                    "low": 0,
+                    "info": 0,
+                    "tech_stack": tech_map.get(cid, "Source Sub-repository"),
+                },
             )
             bucket["total"] += 1
+            bucket["findings_count"] = bucket["total"]
             key = sev.lower() if sev.lower() in bucket else "medium"
             if key in bucket:
                 bucket[key] += 1

@@ -39,6 +39,7 @@ try:
     from report_generator import ReportGenerator
     from profile_validator import validate_project, sign_off_project
     from scan_validator import validate_scan
+    from report_validator import validate_report
 except ImportError as e:
     print(f"[!] Critical Import Error: {e}")
     sys.exit(1)
@@ -108,6 +109,65 @@ def cmd_scan(args):
     print(f"=======================================================\n")
 
 
+def _resolve_run_id(project_id, run_id=None):
+    """Return explicit run_id or latest run folder containing findings.json."""
+    runs_dir = os.path.join(asrp_dir, "1. Projects Registry", project_id, "runs")
+    if run_id:
+        return run_id
+    if not os.path.exists(runs_dir):
+        print(f"[X] FAIL: No runs directory for project '{project_id}'")
+        sys.exit(1)
+    candidates = sorted(
+        [f for f in os.listdir(runs_dir) if f.startswith("run-")],
+        reverse=True,
+    )
+    for folder in candidates:
+        if os.path.exists(os.path.join(runs_dir, folder, "findings.json")):
+            return folder
+    if candidates:
+        return candidates[0]
+    print(f"[X] FAIL: No run folders under {runs_dir}")
+    sys.exit(1)
+
+
+def cmd_report(args):
+    """Run Step 3: normalizer → risk assessor → report generator → validate."""
+    project_id = args.project
+    run_id = _resolve_run_id(project_id, args.run_id)
+
+    findings_path = os.path.join(
+        asrp_dir, "1. Projects Registry", project_id, "runs", run_id, "findings.json"
+    )
+    if not os.path.exists(findings_path):
+        print(f"[X] FAIL: findings.json missing for run '{run_id}'. Complete Step 2 first.")
+        sys.exit(1)
+
+    if not getattr(args, "skip_scan_validate", False):
+        print("👉 [Gate] Validating Step 2 scan outputs...")
+        validate_scan(asrp_dir, project_id, run_id, exit_on_fail=True)
+
+    print(f"\n👉 [Step 3] Report pipeline for {project_id} / {run_id}")
+    print("   [1/3] Findings normalizer (merge + components_summary)...")
+    FindingsNormalizer(script_dir, project_id=project_id, run_id=run_id).run()
+
+    print("   [2/3] Risk assessor...")
+    RiskAssessor(script_dir, project_id=project_id, run_id=run_id).run()
+
+    print("   [3/3] Report generator...")
+    ReportGenerator(script_dir, project_id=project_id, run_id=run_id).run()
+
+    print("👉 [DoD] Validating Step 3 report outputs...")
+    validate_report(asrp_dir, project_id, run_id, exit_on_fail=True)
+
+    run_dir = os.path.join(asrp_dir, "1. Projects Registry", project_id, "runs", run_id)
+    print(f"\n=======================================================")
+    print(f"🏆 STEP 3 REPORT COMPLETE")
+    print(f"📍 Run folder: {run_dir}")
+    print(f"   • HTML: {os.path.join(run_dir, 'security_review_report.html')}")
+    print(f"   • MD  : {os.path.join(run_dir, 'security_review_report.md')}")
+    print(f"=======================================================\n")
+
+
 def cmd_acquire(args):
     """Run standalone 3-step Source Acquisition Flow."""
     acquirer = SourceAcquisition(
@@ -131,6 +191,11 @@ def cmd_validate(args):
             print("[X] FAIL: --stage scan requires --run-id {run_id}")
             sys.exit(1)
         validate_scan(asrp_dir, args.project, args.run_id, exit_on_fail=True, strict=getattr(args, "strict", False))
+    elif args.stage == "report":
+        if not args.run_id:
+            print("[X] FAIL: --stage report requires --run-id {run_id}")
+            sys.exit(1)
+        validate_report(asrp_dir, args.project, args.run_id, exit_on_fail=True)
     else:
         validate_project(asrp_dir, args.project, stage=args.stage, exit_on_fail=True)
 
@@ -227,6 +292,8 @@ def main():
                "  python asrp.py validate --project cleverdent --stage profile\n"
                "  python asrp.py validate --project cleverdent --sign-off --by \"Security Lead\"\n"
                "  python asrp.py validate --project cleverdent --stage scan --run-id run-20260903_103000\n"
+               "  python asrp.py report --project cleverdent --run-id run-20260903_134200\n"
+               "  python asrp.py validate --project cleverdent --stage report --run-id run-20260903_134200\n"
                "  python asrp.py rules list\n"
                "  python asrp.py coverage --standard asvs-v4\n"
                "  python asrp.py status --project cleverdent\n"
@@ -255,14 +322,14 @@ def main():
     parser_val.add_argument("--project", default="cleverdent", help="Target project ID")
     parser_val.add_argument(
         "--stage",
-        choices=["profile", "gate", "scan"],
+        choices=["profile", "gate", "scan", "report"],
         default="gate",
-        help="profile = Step 1 DoD; gate = pre-scan human gate (default); scan = Step 2 DoD",
+        help="profile = Step 1; gate = pre-scan (default); scan = Step 2; report = Step 3 DoD",
     )
     parser_val.add_argument(
         "--run-id",
         default=None,
-        help="Run ID (required when --stage scan)",
+        help="Run ID (required when --stage scan or report)",
     )
     parser_val.add_argument(
         "--sign-off",
@@ -296,6 +363,17 @@ def main():
     parser_status = subparsers.add_parser("status", help="Show project audit status and latest run summary")
     parser_status.add_argument("--project", default="cleverdent", help="Target project ID")
     parser_status.set_defaults(func=cmd_status)
+
+    # Command: report
+    parser_report = subparsers.add_parser("report", help="Run Step 3 report pipeline (normalizer → risk → HTML/MD)")
+    parser_report.add_argument("--project", default="cleverdent", help="Target project ID")
+    parser_report.add_argument("--run-id", default=None, help="Target run ID (defaults to latest with findings.json)")
+    parser_report.add_argument(
+        "--skip-scan-validate",
+        action="store_true",
+        help="Skip Step 2 scan validation pre-check",
+    )
+    parser_report.set_defaults(func=cmd_report)
 
     args = parser.parse_args()
 

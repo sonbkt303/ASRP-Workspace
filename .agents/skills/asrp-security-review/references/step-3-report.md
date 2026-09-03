@@ -8,24 +8,31 @@ Calculate risk metrics and generate HTML/MD security reports from scan outputs.
 |----------|------|
 | Run directory | `1. Projects Registry/{project_id}/runs/{run_id}/` |
 | Findings | `runs/{run_id}/findings.json` |
-| Stage outputs | `runs/{run_id}/stage_outputs/*.json` |
+| Stage outputs | `runs/{run_id}/stage_outputs/*.json` (reference; unified view uses `findings[].stage_refs`) |
 | Risk output | `runs/{run_id}/risk_assessment.json` |
 | HTML templates | `1. Projects Registry/1.1 Template/reports/` |
-| Template docs | `1.1 Template/reports/README.md` |
+
+## CLI (preferred)
+
+```bash
+python asrp.py report --project {project_id} --run-id {run_id}
+python asrp.py validate --project {project_id} --stage report --run-id {run_id}
+```
+
+Pipeline: `findings_normalizer.py` → `risk_assessor.py` → `report_generator.py` → report validation.
+
+Pre-check: Step 2 `validate --stage scan` (skip with `--skip-scan-validate` on `asrp.py report`).
 
 ## Inputs
 
-1. `findings.json` (from Step 2)
-2. All `stage_outputs/*.json` (12 files)
-3. Layer 1 context: `context.yaml`, `project.yaml`, `architecture.yaml`, `components.yaml`
+1. `findings.json` (from Step 2; enriched with `components_summary` after normalizer + risk assessor)
+2. Layer 1: `context.yaml`, `project.yaml`, `technologies.yaml`, `components.yaml`
 
 ## Procedure
 
 ### 1. Risk assessment (Layer 3.7)
 
-Prefer deterministic CLI: `risk_assessor.py` from workspace root with `--project` and `--run-id`.
-
-**Health score (0–100):** Start at 100, deduct by severity:
+`risk_assessor.py` uses shared `risk_scoring.py`:
 
 | Severity | Deduction |
 |----------|-----------|
@@ -34,73 +41,34 @@ Prefer deterministic CLI: `risk_assessor.py` from workspace root with `--project
 | MEDIUM | -5 |
 | LOW | -2 |
 
-**Grade assignment:**
+Risk tier multiplier: critical 1.3, high 1.2, medium 1.0, low 0.8.
 
-| Grade | Score | Status |
-|-------|-------|--------|
-| A | 90–100 | Pass |
-| B | 80–89 | Pass |
-| C | 70–79 | Conditional |
-| D | 50–69 | Action Required |
-| F | < 50 | Fail / Critical Risk |
+**Grades:** A 90–100, B 80–89, C 70–79, D 50–69, F <50.
 
-**Gate status:** `PASSED` or `ACTION REQUIRED`.
-
-**SLA remediation roadmap:**
-
-- **Phase 1 (24–48h):** Critical & High — secrets, RCE, injection
-- **Phase 2 (7d):** High — access control, dependency flaws
-- **Phase 3 (30d):** Medium — misconfigurations
-
-Save to `runs/{run_id}/risk_assessment.json`.
+Outputs: `risk_assessment.json` (project + `component_scores`); syncs `findings.json` `components_summary`.
 
 ### 2. Report generation (Layer 5)
 
-Prefer `report_generator.py` from workspace root. **NO INLINE HTML** — read templates from disk and perform placeholder replacement only.
+`report_generator.py` — template placeholder replacement only.
 
-**Templates:**
-
-- `executive_dashboard.html` → project-wide dashboard
-- `component_report.html` → per-component detail
-
-**Outputs:**
-
-| Report | Path |
-|--------|------|
-| Executive dashboard | `security_review_report.html`, `security_review_report.md` |
-| Per component | `security_review_report_{component_id}.html`, `.md` |
+**Outputs:** executive + per-component `.html` / `.md`.
 
 ### 3. Interactive stage pills (all 12 modules)
 
-Reports MUST support click-to-filter for every Layer 2 stage:
-
-- 2.1 Security Standards
-- 2.2 Security Domains
-- 2.3 Rule Library
-- 2.4 Review Checklists
-- 2.5 Playbooks
-- 2.6 Threat Models
-- 2.7 Secure Coding Guidelines
-- 2.8 Best Practices
-- 2.9 Attack Patterns
-- 2.10 Remediation Guides
-- 2.11 Case Studies
-- 2.12 Decision Logs
-
-Filter pill counts MUST match findings tagged with each `stage_refs` value.
+Pill counts = findings with matching `stage_refs`. Cards use `data-stages="{space-separated stage_refs}"`.
 
 ## Definition of Done
 
-- [ ] `risk_assessment.json` exists with health score, grade, gate status, SLA phases
-- [ ] `security_review_report.html` and `.md` exist
-- [ ] Per-component reports exist for each entry in `components.yaml`
-- [ ] All reports use template files (no inline HTML scaffolding)
-- [ ] Executive summary table with clickable report links emitted
+- [ ] `risk_assessment.json` with project + per-component scores
+- [ ] `components_summary` has `health_score`, `grade`, `findings_count`, `tech_stack`
+- [ ] All report files exist; no unresolved `{{PLACEHOLDER}}` in HTML
+- [ ] `validate --stage report` PASS
 
 ## Abort if
 
-- `findings.json` missing for target `run_id`
-- Stage outputs missing (re-run Step 2 or specify complete run)
+- `findings.json` missing
+- Step 2 scan validation fails (unless `--skip-scan-validate`)
+- Report validation fails
 
 ## Summary
 

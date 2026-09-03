@@ -4,7 +4,7 @@ ASRP Report Generator Module (Layer 5)
 ======================================
 Generates standalone Executive HTML Dashboards and GitHub-Flavored Markdown
 Security Review Reports based on Layer 1 Profile, Layer 3 Findings, Layer 2 Stage Outputs, and Risk Assessment.
-Features interactive Stage Module filtering (2.1 to 2.10) for deep issue exploration.
+Features interactive Stage Module filtering (2.1 to 2.12) driven by findings.stage_refs.
 """
 
 import os
@@ -13,6 +13,10 @@ import json
 import yaml
 import argparse
 from datetime import datetime
+
+ALL_STAGE_IDS = [
+    "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8", "2.9", "2.10", "2.11", "2.12",
+]
 
 # Force UTF-8 encoding for Windows stdout
 if sys.platform == "win32":
@@ -108,6 +112,83 @@ class ReportGenerator:
             stages[key] = load_json(fpath)
         return stages
 
+    def _count_findings_by_stage(self, findings, stage_id, component_id=None):
+        """Count findings whose stage_refs include stage_id (Step 3 contract)."""
+        count = 0
+        for f in findings:
+            if component_id and f.get("component_id") != component_id:
+                continue
+            refs = f.get("stage_refs") or []
+            if stage_id in refs:
+                count += 1
+        return count
+
+    def _finding_stage_refs_attr(self, finding):
+        """Space-separated stage IDs for HTML data-stages filter attribute."""
+        refs = finding.get("stage_refs")
+        if refs:
+            return " ".join(str(s) for s in refs)
+        inferred = self._get_finding_stages(finding)
+        if inferred:
+            return inferred.replace(",", " ")
+        return "2.1"
+
+    def _finding_stage_refs_display(self, finding):
+        refs = finding.get("stage_refs")
+        if refs:
+            return " · ".join(str(s) for s in refs)
+        return " · ".join(self._get_finding_stages(finding).split(","))
+
+    @staticmethod
+    def _build_finding_component_map(findings):
+        return {f.get("finding_id"): f.get("component_id") for f in findings if f.get("finding_id")}
+
+    def _filter_roadmap_items(self, items, component_id=None, finding_map=None):
+        if not component_id:
+            return items
+        finding_map = finding_map or {}
+        filtered = []
+        for item in items:
+            fid = item.get("finding_id")
+            if finding_map.get(fid) == component_id:
+                filtered.append(item)
+        return filtered
+
+    def _build_executive_sla_html(self, roadmap, finding_map):
+        """Render SLA table rows for executive dashboard template."""
+        phases = [
+            ("phase_1_immediate", "ph-1", "Phase 1 · 24-48h", "IMMEDIATE", "🚨 24-48h"),
+            ("phase_2_shortterm", "ph-2", "Phase 2 · 7 Days", "SHORT-TERM", "⚡ 7 days"),
+            ("phase_3_maintenance", "ph-3", "Phase 3 · 30 Days", "MAINTENANCE", "🔧 30 days"),
+        ]
+        rows = []
+        for phase_key, badge_cls, phase_label, phase_title, sla_label in phases:
+            items = roadmap.get(phase_key, {}).get("items", [])
+            rows.append(
+                f'<div class="phase-header"><span class="phase-badge {badge_cls}">{phase_label}</span> {phase_title}</div>'
+            )
+            if not items:
+                rows.append(
+                    '<div class="sla-row"><span class="sla-title" style="grid-column:1/-1;color:var(--text-muted)">No items in this phase.</span></div>'
+                )
+                continue
+            for item in items:
+                sev = str(item.get("severity", "MEDIUM")).upper()
+                sev_class = sev.lower()
+                fid = item.get("finding_id", "")
+                cid = finding_map.get(fid, "")
+                title = item.get("title", "")
+                file_path = item.get("file", "")
+                rows.append(f'''
+      <div class="sla-row">
+        <span class="finding-sev sev-{sev_class}">{sev}</span>
+        <span class="sla-title">{title} ({cid}) · <span style="color:var(--text-muted)">{file_path}</span></span>
+        <span class="sla-phase-label">{sla_label}</span>
+        <span class="sla-effort">1d</span>
+        <span class="sla-team">DevSecOps</span>
+      </div>''')
+        return "\n".join(rows)
+
     def _count_stage_issues(self, stage_id, stages_data, component_id=None):
         """Count non-PASS items in a stage output JSON file for a specific component (or all components)."""
         stage_file_data = stages_data.get(stage_id) or {}
@@ -122,7 +203,11 @@ class ReportGenerator:
         return count
 
     def _get_finding_stages(self, finding, stages_data=None):
-        """Dynamically determine which Layer 2 Stage Modules a finding genuinely maps to based on strict specific criteria."""
+        """Determine Layer 2 stage modules — prefer explicit stage_refs from Step 2."""
+        refs = finding.get("stage_refs")
+        if refs:
+            return ",".join(str(s) for s in refs)
+
         stages = []
         
         std = finding.get("standard_mapping", {})
@@ -438,35 +523,6 @@ class ReportGenerator:
             cards.append(card)
 
         # 2.10 Remediation Guides
-            item_id = item.get("item_id", "REM-000")
-            clean_id = str(item_id).replace('.', '_').replace('/', '_').replace(':', '_').replace('-', '_')
-            title = item.get("summary", item_id)
-            sla = item.get("priority_sla", "24h")
-            sev = "HIGH" if sla in ["24h", "immediate_24h"] else "MEDIUM"
-            sev_class = sev.lower()
-            patch = item.get("code_patch", "")
-            patch_html = f'<div class="code-block" style="background:#062016;color:#6ee7b7;">{patch}</div>' if patch else ''
-            
-            card = f'''
-      <div class="finding-card" id="card-{clean_id}" data-stages="2.10" data-comp="{cid}">
-        <div class="finding-header" onclick="toggleF(\'card-{clean_id}\')">
-          <span class="finding-sev sev-{sev_class}">SLA {sla}</span>
-          <span class="finding-name">[{cid}] [{item_id}] {title}</span>
-          <span class="comp-tag" style="background:rgba(59,130,246,0.12);color:var(--accent-blue)">{cid}</span>
-          <span class="stage-tag">2.10 Remediation Guide</span>
-          <span class="find-toggle">▼</span>
-        </div>
-        <div class="finding-body">
-          <div class="fix-box">
-            <label>✅ Actionable Code Patch ({item.get("target_finding_ref", "")})</label>
-            <p>{title}</p>
-            {patch_html}
-          </div>
-        </div>
-      </div>'''
-            cards.append(card)
-
-        # 2.10 Remediation Guides
         s210 = stages_data.get("2.10", {}).get("results", [])
         for item in s210:
             if item.get("status") in ["PASS", "DONE", "RESOLVED"]: continue
@@ -507,32 +563,51 @@ class ReportGenerator:
         risk_scoring = risk_data.get("risk_scoring", {})
         roadmap = risk_data.get("remediation_roadmap", {})
         all_findings = findings_data.get("findings", [])
+        finding_map = self._build_finding_component_map(all_findings)
+        comp_summary = findings_data.get("components_summary", {})
 
         if component_id:
             findings = [f for f in all_findings if f.get("component_id") == component_id]
             title_suffix = f"— {component_id.upper()}"
+            comp_meta = comp_summary.get(component_id, {})
+            comp_scores = risk_data.get("component_scores", {}).get(component_id, {})
+            display_score = comp_meta.get("health_score", comp_scores.get("security_score", 0))
+            display_grade = comp_meta.get("grade", comp_scores.get("grade", "F"))
+            display_rating = comp_meta.get("rating", comp_scores.get("rating", risk_scoring.get("rating")))
+            display_status = comp_meta.get("status", comp_scores.get("status", risk_scoring.get("status")))
+            sev = {
+                "CRITICAL": comp_meta.get("critical", 0),
+                "HIGH": comp_meta.get("high", 0),
+                "MEDIUM": comp_meta.get("medium", 0),
+                "LOW": comp_meta.get("low", 0),
+                "INFO": comp_meta.get("info", 0),
+            }
         else:
             findings = all_findings
             title_suffix = f"— {self.project_id.upper()} (Executive Overview)"
+            display_score = risk_scoring.get("security_score", 0)
+            display_grade = risk_scoring.get("grade", "F")
+            display_rating = risk_scoring.get("rating", "FAIL / CRITICAL RISK")
+            display_status = risk_scoring.get("status", "ACTION REQUIRED")
+            sev = risk_scoring.get("severity_counts", {})
 
         md = []
         md.append(f"# 🛡️ ASRP Application Security Review Report {title_suffix}\n")
         md.append(f"> **Run ID:** `{self.run_id}` | **Audit Date:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  \n")
         md.append(f"> **Target Project:** {project_info.get('name', self.project_id)}  \n")
-        md.append(f"> **Security Gate Status:** **`{risk_scoring.get('status', 'ACTION REQUIRED')}`**\n")
+        md.append(f"> **Security Gate Status:** **`{display_status}`**\n")
         md.append("---\n")
 
         # Executive Summary Scorecard
         md.append("## 📊 Executive Scorecard & Risk Rating\n")
         md.append(f"| Metric | Value |")
         md.append(f"|---|---|")
-        md.append(f"| **Security Health Score** | **`{risk_scoring.get('security_score', 0)} / 100`** (Grade `{risk_scoring.get('grade', 'F')}`) |")
-        md.append(f"| **Risk Rating** | **{risk_scoring.get('rating', 'FAIL / CRITICAL RISK')}** |")
+        md.append(f"| **Security Health Score** | **`{display_score} / 100`** (Grade `{display_grade}`) |")
+        md.append(f"| **Risk Rating** | **{display_rating}** |")
         md.append(f"| **Total Findings** | **{len(findings)}** |")
         md.append(f"| **Business Criticality** | `{risk_data.get('business_context', {}).get('business_criticality', 'N/A')}` |\n")
 
         md.append("### 📈 Severity Breakdown\n")
-        sev = risk_scoring.get("severity_counts", {})
         md.append(f"- 🔴 **CRITICAL:** `{sev.get('CRITICAL', 0)}`")
         md.append(f"- 🟠 **HIGH:** `{sev.get('HIGH', 0)}`")
         md.append(f"- 🟡 **MEDIUM:** `{sev.get('MEDIUM', 0)}`")
@@ -545,9 +620,7 @@ class ReportGenerator:
                                      ("phase_2_shortterm", "Phase 2: High Priority Hardening (SLA 7 days)"), 
                                      ("phase_3_maintenance", "Phase 3: General Maintenance (SLA 30 days)")]:
             p_data = roadmap.get(phase_key, {})
-            items = p_data.get("items", [])
-            if component_id:
-                items = [i for i in items if component_id in i.get("finding_id", "")]
+            items = self._filter_roadmap_items(p_data.get("items", []), component_id, finding_map)
             md.append(f"### 🎯 {phase_name} ({len(items)} items)")
             for item in items:
                 md.append(f"- **`[{item.get('severity')}]` [{item.get('finding_id')}]** `{item.get('title')}` — *{item.get('file')}*")
@@ -756,17 +829,19 @@ class ReportGenerator:
         # Render Component Cards for score-grid
         comp_cards_html = []
         for comp_id, comp_meta in comp_summary.items():
-            c_score = comp_meta.get("health_score", 100)
-            c_grade = comp_meta.get("grade", "A")
+            c_score = comp_meta.get("health_score", 0)
+            c_grade = comp_meta.get("grade", "F")
+            c_status = comp_meta.get("status", "ACTION REQUIRED")
             c_color = "#10b981" if c_score >= 80 else ("#f59e0b" if c_score >= 70 else "#ef4444")
             c_bg = "rgba(16,185,129,0.12)" if c_score >= 80 else ("rgba(245,158,11,0.12)" if c_score >= 70 else "rgba(239,68,68,0.12)")
-            c_rating = "PASS" if c_score >= 80 else ("MODERATE RISK" if c_score >= 70 else "ACTION REQUIRED")
+            c_rating = "PASS" if c_score >= 80 else ("MODERATE RISK" if c_score >= 70 else c_status)
             c_stack = comp_meta.get('tech_stack', 'Source Sub-repository')
             c_findings = [f for f in findings if f.get('component_id') == comp_id]
             c_sev = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0}
             for f in c_findings:
                 s = f.get('severity', 'MEDIUM').upper()
                 c_sev[s] = c_sev.get(s, 0) + 1
+            c_count = comp_meta.get('findings_count', comp_meta.get('total', len(c_findings)))
 
             comp_card_html = f'''
     <div class="score-card" id="card-{comp_id}" style="border-top: 3px solid {c_color}; cursor: pointer;" onclick="window.location.href=\'security_review_report_{comp_id}.html\'">
@@ -799,12 +874,13 @@ class ReportGenerator:
         ql_cards = []
         for cid, cm in comp_summary.items():
             icon = '⚙️' if 'api' in cid else '🖥️'
+            fcount = cm.get('findings_count', cm.get('total', 0))
             ql_cards.append(f'''
     <a class="ql-card" href="security_review_report_{cid}.html" target="_blank">
       <div class="ql-icon">{icon}</div>
       <div>
         <div class="ql-title">{cid} Detail Security Report</div>
-        <div class="ql-sub">{cm.get('tech_stack', 'Sub-repo')} · {cm.get('findings_count', 0)} findings · Grade {cm.get('grade', 'B')} · Click to view →</div>
+        <div class="ql-sub">{cm.get('tech_stack', 'Sub-repo')} · {fcount} findings · Grade {cm.get('grade', 'F')} · Click to view →</div>
       </div>
       <div class="ql-arrow">→</div>
     </a>''')
@@ -829,8 +905,8 @@ class ReportGenerator:
             loc = f.get('location', {})
             file_path = loc.get('file_path', 'N/A')
             start_line = loc.get('start_line', 1)
-            mapped_stages_str = self._get_finding_stages(f, stages_data)
-            stage_refs_display = " · ".join(mapped_stages_str.split())
+            mapped_stages_str = self._finding_stage_refs_attr(f)
+            stage_refs_display = self._finding_stage_refs_display(f)
             
             snippet = f.get('evidence', {}).get('code_snippet', '# No code snippet')
             snippet_html = f'<div class="code-block">{snippet}</div>' if snippet else ''
@@ -855,7 +931,7 @@ class ReportGenerator:
             patch_html = f'<div class="code-block" style="margin-top:6px;background:#062016;color:#6ee7b7;">{code_patch}</div>' if code_patch else ''
 
             card_html = f'''
-      <div class="finding-card" id="F-{fid}" data-stages="all" data-comp="{cid}">
+      <div class="finding-card" id="F-{fid}" data-stages="{mapped_stages_str}" data-comp="{cid}">
         <div class="finding-header" onclick="toggleF(\'F-{fid}\')">
           <span class="finding-sev sev-{sev_class}">{sev_name}</span>
           <span class="finding-name">[{cid}] {title}</span>
@@ -880,10 +956,10 @@ class ReportGenerator:
       </div>'''
             exec_findings_cards.append(card_html)
 
-        stage_cards = self._render_stage_output_cards(stages_data, component_id=None)
-        exec_findings_cards.extend(stage_cards)
-
         exec_findings_html = "\n".join(exec_findings_cards)
+
+        finding_map = self._build_finding_component_map(findings)
+        sla_html = self._build_executive_sla_html(roadmap, finding_map)
 
         # Replace placeholders in template
         html = template
@@ -904,18 +980,24 @@ class ReportGenerator:
         html = html.replace("{{GATE_STATUS_TEXT}}", risk_scoring.get('status', 'ACTION REQUIRED'))
         html = html.replace("{{GATE_STATUS_EMOJI}}", "🔴" if risk_scoring.get('status') == 'ACTION REQUIRED' else "🟢")
 
-        html = html.replace("{{STAGE_2_1_COUNT}}", str(self._count_stage_issues("2.1", stages_data)))
-        html = html.replace("{{STAGE_2_2_COUNT}}", str(self._count_stage_issues("2.2", stages_data)))
-        html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_stage_issues("2.3", stages_data)))
-        html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_stage_issues("2.4", stages_data)))
-        html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_stage_issues("2.6", stages_data)))
-        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_stage_issues("2.7", stages_data)))
-        html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_stage_issues("2.10", stages_data)))
+        html = html.replace("{{STAGE_2_1_COUNT}}", str(self._count_findings_by_stage(findings, "2.1")))
+        html = html.replace("{{STAGE_2_2_COUNT}}", str(self._count_findings_by_stage(findings, "2.2")))
+        html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_findings_by_stage(findings, "2.3")))
+        html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_findings_by_stage(findings, "2.4")))
+        html = html.replace("{{STAGE_2_5_COUNT}}", str(self._count_findings_by_stage(findings, "2.5")))
+        html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_findings_by_stage(findings, "2.6")))
+        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_findings_by_stage(findings, "2.7")))
+        html = html.replace("{{STAGE_2_8_COUNT}}", str(self._count_findings_by_stage(findings, "2.8")))
+        html = html.replace("{{STAGE_2_9_COUNT}}", str(self._count_findings_by_stage(findings, "2.9")))
+        html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_findings_by_stage(findings, "2.10")))
+        html = html.replace("{{STAGE_2_11_COUNT}}", str(self._count_findings_by_stage(findings, "2.11")))
+        html = html.replace("{{STAGE_2_12_COUNT}}", str(self._count_findings_by_stage(findings, "2.12")))
 
         html = html.replace("{{SCORE_GRID_CARDS}}", grid_html)
         html = html.replace("{{QUICK_LINKS_CARDS}}", quick_links_html)
         html = html.replace("{{COMPONENT_PILLS_HTML}}", comp_pills_html)
         html = html.replace("{{EXECUTIVE_FINDINGS_HTML}}", exec_findings_html)
+        html = html.replace("{{SLA_ROADMAP_HTML}}", sla_html)
 
         return html
 
@@ -926,8 +1008,10 @@ class ReportGenerator:
         findings = [f for f in all_findings if f.get("component_id") == component_id]
         
         comp_summary = findings_data.get("components_summary", {}).get(component_id, {})
-        c_score = comp_summary.get("health_score", risk_scoring.get('security_score', 80))
-        c_grade = comp_summary.get("grade", risk_scoring.get('grade', 'B'))
+        comp_scores = risk_data.get("component_scores", {}).get(component_id, {})
+        c_score = comp_summary.get("health_score", comp_scores.get("security_score", 0))
+        c_grade = comp_summary.get("grade", comp_scores.get("grade", "F"))
+        c_status = comp_summary.get("status", comp_scores.get("status", risk_scoring.get("status")))
         c_color = "#10b981" if c_score >= 80 else ("#f59e0b" if c_score >= 70 else "#ef4444")
         c_bg = "rgba(16,185,129,0.12)" if c_score >= 80 else ("rgba(245,158,11,0.12)" if c_score >= 70 else "rgba(239,68,68,0.12)")
 
@@ -954,8 +1038,8 @@ class ReportGenerator:
             file_path = loc.get('file_path', 'N/A')
             start_line = loc.get('start_line', 1)
             end_line = loc.get('end_line', start_line)
-            mapped_stages_str = self._get_finding_stages(f, stages_data)
-            stage_refs_display = " · ".join(mapped_stages_str.split())
+            mapped_stages_str = self._finding_stage_refs_attr(f)
+            stage_refs_display = self._finding_stage_refs_display(f)
             
             snippet = f.get('evidence', {}).get('code_snippet', '# No code snippet')
             snippet_html = f'<div class="code-snippet">{snippet}</div>' if snippet else ''
@@ -980,7 +1064,7 @@ class ReportGenerator:
             patch_html = f'<div class="code-snippet" style="margin-top:8px;">{code_patch}</div>' if code_patch else ''
 
             card_html = f'''
-      <div class="finding-card" id="F-{fid}" data-stages="all">
+      <div class="finding-card" id="F-{fid}" data-stages="{mapped_stages_str}" data-comp="{component_id}">
         <div class="finding-header" onclick="toggleFinding(\'F-{fid}\')">
           <span class="finding-severity sev-{sev_class}">{sev_name}</span>
           <span class="finding-title">{title}</span>
@@ -1011,9 +1095,6 @@ class ReportGenerator:
         </div>
       </div>'''
             findings_cards_html.append(card_html)
-
-        stage_cards = self._render_stage_output_cards(stages_data, component_id=component_id)
-        findings_cards_html.extend(stage_cards)
 
         comp_findings_html = "\n".join(findings_cards_html) if findings_cards_html else "<p style='color:var(--pass);'>No security vulnerabilities detected for this component.</p>"
 
@@ -1049,9 +1130,16 @@ class ReportGenerator:
 
         # SLA Roadmap
         roadmap = risk_data.get("remediation_roadmap", {})
-        p1_items = [i for i in roadmap.get("phase_1_immediate", {}).get("items", []) if component_id in i.get("finding_id", "") or not component_id]
-        p2_items = [i for i in roadmap.get("phase_2_shortterm", {}).get("items", []) if component_id in i.get("finding_id", "") or not component_id]
-        p3_items = [i for i in roadmap.get("phase_3_maintenance", {}).get("items", []) if component_id in i.get("finding_id", "") or not component_id]
+        finding_map = self._build_finding_component_map(all_findings)
+        p1_items = self._filter_roadmap_items(
+            roadmap.get("phase_1_immediate", {}).get("items", []), component_id, finding_map
+        )
+        p2_items = self._filter_roadmap_items(
+            roadmap.get("phase_2_shortterm", {}).get("items", []), component_id, finding_map
+        )
+        p3_items = self._filter_roadmap_items(
+            roadmap.get("phase_3_maintenance", {}).get("items", []), component_id, finding_map
+        )
 
         def _render_sla_items(items):
             out = []
@@ -1133,8 +1221,8 @@ class ReportGenerator:
         html = html.replace("{{GRADE_BG}}", c_bg)
         html = html.replace("{{SCORE_DASHOFFSET}}", dash_offset)
 
-        html = html.replace("{{GATE_STATUS_TEXT}}", risk_scoring.get('status', 'ACTION REQUIRED'))
-        html = html.replace("{{GATE_ICON}}", "⚠️" if risk_scoring.get('status') == 'ACTION REQUIRED' else "✅")
+        html = html.replace("{{GATE_STATUS_TEXT}}", c_status)
+        html = html.replace("{{GATE_ICON}}", "⚠️" if c_score < 70 else "✅")
         html = html.replace("{{GATE_DESC}}", f"Component Health Score is {c_score}/100 (Grade {c_grade}). Remediation required.")
         html = html.replace("{{GATE_TITLE_COLOR}}", c_color)
         html = html.replace("{{GATE_BANNER_BG}}", "rgba(239, 68, 68, 0.1)" if c_score < 70 else "rgba(16, 185, 129, 0.1)")
@@ -1144,13 +1232,18 @@ class ReportGenerator:
         html = html.replace("{{GATE_BADGE_BORDER}}", "rgba(239, 68, 68, 0.4)" if c_score < 70 else "rgba(16, 185, 129, 0.4)")
         html = html.replace("{{GATE_STATUS_EMOJI}}", "🔴" if c_score < 70 else "🟢")
 
-        html = html.replace("{{STAGE_2_1_COUNT}}", str(self._count_stage_issues("2.1", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_2_COUNT}}", str(self._count_stage_issues("2.2", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_stage_issues("2.3", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_stage_issues("2.4", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_stage_issues("2.6", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_stage_issues("2.7", stages_data, component_id)))
-        html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_stage_issues("2.10", stages_data, component_id)))
+        html = html.replace("{{STAGE_2_1_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.1", component_id)))
+        html = html.replace("{{STAGE_2_2_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.2", component_id)))
+        html = html.replace("{{STAGE_2_3_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.3", component_id)))
+        html = html.replace("{{STAGE_2_4_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.4", component_id)))
+        html = html.replace("{{STAGE_2_5_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.5", component_id)))
+        html = html.replace("{{STAGE_2_6_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.6", component_id)))
+        html = html.replace("{{STAGE_2_7_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.7", component_id)))
+        html = html.replace("{{STAGE_2_8_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.8", component_id)))
+        html = html.replace("{{STAGE_2_9_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.9", component_id)))
+        html = html.replace("{{STAGE_2_10_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.10", component_id)))
+        html = html.replace("{{STAGE_2_11_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.11", component_id)))
+        html = html.replace("{{STAGE_2_12_COUNT}}", str(self._count_findings_by_stage(all_findings, "2.12", component_id)))
 
         html = html.replace("{{FINDINGS_CARDS_LIST}}", comp_findings_html)
         html = html.replace("{{SECURITY_STRENGTHS_BLOCK}}", strengths_html)

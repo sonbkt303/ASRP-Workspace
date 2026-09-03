@@ -78,5 +78,6 @@ flowchart LR
 |------|--------|
 | 2026-09-03 | Step 2 improvements: scan_validator, scan_context.json, rule_set filtering, clone-based scanner, stage overlap contract |
 | 2026-09-03 | Step 2 P0/P1: extended scan_context (technologies, business, tools_enabled), scanner tools_enabled + honest raw outputs, findings merge/dedupe, validate --strict |
+| 2026-09-03 | Step 3 P0/P1: risk_scoring.py, per-component scores, report_validator, asrp.py report, stage_refs HTML filter, SLA populate, 12 stage pills |
 | 2026-07-24 | Layer 2 completed (19 Rules, 6 Engines, Multi-Lang Spec). Handoff to Layer 3 Assessment Engine. |
 | 2026-07-22 | Initial handoff from Layer 1 → Layer 2 |

@@ -13,6 +13,11 @@ import yaml
 import argparse
 from datetime import datetime
 
+from risk_scoring import (
+    calculate_security_score,
+    severity_counts_from_findings,
+)
+
 # Force UTF-8 encoding for Windows stdout
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8')
@@ -105,60 +110,45 @@ class RiskAssessor:
         findings = findings_payload.get("findings", [])
         severity_counts = findings_payload.get("severity_summary")
         if not severity_counts or not any(severity_counts.values()):
-            severity_counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0}
-            for f in findings:
-                sev = str(f.get("severity", "")).upper()
-                if sev in severity_counts:
-                    severity_counts[sev] += 1
+            severity_counts = severity_counts_from_findings(findings)
 
-        # Risk Multiplier based on project risk tier
-        risk_tier = context.get("risk_tier", "high").lower()
-        multipliers = {
-            "critical": 1.3,
-            "high": 1.2,
-            "medium": 1.0,
-            "low": 0.8
-        }
-        multiplier = multipliers.get(risk_tier, 1.2)
+        risk_tier = context.get("risk_tier", "high")
+        return calculate_security_score(severity_counts, risk_tier, apply_multiplier=True)
 
-        # Base score 100
-        base_score = 100.0
-        deduction = (
-            (severity_counts.get("CRITICAL", 0) * 15) +
-            (severity_counts.get("HIGH", 0) * 8) +
-            (severity_counts.get("MEDIUM", 0) * 3) +
-            (severity_counts.get("LOW", 0) * 1)
-        ) * multiplier
+    def calculate_component_scores(self, findings, context):
+        """Per-component health scores from component-scoped findings."""
+        by_component: dict[str, list] = {}
+        for f in findings:
+            cid = f.get("component_id") or "unknown"
+            by_component.setdefault(cid, []).append(f)
 
-        final_score = max(0, min(100, round(base_score - deduction)))
+        scores = {}
+        for cid, comp_findings in by_component.items():
+            sev = severity_counts_from_findings(comp_findings)
+            scores[cid] = calculate_security_score(
+                sev, context.get("risk_tier", "high"), apply_multiplier=True
+            )
+        return scores
 
-        # Assign Grade
-        if final_score >= 90:
-            grade = "A"
-            rating = "EXCELLENT / LOW RISK"
-            status = "PASS"
-        elif final_score >= 75:
-            grade = "B"
-            rating = "GOOD / MEDIUM RISK"
-            status = "PASS WITH WARNINGS"
-        elif final_score >= 50:
-            grade = "C"
-            rating = "NEEDS IMPROVEMENT / HIGH RISK"
-            status = "CONDITIONAL APPROVAL"
-        else:
-            grade = "F"
-            rating = "FAIL / CRITICAL RISK"
-            status = "ACTION REQUIRED"
+    def enrich_findings_components_summary(self, findings_payload, component_scores):
+        """Write health_score/grade/findings_count into findings.json components_summary."""
+        findings = findings_payload.get("findings", [])
+        summary = dict(findings_payload.get("components_summary") or {})
 
-        return {
-            "security_score": final_score,
-            "grade": grade,
-            "rating": rating,
-            "status": status,
-            "total_deduction": round(deduction, 1),
-            "multiplier_applied": multiplier,
-            "severity_counts": severity_counts
-        }
+        for cid, scoring in component_scores.items():
+            bucket = dict(summary.get(cid) or {})
+            comp_findings = [f for f in findings if f.get("component_id") == cid]
+            bucket["findings_count"] = len(comp_findings)
+            bucket["health_score"] = scoring["security_score"]
+            bucket["grade"] = scoring["grade"]
+            bucket["rating"] = scoring["rating"]
+            bucket["status"] = scoring["status"]
+            summary[cid] = bucket
+
+        findings_payload["components_summary"] = summary
+        findings_file = os.path.join(self.target_run_dir, "findings.json")
+        save_json(findings_payload, findings_file)
+        return summary
 
     def build_remediation_roadmap(self, findings):
         """Build SLA-based Remediation Roadmap."""
@@ -216,8 +206,11 @@ class RiskAssessor:
             raise FileNotFoundError(f"findings.json not found in {self.target_run_dir}. Run Findings Normalizer first.")
 
         context = self.load_business_context()
+        all_findings = findings_payload.get("findings", [])
         scoring_results = self.calculate_risk_score(findings_payload, context)
-        roadmap = self.build_remediation_roadmap(findings_payload.get("findings", []))
+        component_scores = self.calculate_component_scores(all_findings, context)
+        self.enrich_findings_components_summary(findings_payload, component_scores)
+        roadmap = self.build_remediation_roadmap(all_findings)
 
         output_payload = {
             "run_id": self.run_id,
@@ -225,6 +218,7 @@ class RiskAssessor:
             "assessed_at": datetime.now().isoformat() + "Z",
             "business_context": context,
             "risk_scoring": scoring_results,
+            "component_scores": component_scores,
             "remediation_roadmap": roadmap
         }
 

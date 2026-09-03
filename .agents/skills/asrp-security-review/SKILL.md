@@ -113,11 +113,14 @@ Schemas: [`stage-output.schema.json`](references/stage-output.schema.json), [`fi
 
 ## Step 3 — Risk & Report (Layer 3.7 & 5)
 
-Risk score + HTML/MD reports via `risk_assessor.py` and `report_generator.py`. All 12 stage pills in reports.
+```bash
+python asrp.py report --project {project_id} --run-id {run_id}
+python asrp.py validate --project {project_id} --stage report --run-id {run_id}
+```
 
 Details: [`references/step-3-report.md`](references/step-3-report.md)
 
-**DoD:** `risk_assessment.json` + all report files. **Abort if:** `findings.json` missing.
+**DoD:** `risk_assessment.json` + all report files + report validation PASS. **Abort if:** `findings.json` missing or report validation fails.
 
 ## Response structure
 

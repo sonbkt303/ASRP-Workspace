@@ -28,6 +28,7 @@
 ├── BLUEPRINT.md                        # Layer 5 canonical blueprint (file này)
 ├── README.md                           # Hướng dẫn Layer 5
 ├── report_generator.py                 # Core Report Generator CLI Tool
+├── report_validator.py                 # Step 3 DoD validation (`validate --stage report`)
 └── templates/                          # Report templates (nếu có)
 ```
 

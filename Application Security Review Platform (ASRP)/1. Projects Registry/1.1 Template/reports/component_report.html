@@ -317,9 +317,14 @@ body::before {
       <div class="stage-pill" id="pill-2.2"  onclick="filterStage('2.2')">  <span>🏛️</span> 2.2 Domains     <span class="stage-pill-count">{{STAGE_2_2_COUNT}}</span> </div>
       <div class="stage-pill" id="pill-2.3"  onclick="filterStage('2.3')">  <span>⚙️</span> 2.3 Rule Library <span class="stage-pill-count">{{STAGE_2_3_COUNT}}</span> </div>
       <div class="stage-pill" id="pill-2.4"  onclick="filterStage('2.4')">  <span>✅</span> 2.4 Checklists  <span class="stage-pill-count">{{STAGE_2_4_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.5"  onclick="filterStage('2.5')">  <span>📖</span> 2.5 Playbooks   <span class="stage-pill-count">{{STAGE_2_5_COUNT}}</span> </div>
       <div class="stage-pill" id="pill-2.6"  onclick="filterStage('2.6')">  <span>⚔️</span> 2.6 Threat Models <span class="stage-pill-count">{{STAGE_2_6_COUNT}}</span> </div>
       <div class="stage-pill" id="pill-2.7"  onclick="filterStage('2.7')">  <span>📘</span> 2.7 Guidelines    <span class="stage-pill-count">{{STAGE_2_7_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.8"  onclick="filterStage('2.8')">  <span>⭐</span> 2.8 Best Practices <span class="stage-pill-count">{{STAGE_2_8_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.9"  onclick="filterStage('2.9')">  <span>🎯</span> 2.9 Attack Patterns <span class="stage-pill-count">{{STAGE_2_9_COUNT}}</span> </div>
       <div class="stage-pill" id="pill-2.10" onclick="filterStage('2.10')"> <span>🔧</span> 2.10 Remediation <span class="stage-pill-count">{{STAGE_2_10_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.11" onclick="filterStage('2.11')"> <span>📚</span> 2.11 Case Studies <span class="stage-pill-count">{{STAGE_2_11_COUNT}}</span> </div>
+      <div class="stage-pill" id="pill-2.12" onclick="filterStage('2.12')"> <span>📝</span> 2.12 Decision Logs <span class="stage-pill-count">{{STAGE_2_12_COUNT}}</span> </div>
     </div>
   </div>
 
@@ -376,8 +381,14 @@ body::before {
     '2.2': 'Stage 2.2 – Security Domains',
     '2.3': 'Stage 2.3 – Rule Library',
     '2.4': 'Stage 2.4 – Review Checklists',
+    '2.5': 'Stage 2.5 – Playbooks',
     '2.6': 'Stage 2.6 – Threat Models',
-    '2.10': 'Stage 2.10 – Remediation Guides'
+    '2.7': 'Stage 2.7 – Secure Coding Guidelines',
+    '2.8': 'Stage 2.8 – Best Practices',
+    '2.9': 'Stage 2.9 – Attack Patterns',
+    '2.10': 'Stage 2.10 – Remediation Guides',
+    '2.11': 'Stage 2.11 – Case Studies',
+    '2.12': 'Stage 2.12 – Decision Logs'
   };
 
   function filterStage(stage) {
@@ -388,14 +399,12 @@ body::before {
     const cards = document.querySelectorAll('#findings-list .finding-card');
     let visible = 0;
     cards.forEach(card => {
-      if (stage === 'all') {
-        const stages = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
-        if (stages.includes('all')) { card.classList.remove('hidden'); visible++; }
-        else { card.classList.add('hidden'); }
+      const stages = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim()).filter(Boolean);
+      if (stage === 'all' || stages.includes(stage)) {
+        card.classList.remove('hidden');
+        visible++;
       } else {
-        const stages = (card.getAttribute('data-stages') || '').split(/[\s,]+/).map(s => s.trim());
-        if (stages.includes(stage)) { card.classList.remove('hidden'); visible++; }
-        else { card.classList.add('hidden'); }
+        card.classList.add('hidden');
       }
     });
 

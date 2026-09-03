@@ -89,11 +89,16 @@ Emit the appropriate summary table at the end of each step.
 | Grade | {A-F} |
 | Gate Status | PASSED / ACTION REQUIRED |
 
+| Component | Score | Grade | Findings |
+|-----------|-------|-------|----------|
+| {component_id} | {score}/100 | {grade} | {n} |
+
 | Report | Path |
 |--------|------|
 | Executive Dashboard | runs/{run_id}/security_review_report.html |
 | Component ({id}) | runs/{run_id}/security_review_report_{id}.html |
 
+**Report validation:** pass / FAIL (`asrp.py validate --stage report --run-id {run_id}`)
 **SLA Roadmap:** Phase 1 ({n}) · Phase 2 ({n}) · Phase 3 ({n})
 ```
 
