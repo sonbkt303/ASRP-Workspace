@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 340" fill="none">
+  <rect width="920" height="340" rx="12" fill="#0f172a"/>
+  <text x="460" y="28" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI" font-size="13">End-to-End Pipeline  7 steps · each produces artifacts</text>
+  <g font-family="Segoe UI, sans-serif" font-size="11">
+    <g>
+      <circle cx="80" cy="70" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+      <text x="80" y="75" text-anchor="middle" fill="#e2e8f0" font-weight="700">1</text>
+      <text x="80" y="105" text-anchor="middle" fill="#fff" font-weight="600">Acquire</text>
+      <text x="80" y="122" text-anchor="middle" fill="#94a3b8">clone source</text>
+    </g>
+    <line x1="110" y1="70" x2="150" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="180" cy="70" r="18" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+      <text x="180" y="75" text-anchor="middle" fill="#fff" font-weight="700">2</text>
+      <text x="180" y="105" text-anchor="middle" fill="#fff" font-weight="600">Profile</text>
+      <text x="180" y="122" text-anchor="middle" fill="#94a3b8">8 YAML files</text>
+    </g>
+    <line x1="210" y1="70" x2="250" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="280" cy="70" r="18" fill="#422006" stroke="#f59e0b" stroke-width="2"/>
+      <text x="280" y="75" text-anchor="middle" fill="#fff" font-weight="700">3</text>
+      <text x="280" y="105" text-anchor="middle" fill="#fde68a" font-weight="600">Validate</text>
+      <text x="280" y="122" text-anchor="middle" fill="#fbbf24">human gate</text>
+    </g>
+    <line x1="310" y1="70" x2="350" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="380" cy="70" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+      <text x="380" y="75" text-anchor="middle" fill="#e2e8f0" font-weight="700">4</text>
+      <text x="380" y="105" text-anchor="middle" fill="#fff" font-weight="600">Resolve</text>
+      <text x="380" y="122" text-anchor="middle" fill="#94a3b8">rules.json</text>
+    </g>
+    <line x1="410" y1="70" x2="450" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="480" cy="70" r="18" fill="#312e81" stroke="#818cf8" stroke-width="2"/>
+      <text x="480" y="75" text-anchor="middle" fill="#fff" font-weight="700">5</text>
+      <text x="480" y="105" text-anchor="middle" fill="#fff" font-weight="600">Scan</text>
+      <text x="480" y="122" text-anchor="middle" fill="#94a3b8">tools + AI</text>
+    </g>
+    <line x1="510" y1="70" x2="550" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="580" cy="70" r="18" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+      <text x="580" y="75" text-anchor="middle" fill="#e2e8f0" font-weight="700">6</text>
+      <text x="580" y="105" text-anchor="middle" fill="#fff" font-weight="600">Normalize</text>
+      <text x="580" y="122" text-anchor="middle" fill="#94a3b8">findings.json</text>
+    </g>
+    <line x1="610" y1="70" x2="650" y2="70" stroke="#475569" stroke-width="2"/>
+    <g>
+      <circle cx="680" cy="70" r="18" fill="#14532d" stroke="#22c55e" stroke-width="2"/>
+      <text x="680" y="75" text-anchor="middle" fill="#fff" font-weight="700">7</text>
+      <text x="680" y="105" text-anchor="middle" fill="#bbf7d0" font-weight="600">Report</text>
+      <text x="680" y="122" text-anchor="middle" fill="#86efac">.html</text>
+    </g>
+  </g>
+  <rect x="40" y="160" width="840" height="150" rx="12" fill="#111b2e" stroke="#2a3a55"/>
+  <text x="60" y="188" fill="#f59e0b" font-family="Segoe UI" font-size="12" font-weight="700">  Step 3  Mandatory gate</text>
+  <text x="60" y="212" fill="#e2e8f0" font-family="Segoe UI" font-size="12">Engine does NOT scan unless lifecycle_status = validated</text>
+  <text x="60" y="240" fill="#94a3b8" font-family="Segoe UI" font-size="11">CLI: asrp validate --project {id}</text>
+  <text x="60" y="268" fill="#7dd3fc" font-family="Consolas, monospace" font-size="10">cleverdent/runs/run-*/findings.json · security_review_report.html</text>
+</svg>

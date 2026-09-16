@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#22c55e"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="500" rx="16" fill="#0f172a"/>
+  <text x="480" y="28" text-anchor="middle" fill="#94a3b8" font-family="Segoe UI, sans-serif" font-size="13">ASRP — Six-Layer Architecture · m?i layer có vai trò rõ ràng</text>
+
+  <g font-family="Segoe UI, sans-serif" filter="url(#shadow)">
+    <!-- L1 -->
+    <g>
+      <rect x="24" y="48" width="168" height="168" rx="12" fill="#111b2e" stroke="#3b82f6" stroke-width="2"/>
+      <rect x="24" y="48" width="168" height="36" rx="12" fill="#1e3a5f"/>
+      <rect x="24" y="68" width="168" height="16" fill="#1e3a5f"/>
+      <text x="108" y="72" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">L1 · Projects Registry</text>
+      <text x="36" y="100" fill="#93c5fd" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="36" y="116" fill="#dbeafe" font-size="10">H? s? d? án — 8 YAML</text>
+      <line x1="36" y1="126" x2="180" y2="126" stroke="#2a3a55"/>
+      <text x="36" y="142" fill="#93c5fd" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="36" y="158" fill="#94a3b8" font-size="9">Engine bi?t stack, scope,</text>
+      <text x="36" y="172" fill="#94a3b8" font-size="9">lens tr??c khi scan</text>
+      <rect x="36" y="186" width="144" height="20" rx="5" fill="#0b1220" stroke="#22c55e"/>
+      <text x="108" y="200" text-anchor="middle" fill="#86efac" font-size="8">? Done</text>
+    </g>
+
+    <!-- L2 -->
+    <g>
+      <rect x="24" y="232" width="168" height="168" rx="12" fill="#111b2e" stroke="#3b82f6" stroke-width="2"/>
+      <rect x="24" y="232" width="168" height="36" rx="12" fill="#1e3a5f"/>
+      <rect x="24" y="252" width="168" height="16" fill="#1e3a5f"/>
+      <text x="108" y="256" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">L2 · Knowledge Base</text>
+      <text x="36" y="284" fill="#93c5fd" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="36" y="300" fill="#dbeafe" font-size="10">Standards + Rule Library</text>
+      <line x1="36" y1="310" x2="180" y2="310" stroke="#2a3a55"/>
+      <text x="36" y="326" fill="#93c5fd" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="36" y="342" fill="#94a3b8" font-size="9">Bi?t chu?n gì &amp; rule</text>
+      <text x="36" y="356" fill="#94a3b8" font-size="9">executable nào ch?y</text>
+      <rect x="36" y="370" width="144" height="20" rx="5" fill="#0b1220" stroke="#22c55e"/>
+      <text x="108" y="384" text-anchor="middle" fill="#86efac" font-size="8">? Done</text>
+    </g>
+
+    <!-- L3 center -->
+    <g>
+      <rect x="248" y="120" width="200" height="200" rx="14" fill="url(#g1)" stroke="#60a5fa" stroke-width="2"/>
+      <text x="348" y="152" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">L3 · Assessment Engine</text>
+      <text x="264" y="178" fill="#c7d2fe" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="264" y="194" fill="#e0e7ff" font-size="10">Motor trung tâm — th?c thi scan</text>
+      <line x1="264" y1="206" x2="432" y2="206" stroke="#4f46e5" stroke-opacity="0.5"/>
+      <text x="264" y="222" fill="#c7d2fe" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="264" y="238" fill="#dbeafe" font-size="9">Profile + rules ?</text>
+      <text x="264" y="252" fill="#dbeafe" font-size="9">findings + evidence</text>
+      <text x="264" y="266" fill="#dbeafe" font-size="9">AI reviewer tr?ng tâm</text>
+      <rect x="264" y="282" width="168" height="22" rx="6" fill="#0b1220" stroke="#22c55e"/>
+      <text x="348" y="297" text-anchor="middle" fill="#86efac" font-size="8">? Done · Resolver · Orchestrator</text>
+    </g>
+
+    <!-- L4 -->
+    <g>
+      <rect x="504" y="48" width="168" height="168" rx="12" fill="#111b2e" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <rect x="504" y="48" width="168" height="36" rx="12" fill="#1a2332"/>
+      <rect x="504" y="68" width="168" height="16" fill="#1a2332"/>
+      <text x="588" y="72" text-anchor="middle" fill="#cbd5e1" font-size="14" font-weight="700">L4 · Integrations</text>
+      <text x="516" y="100" fill="#94a3b8" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="516" y="116" fill="#cbd5e1" font-size="10">Orchestrate tools bên ngoài</text>
+      <line x1="516" y1="126" x2="660" y2="126" stroke="#2a3a55"/>
+      <text x="516" y="142" fill="#94a3b8" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="516" y="158" fill="#94a3b8" font-size="9">Semgrep, Trivy, Gitleaks…</text>
+      <text x="516" y="172" fill="#94a3b8" font-size="9">feed vào L3, normalize</text>
+      <rect x="516" y="186" width="144" height="20" rx="5" fill="#0b1220" stroke="#f59e0b"/>
+      <text x="588" y="200" text-anchor="middle" fill="#fde68a" font-size="8">Planned</text>
+    </g>
+
+    <!-- L5 -->
+    <g>
+      <rect x="504" y="232" width="168" height="168" rx="12" fill="#111b2e" stroke="#22c55e" stroke-width="2"/>
+      <rect x="504" y="232" width="168" height="36" rx="12" fill="#14532d"/>
+      <rect x="504" y="252" width="168" height="16" fill="#14532d"/>
+      <text x="588" y="256" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">L5 · Reporting</text>
+      <text x="516" y="284" fill="#86efac" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="516" y="300" fill="#dcfce7" font-size="10">Output cho stakeholder</text>
+      <line x1="516" y1="310" x2="660" y2="310" stroke="#2a3a55"/>
+      <text x="516" y="326" fill="#86efac" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="516" y="342" fill="#bbf7d0" font-size="9">Executive HTML, technical</text>
+      <text x="516" y="356" fill="#bbf7d0" font-size="9">report, remediation plan</text>
+      <rect x="516" y="370" width="144" height="20" rx="5" fill="#0b1220" stroke="#22c55e"/>
+      <text x="588" y="384" text-anchor="middle" fill="#86efac" font-size="8">? Done</text>
+    </g>
+
+    <!-- L6 -->
+    <g>
+      <rect x="728" y="140" width="200" height="168" rx="12" fill="#111b2e" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+      <rect x="728" y="140" width="200" height="36" rx="12" fill="#1a2332"/>
+      <rect x="728" y="160" width="200" height="16" fill="#1a2332"/>
+      <text x="828" y="164" text-anchor="middle" fill="#cbd5e1" font-size="14" font-weight="700">L6 · Dashboard</text>
+      <text x="740" y="192" fill="#94a3b8" font-size="9" font-weight="600">VAI TRÒ</text>
+      <text x="740" y="208" fill="#cbd5e1" font-size="10">Portfolio &amp; analytics</text>
+      <line x1="740" y1="218" x2="916" y2="218" stroke="#2a3a55"/>
+      <text x="740" y="234" fill="#94a3b8" font-size="9" font-weight="600">M?C ?ÍCH</text>
+      <text x="740" y="250" fill="#94a3b8" font-size="9">Cross-project view:</text>
+      <text x="740" y="264" fill="#94a3b8" font-size="9">risk trends, compliance %</text>
+      <rect x="740" y="278" width="176" height="20" rx="5" fill="#0b1220" stroke="#f59e0b"/>
+      <text x="828" y="292" text-anchor="middle" fill="#fde68a" font-size="8">Planned</text>
+    </g>
+  </g>
+
+  <!-- Arrows -->
+  <path d="M192 120 L243 175" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M192 300 L243 245" stroke="#60a5fa" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M448 175 L499 120" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <path d="M448 265 L499 310" stroke="#22c55e" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+  <path d="M672 310 L723 224" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+
+  <!-- Bottom callout -->
+  <rect x="30" y="420" width="900" height="60" rx="12" fill="#111b2e" stroke="#2a3a55"/>
+  <text x="480" y="444" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="600">Lu?ng hôm nay: <tspan fill="#93c5fd">L1 + L2 (input)</tspan> ? <tspan fill="#c4b5fd">L3 (motor)</tspan> ? <tspan fill="#86efac">L5 (output)</tspan></text>
+  <text x="480" y="464" text-anchor="middle" fill="#64748b" font-size="10">L4 tools feed L3 · L6 portfolio view — roadmap · Knowledge ? Rules: L2 tách concept (OWASP…) kh?i rule executable</text>
+</svg>

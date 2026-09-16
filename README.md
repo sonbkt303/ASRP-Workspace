@@ -3,7 +3,8 @@
 Workspace chứa **Application Security Review Platform (ASRP)** và **Security Knowledge Base** — nền tảng Security Review as Code và kho tri thức bảo mật hỗ trợ.
 
 Tài liệu hướng dẫn sử dụng nhanh CLI: [`USAGE-GUIDE.md`](USAGE-GUIDE.md)  
-Tài liệu kiến trúc chính: [`Application Security Review Platform (ASRP)/ARCHITECTURE-BLUEPRINT.md`](Application%20Security%20Review%20Platform%20(ASRP)/ARCHITECTURE-BLUEPRINT.md)
+Tài liệu kiến trúc chính: [`Application Security Review Platform (ASRP)/ARCHITECTURE-BLUEPRINT.md`](Application%20Security%20Review%20Platform%20(ASRP)/ARCHITECTURE-BLUEPRINT.md)  
+Slide giới thiệu kiến trúc cho team: [`docs/slides/architecture-overview.md`](docs/slides/architecture-overview.md)
 
 ---
 
