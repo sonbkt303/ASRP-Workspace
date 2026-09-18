@@ -71,7 +71,7 @@
 <tr>
 <td><strong>Profile</strong></td>
 <td>Sinh 8 YAML (stack, scope, <code>assessment.yaml</code>…)</td>
-<td>Engine <strong>hiểu dự án</strong> trước khi scan — không quét mù, không full ASVS mặc định</td>
+<td>Engine <strong>hiểu dự án</strong> trước khi scan — không quét mù, không full Application Security Verification Standard mặc định</td>
 </tr>
 <tr>
 <td><strong>Validate</strong></td>
@@ -428,7 +428,7 @@ Acquire — clone repo và pin commit SHA.
 Mục đích: có source cố định. Review đúng version, sau vài tháng vẫn tái lập được kết quả.
 
 Profile — sinh hồ sơ dự án, 8 file YAML: stack, kiến trúc, scope, assessment lens.
-Mục đích: engine hiểu dự án trước khi scan. Không quét mù, không full ASVS mặc định.
+Mục đích: engine hiểu dự án trước khi scan. Không quét mù, không full Application Security Verification Standard mặc định.
 
 Validate — AppSec hoặc Security Lead review và sign-off hồ sơ.
 Mục đích: human gate. Chặn scan khi profile sai hoặc chưa đủ. Engine chỉ chạy khi lifecycle_status = validated.

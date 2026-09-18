@@ -120,7 +120,7 @@ findings có evidence, executive dashboard cho stakeholder, và remediation road
 | Bước | Làm gì | Mục đích (để làm gì) |
 |------|--------|----------------------|
 | **Acquire** | Clone repo, pin commit SHA | Có **source cố định** — review đúng version, tái lập kết quả sau vài tháng |
-| **Profile** | Sinh 8 YAML (stack, scope, `assessment.yaml`…) | Engine **hiểu dự án** trước khi scan — không quét mù, không full ASVS mặc định |
+| **Profile** | Sinh 8 YAML (stack, scope, `assessment.yaml`…) | Engine **hiểu dự án** trước khi scan — không quét mù, không full Application Security Verification Standard mặc định |
 | **Validate** | AppSec review & sign-off hồ sơ | **Human gate** — chặn scan khi profile sai/thiếu; chỉ chạy khi `validated` |
 | **Scan** | AI reviewer trọng tâm + tools hỗ trợ theo lens | Phát hiện lỗ hổng **theo ngữ cảnh** dự án (logic flaws, BOLA…) + pattern/CVE/secrets |
 | **Report** | Chuẩn hóa findings → executive HTML | Stakeholder **đọc, ưu tiên fix**, có evidence & audit trail — không chỉ list lỗi thô |
@@ -134,7 +134,7 @@ Acquire — clone repo và pin commit SHA.
 Mục đích: có source cố định. Review đúng version, sau vài tháng vẫn tái lập được kết quả.
 
 Profile — sinh hồ sơ dự án, 8 file YAML: stack, kiến trúc, scope, assessment lens.
-Mục đích: engine hiểu dự án trước khi scan. Không quét mù, không full ASVS mặc định.
+Mục đích: engine hiểu dự án trước khi scan. Không quét mù, không full Application Security Verification Standard mặc định.
 
 Validate — AppSec hoặc Security Lead review và sign-off hồ sơ.
 Mục đích: human gate. Chặn scan khi profile sai hoặc chưa đủ. Engine chỉ chạy khi lifecycle_status = validated.
