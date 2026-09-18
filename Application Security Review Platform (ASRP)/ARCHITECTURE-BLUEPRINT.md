@@ -191,7 +191,7 @@ flowchart TB
 
 | Module | Chức năng |
 |--------|-----------|
-| `3.1 Source Acquisition` | Clone repo, pin commit SHA, lưu acquisition metadata |
+| `3.1 Source Acquisition` | Clone repo, pin commit SHA, lưu acquisition metadata; **no demo seed on real clones** (auto-cleanup synthetic `app/main.py` pollution) |
 | `3.2 Workspace` | Phân loại artifacts: source, config, IaC, deps, secrets, API spec, docs |
 | `3.3 Evidence Collection` | Lưu file:line, snippet, tool raw output, hash |
 | `3.4 Rule Evaluation` | Chạy rules đã chọn theo assessment lens |

@@ -117,7 +117,16 @@ AI pre-flight artifact sinh cùng run folder:
 
 ## 7. Scanner Orchestrator — Clone-Based Scanning
 
-`scanner_orchestrator.py` quét clone root `clones/{project_id}/{component_id}/` (một lần per component). Raw outputs: `raw_outputs/{component_id}/{engine}_raw.json`. Respects `assessment.tools_enabled`. Default: empty `_meta` placeholder khi native tool không có; `--allow-emulated` cho dev/demo. `execution_summary.json` báo `emulated_by_engine`, `tools_enabled`, `allow_emulated`.
+`scanner_orchestrator.py` quét clone root `clones/{project_id}/{component_id}/` (một lần per component). Raw outputs: `raw_outputs/{component_id}/{engine}_raw.json`. Respects `assessment.tools_enabled`. Default: empty `_meta` placeholder khi native tool không có. **`--allow-emulated` không inject fake file paths** — chỉ dùng cho dev smoke test; evidence thật cần native tools (`gitleaks`, `semgrep`, `trivy`). `execution_summary.json` báo `emulated_by_engine`, `tools_enabled`, `allow_emulated`.
+
+## 7.1 Source Acquisition — Synthetic Demo Guard
+
+`source_acquisition.py` → `populate_workspace_files()`:
+
+- **Production projects** (`cleverdent`, …): không seed Python demo khi clone đã có source markers (`package.json`, `.git`, …).
+- **Auto-cleanup**: xóa `app/main.py`, `config/settings.py`, `requirements.txt` nếu khớp ASRP demo signature (legacy pollution).
+- **Demo lane only**: `demo-*` / `test-app` projects với workspace trống mới nhận seeded FastAPI sample.
+- `acquisition_metadata.json` ghi `synthetic_files_injected` / `synthetic_files_removed` per component.
 
 ---
 
@@ -127,7 +136,7 @@ AI pre-flight artifact sinh cùng run folder:
 
 **Checks:** 12 stage files + findings.json schema; summary integrity; anti copy-paste; forbid `FND-*` item_ids; consolidation completeness; `manifest_hash` freshness vs `registry.manifest.yaml`; emulated-only raw outputs when `tools_enabled` (warning default, error with `--strict`).
 
-**Findings normalizer:** merge mode — append raw hits to AI `findings.json`, dedupe by rule_id+location, filter by `severity_threshold`, emit `components_summary`.
+**Findings normalizer:** merge mode — append raw hits to AI `findings.json`, dedupe by rule_id+location, filter by `severity_threshold`, emit `components_summary`. **Skips supplementary merge when `all_engines_emulated`**; strips findings on ASRP demo seed paths (`app/main.py`, `config/settings.py`, …) unless `finding_id` is AI-primary (`FND-*`).
 
 **Stage overlap semantics:** Cùng vulnerability được phép FAIL ở nhiều stage với catalog `item_id` khác nhau; dedupe chỉ ở `findings.json`. Copy-paste toàn bộ `results[]` sang nhiều stage → FAIL.
 

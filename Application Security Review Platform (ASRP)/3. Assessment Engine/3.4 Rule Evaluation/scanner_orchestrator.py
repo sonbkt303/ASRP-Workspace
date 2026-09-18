@@ -144,20 +144,12 @@ class ScannerOrchestrator:
                 is_native = False
 
         if not is_native:
-            if not self.allow_emulated:
-                raw_data = self._empty_payload("gitleaks", "gitleaks binary not available")
-            else:
-                raw_data = [
-                    {
-                        "Description": r["name"],
-                        "StartLine": 12,
-                        "File": "config/settings.py",
-                        "RuleID": r.get("engine_config", {}).get("gitleaks_rule_id", "generic-api-key"),
-                        "Tags": [r["id"], r.get("severity", "MEDIUM")],
-                        "component_id": component_id,
-                    }
-                    for r in rules
-                ]
+            reason = (
+                "gitleaks binary not available (install gitleaks for real secret scan evidence)"
+                if not self.allow_emulated
+                else "emulated path injection disabled — use demo-* project seed + native tools"
+            )
+            raw_data = self._empty_payload("gitleaks", reason)
 
         output_file = os.path.join(out_dir, "gitleaks_raw.json")
         save_json(raw_data, output_file)
@@ -179,25 +171,12 @@ class ScannerOrchestrator:
                 is_native = False
 
         if not is_native:
-            if not self.allow_emulated:
-                raw_data = self._empty_payload("semgrep", "semgrep binary not available")
-            else:
-                raw_data = {
-                    "results": [
-                        {
-                            "check_id": r["id"],
-                            "path": "app/main.py",
-                            "start": {"line": 45, "col": 5},
-                            "extra": {
-                                "message": r.get("description", r.get("name", "")),
-                                "severity": r.get("severity", "MEDIUM").upper(),
-                                "component_id": component_id,
-                            },
-                        }
-                        for r in rules
-                    ],
-                    "errors": [],
-                }
+            reason = (
+                "semgrep binary not available (install semgrep for real SAST evidence)"
+                if not self.allow_emulated
+                else "emulated path injection disabled — use demo-* project seed + native tools"
+            )
+            raw_data = self._empty_payload("semgrep", reason)
 
         output_file = os.path.join(out_dir, "semgrep_raw.json")
         save_json(raw_data, output_file)
@@ -220,23 +199,12 @@ class ScannerOrchestrator:
                 is_native = False
 
         if not is_native:
-            if not self.allow_emulated:
-                raw_data = self._empty_payload("trivy", "trivy binary not available")
-            else:
-                raw_data = {
-                    "Results": [
-                        {
-                            "Target": "requirements.txt",
-                            "Vulnerabilities": [
-                                {
-                                    "VulnerabilityID": "CVE-2023-32681",
-                                    "Severity": "HIGH",
-                                    "component_id": component_id,
-                                }
-                            ],
-                        }
-                    ]
-                }
+            reason = (
+                "trivy binary not available (install trivy for real SCA evidence)"
+                if not self.allow_emulated
+                else "emulated path injection disabled — use demo-* project seed + native tools"
+            )
+            raw_data = self._empty_payload("trivy", reason)
 
         output_file = os.path.join(out_dir, "trivy_raw.json")
         save_json(raw_data, output_file)
@@ -249,21 +217,12 @@ class ScannerOrchestrator:
         mode = "Internal LLM Agent"
         print(f"[*] Engine: Custom AI ({len(rules)} rules) @ {component_id} -> {mode}")
 
-        if not self.allow_emulated:
-            raw_data = self._empty_payload("custom_ai", "custom_ai requires AI audit phase (Phase 2B)")
-        else:
-            raw_data = {
-                "ai_findings": [
-                    {
-                        "rule_id": r["id"],
-                        "focus_domain": r.get("category"),
-                        "target_file": "app/api/v1/orders.py",
-                        "confidence_score": 0.92,
-                        "component_id": component_id,
-                    }
-                    for r in rules
-                ]
-            }
+        reason = (
+            "custom_ai requires AI audit phase (Phase 2B)"
+            if not self.allow_emulated
+            else "emulated custom_ai disabled — complete AI-primary audit (Phase 2B)"
+        )
+        raw_data = self._empty_payload("custom_ai", reason)
 
         output_file = os.path.join(out_dir, "custom_ai_raw.json")
         save_json(raw_data, output_file)

@@ -44,6 +44,28 @@ def save_yaml(data, filepath):
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
 
+SOURCE_MARKERS = (
+    "package.json",
+    "pnpm-lock.yaml",
+    "yarn.lock",
+    "pom.xml",
+    "go.mod",
+    "Cargo.toml",
+    "requirements.txt",
+    "nest-cli.json",
+    "tsconfig.json",
+    ".git",
+)
+
+SYNTHETIC_SIGNATURE = "super-secret-key-change-in-production"
+
+SYNTHETIC_FILE_SIGNATURES = (
+    ("app/main.py", "import os\nimport hashlib"),
+    ("config/settings.py", SYNTHETIC_SIGNATURE),
+    ("requirements.txt", "fastapi==0.95.1"),
+)
+
+
 def ignore_unwanted_dirs(src, names):
     """Filter out build artifacts, dependencies, and IDE configuration folders."""
     ignored = set()
@@ -399,8 +421,7 @@ class SourceAcquisition:
                 comp["repository"] = repo_url
                 save_yaml({"components": components_list}, components_path)
 
-            # Populate sample files if empty
-            self.populate_workspace_files(comp_workspace)
+            synthetic_meta = self.populate_workspace_files(comp_workspace)
 
             acquired_entry = {
                 "component_id": comp_id,
@@ -410,7 +431,9 @@ class SourceAcquisition:
                 "target_branch": target_branch,
                 "pinned_commit_sha": commit_sha,
                 "acquisition_method": acquisition_method,
-                "workspace_path": comp_workspace
+                "workspace_path": comp_workspace,
+                "synthetic_files_injected": synthetic_meta.get("synthetic_files_injected", False),
+                "synthetic_files_removed": synthetic_meta.get("synthetic_files_removed", []),
             }
             
             acquired_components.append(acquired_entry)
@@ -451,13 +474,68 @@ class SourceAcquisition:
                     print(f"  [+] Added to .gitignore: {entry}")
             print(f"[✓] .gitignore updated successfully!")
 
-    def populate_workspace_files(self, comp_workspace):
-        """Populate sample source code files into acquired workspace directory if empty."""
-        main_py_path = os.path.join(comp_workspace, "app", "main.py")
-        if os.path.exists(main_py_path):
-            return  # Code already present from Local Copy or Git Clone
+    def _is_demo_project(self) -> bool:
+        """Demo/sandbox projects may receive seeded Python sample code."""
+        return self.project_id.startswith(("demo-", "test-app"))
 
-        # 1. config/settings.py
+    def _workspace_has_real_source(self, comp_workspace: str) -> bool:
+        return any(
+            os.path.exists(os.path.join(comp_workspace, marker))
+            for marker in SOURCE_MARKERS
+        )
+
+    def _file_matches_signature(self, content: str, signature: str) -> bool:
+        normalized = content.replace("\r\n", "\n")
+        return signature in normalized
+
+    def _cleanup_synthetic_artifacts(self, comp_workspace: str) -> list[str]:
+        """Remove ASRP demo Python files accidentally injected into real clones."""
+        removed = []
+        for rel_path, signature in SYNTHETIC_FILE_SIGNATURES:
+            full_path = os.path.join(comp_workspace, rel_path)
+            if not os.path.isfile(full_path):
+                continue
+            try:
+                with open(full_path, encoding="utf-8") as handle:
+                    matches = self._file_matches_signature(handle.read(), signature)
+                if matches:
+                    os.remove(full_path)
+                    removed.append(rel_path)
+            except OSError:
+                continue
+
+        app_dir = os.path.join(comp_workspace, "app")
+        if os.path.isdir(app_dir) and not os.listdir(app_dir):
+            os.rmdir(app_dir)
+
+        config_dir = os.path.join(comp_workspace, "config")
+        if os.path.isdir(config_dir) and not os.listdir(config_dir):
+            os.rmdir(config_dir)
+
+        return removed
+
+    def populate_workspace_files(self, comp_workspace):
+        """
+        Seed demo Python sample code only for demo/test projects with empty workspaces.
+        Real projects: never inject; remove legacy synthetic artifacts if present.
+        """
+        meta = {"synthetic_files_injected": False, "synthetic_files_removed": []}
+
+        if self._workspace_has_real_source(comp_workspace):
+            removed = self._cleanup_synthetic_artifacts(comp_workspace)
+            if removed:
+                meta["synthetic_files_removed"] = removed
+                print(f"  [-] Removed ASRP synthetic demo files: {', '.join(removed)}")
+            return meta
+
+        if not self._is_demo_project():
+            print(
+                f"  [!] Workspace empty for production project '{self.project_id}' "
+                f"— skipping demo seed (use --source or configure components.yaml repository)"
+            )
+            return meta
+
+        # Demo-only seed: config/settings.py
         settings_path = os.path.join(comp_workspace, "config", "settings.py")
         os.makedirs(os.path.dirname(settings_path), exist_ok=True)
         with open(settings_path, "w", encoding="utf-8") as f:
@@ -469,7 +547,6 @@ AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
 DATABASE_URI = "postgresql://dbuser:P@ssw0rd2026!@localhost:5432/app_db"
 ''')
 
-        # 2. app/main.py
         main_path = os.path.join(comp_workspace, "app", "main.py")
         os.makedirs(os.path.dirname(main_path), exist_ok=True)
         with open(main_path, "w", encoding="utf-8") as f:
@@ -491,12 +568,15 @@ def ping_host(host: str):
     return {"status": "pinged"}
 ''')
 
-        # 3. requirements.txt
         req_path = os.path.join(comp_workspace, "requirements.txt")
         with open(req_path, "w", encoding="utf-8") as f:
             f.write('''fastapi==0.95.1
 requests==2.28.1
 ''')
+
+        meta["synthetic_files_injected"] = True
+        print(f"  [+] Seeded demo Python sample code for project '{self.project_id}'")
+        return meta
 
     def run(self):
         """Execute full 3-step Source Acquisition Flow."""

@@ -32,6 +32,14 @@ ENGINE_PRIORITY = {
     "cicd": 6,
 }
 
+# Paths from ASRP demo seed (source_acquisition.populate_workspace_files) — never merge as evidence.
+SYNTHETIC_PATHS = {
+    "app/main.py",
+    "config/settings.py",
+    "app/api/v1/orders.py",
+    "requirements.txt",
+}
+
 
 def load_json(filepath):
     """Utility to safely load a JSON file."""
@@ -144,6 +152,22 @@ class FindingsNormalizer:
         for r in payload.get("rules", []):
             rules_map[r["id"]] = r
         return rules_map
+
+    def _load_execution_summary(self) -> dict:
+        summary_path = os.path.join(self.raw_outputs_dir, "execution_summary.json")
+        return load_json(summary_path) or {}
+
+    def _is_synthetic_location(self, finding: dict) -> bool:
+        loc = (finding.get("location") or {}).get("file_path", "")
+        normalized = str(loc).replace("\\", "/").lstrip("./")
+        return normalized in SYNTHETIC_PATHS
+
+    def _should_exclude_finding(self, finding: dict) -> bool:
+        """Drop scanner hits on ASRP demo seed paths; keep AI-primary FND-* findings."""
+        if not self._is_synthetic_location(finding):
+            return False
+        finding_id = str(finding.get("finding_id") or "")
+        return not finding_id.startswith("FND-")
 
     def normalize_gitleaks(self, raw_data, rules_map, counter, component_id=None):
         findings = []
@@ -420,6 +444,14 @@ class FindingsNormalizer:
         supplementary = []
         counter = len(existing_findings)
         engine_counts = {"gitleaks": 0, "semgrep": 0, "trivy": 0, "custom_ai": 0}
+        execution_summary = self._load_execution_summary()
+        skip_supplementary = execution_summary.get("all_engines_emulated", False)
+
+        if skip_supplementary:
+            print(
+                "[!] All scanner engines emulated/empty — skipping supplementary merge "
+                "(AI-primary findings only; install native tools for real SAST/SCA evidence)"
+            )
 
         normalizers = [
             ("gitleaks", self.normalize_gitleaks),
@@ -428,26 +460,33 @@ class FindingsNormalizer:
             ("custom_ai", self.normalize_custom_ai),
         ]
 
-        for cid in component_ids:
-            comp_dir = os.path.join(self.raw_outputs_dir, cid) if cid else self.raw_outputs_dir
-            if not os.path.isdir(comp_dir):
-                comp_dir = self.raw_outputs_dir
-            for engine_name, fn in normalizers:
-                raw_path = os.path.join(comp_dir, f"{engine_name}_raw.json")
-                raw_data = load_json(raw_path)
-                new_findings, counter = fn(raw_data, rules_map, counter, component_id=cid)
-                supplementary.extend(new_findings)
-                engine_counts[engine_name] += len(new_findings)
-                if new_findings:
-                    label = cid or "global"
-                    print(f"[*] {engine_name} @ {label}: {len(new_findings)} supplementary hits")
+        if not skip_supplementary:
+            for cid in component_ids:
+                comp_dir = os.path.join(self.raw_outputs_dir, cid) if cid else self.raw_outputs_dir
+                if not os.path.isdir(comp_dir):
+                    comp_dir = self.raw_outputs_dir
+                for engine_name, fn in normalizers:
+                    raw_path = os.path.join(comp_dir, f"{engine_name}_raw.json")
+                    raw_data = load_json(raw_path)
+                    new_findings, counter = fn(raw_data, rules_map, counter, component_id=cid)
+                    new_findings = [f for f in new_findings if not self._is_synthetic_location(f)]
+                    supplementary.extend(new_findings)
+                    engine_counts[engine_name] += len(new_findings)
+                    if new_findings:
+                        label = cid or "global"
+                        print(f"[*] {engine_name} @ {label}: {len(new_findings)} supplementary hits")
 
         merged = self.merge_findings(existing_findings, supplementary)
+        after_synthetic_filter = [f for f in merged if not self._should_exclude_finding(f)]
+        synthetic_removed = len(merged) - len(after_synthetic_filter)
+        if synthetic_removed:
+            print(f"[*] Removed {synthetic_removed} findings on ASRP demo seed paths")
+
         filtered = [
-            f for f in merged
+            f for f in after_synthetic_filter
             if passes_severity_threshold(f.get("severity"), self.severity_threshold)
         ]
-        removed = len(merged) - len(filtered)
+        removed = len(after_synthetic_filter) - len(filtered)
         if removed:
             print(f"[*] Filtered {removed} findings below severity_threshold '{self.severity_threshold}'")
 
@@ -477,6 +516,8 @@ class FindingsNormalizer:
             "merge_stats": {
                 "ai_primary_count": len(existing_findings),
                 "supplementary_added": len(supplementary),
+                "supplementary_skipped_emulated": skip_supplementary,
+                "synthetic_paths_removed": synthetic_removed,
                 "after_dedupe": len(merged),
                 "after_threshold_filter": len(filtered),
             },
